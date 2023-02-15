@@ -16,22 +16,30 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-
 import coil.compose.rememberAsyncImagePainter
 import com.example.compose.ui.theme.ComposeTheme
 import com.example.compose.ui.theme.Green50
+import com.example.compose.ui.theme.Grey400
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class HomeActivity : ComponentActivity() {
 
@@ -59,19 +67,153 @@ fun Content(content: @Composable () -> Unit) {
 fun ConversationScreen(
     viewModel: HomeViewModel = viewModel()
 ) {
-    val uiSate by viewModel.conversation.collectAsState()
-    ConversationsByTime(uiSate)
+    val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
+    val user by viewModel.user.collectAsState(null)
+
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = { AppBar(user) }
+    ) { padding ->
+        val conversations by viewModel.conversation.collectAsState()
+
+        Column {
+            ConversationsByTime(
+                conversations,
+                Modifier
+                    .padding(padding)
+                    .weight(1.0f)
+            )
+            Editor(scaffoldState, scope)
+        }
+    }
 }
 
 @Composable
-fun ConversationsByTime(conversations: Map<String, List<Conversation>>) {
-    LazyColumn(modifier = Modifier.padding(4.dp)) {
+private fun AppBar(user: User?) {
+    TopAppBar {
+        Row(
+            modifier = Modifier.fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val avatar = user?.avatar
+            Image(
+                painter = if (avatar.isNullOrEmpty()) rememberVectorPainter(Icons.Default.Face) else rememberAsyncImagePainter(
+                    user
+                ),
+                contentDescription = "Current user",
+                modifier = Modifier.size(40.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "Conversations", style = MaterialTheme.typography.subtitle1,
+                modifier = Modifier.weight(1.0f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun Editor(
+    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    scope: CoroutineScope = rememberCoroutineScope()
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Surface(
+            color = Grey400,
+            modifier = Modifier
+                .weight(1.0f),
+            shape = RoundedCornerShape(32.dp),
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(4.dp)) {
+                var message by remember {
+                    mutableStateOf("")
+                }
+
+                EditorIconButton(Icons.Default.Face, "Emoji") {
+                    scope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar("Show emoji")
+                    }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                TextField(
+                    value = message,
+                    onValueChange = { message = it },
+                    placeholder = {
+                        Text(
+                            "Message",
+                            modifier = Modifier
+                                .background(Color.Transparent)
+                                .fillMaxWidth()
+                        )
+                    },
+                    singleLine = true,
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    modifier = Modifier
+                        .weight(1.0f),
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                EditorIconButton(Icons.Default.Add, "Attach file") {
+                    scope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar("Launch attach")
+                    }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                EditorIconButton(Icons.Default.LocationOn, "Attach Location") {
+                    scope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar("Enable location")
+                    }
+                }
+            }
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        EditorIconButton(Icons.Default.Send, "Send Message") {
+            scope.launch {
+                scaffoldState.snackbarHostState.showSnackbar("Sending message")
+            }
+        }
+    }
+}
+
+@Composable
+private fun EditorIconButton(
+    icon: ImageVector,
+    contentDescription: String,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        shape = CircleShape,
+        modifier = Modifier
+            .size(40.dp),
+        contentPadding = PaddingValues(4.dp)
+    ) {
+        Icon(
+            icon, contentDescription, modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@Composable
+fun ConversationsByTime(conversations: Map<String, List<Conversation>>, modifier: Modifier) {
+    LazyColumn(modifier = modifier) {
         conversations.forEach { (time, conversations) ->
             item {
                 ConversationTime(time)
                 Spacer(modifier = Modifier.height(2.dp))
             }
             items(conversations) { conversation ->
+                Spacer(modifier = Modifier.height(4.dp))
                 Row {
                     Conversation(conversation)
                 }
@@ -122,7 +264,7 @@ private fun Conversation(conversation: Conversation) {
     ) {
         Column {
             Image(
-                painter = rememberAsyncImagePainter(conversation.avatar),
+                painter = rememberAsyncImagePainter(conversation.sender.avatar),
                 contentDescription = "User profile",
                 modifier = Modifier
                     .size(64.dp)
@@ -133,7 +275,7 @@ private fun Conversation(conversation: Conversation) {
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                text = conversation.sender,
+                text = conversation.sender.name,
                 color = Color(0xff43a047),
                 style = MaterialTheme.typography.subtitle2,
                 modifier = Modifier.padding(start = 4.dp, end = 4.dp)
@@ -164,9 +306,8 @@ private fun Conversation(conversation: Conversation) {
 fun GreetingsPreview() {
     Conversation(
         Conversation(
-            "John",
-            "Hello Jack! How are you today? Can you me those presentations",
-            "https://placekitten.com/200/300"
+            User("John", "https://placekitten.com/200/300"),
+            "Hello Jack! How are you today? Can you me those presentations"
         )
     )
 }
@@ -177,7 +318,13 @@ fun GreetingsPreview() {
     showBackground = true
 )
 @Composable
-fun ConversationsByTimePreview() {
-    ConversationsByTime(SampleData.messages)
+fun ConversationsScreenPreview() {
+    ConversationScreen()
+}
+
+@Preview
+@Composable
+fun EditorPreview() {
+    Editor()
 }
 

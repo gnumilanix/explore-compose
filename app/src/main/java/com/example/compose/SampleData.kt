@@ -1,29 +1,27 @@
 package com.example.compose
 
 object SampleData {
+    val userJohn = User("John", "http://placekitten.com/200/300")
+    val userJack = User("Jack", "http://placekitten.com/200/400")
     val messages = mapOf(
         "yesterday" to listOf(
             Conversation(
-                "John",
-                "Hello Jack! How are you today? Can you me those presentations",
-                "http://placekitten.com/200/300"
+                userJohn,
+                "Hello Jack! How are you today? Can you me those presentations"
             ),
             Conversation(
-                "Jack",
-                "Hello John! I am good. How about you?",
-                "http://placekitten.com/200/400"
+                userJack,
+                "Hello John! I am good. How about you?"
             ),
             Conversation(
-                "John",
-                "I am good as well",
-                "http://placekitten.com/200/300"
+                userJohn,
+                "I am good as well"
             )
         ),
         "moments ago" to listOf(
             Conversation(
-                "Jack",
-                "What are you doing these days?",
-                "http://placekitten.com/200/400"
+                userJack,
+                "What are you doing these days?"
             )
         )
     )

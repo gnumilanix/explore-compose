@@ -1,17 +1,16 @@
 package com.example.compose
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 
 class HomeViewModel : ViewModel() {
+    private val _user = MutableSharedFlow<User>()
+    val user = _user.asSharedFlow()
     private val _conversations = MutableStateFlow(mapOf<String, List<Conversation>>())
-    val conversation: StateFlow<Map<String, List<Conversation>>> = _conversations.asStateFlow()
-
+    val conversation = _conversations.asStateFlow()
 
     init {
+        _user.tryEmit(SampleData.userJack)
         _conversations.update { SampleData.messages }
     }
 }
