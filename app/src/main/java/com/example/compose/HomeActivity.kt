@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.example.compose.Direction.*
 import com.example.compose.ui.theme.ComposeTheme
 import com.example.compose.ui.theme.Green50
 import com.example.compose.ui.theme.Grey400
@@ -98,13 +99,17 @@ private fun AppBar(user: User?) {
         ) {
             val avatar = user?.avatar
             Image(
-                painter = if (avatar.isNullOrEmpty()) rememberVectorPainter(Icons.Default.Face) else rememberAsyncImagePainter(
-                    user
-                ),
+                painter = when {
+                    avatar.isNullOrEmpty() -> rememberVectorPainter(Icons.Default.Face)
+                    else -> rememberAsyncImagePainter(user)
+                },
                 contentDescription = "Current user",
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .border(1.5.dp, Color(0xff76d275), CircleShape)
             )
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "Conversations", style = MaterialTheme.typography.subtitle1,
                 modifier = Modifier.weight(1.0f)
@@ -131,7 +136,10 @@ private fun Editor(
                 .weight(1.0f),
             shape = RoundedCornerShape(32.dp),
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(4.dp)) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 0.dp)
+            ) {
                 var message by remember {
                     mutableStateOf("")
                 }
@@ -176,7 +184,7 @@ private fun Editor(
                 }
             }
         }
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(4.dp))
         EditorIconButton(Icons.Default.Send, "Send Message") {
             scope.launch {
                 scaffoldState.snackbarHostState.showSnackbar("Sending message")
@@ -255,44 +263,90 @@ private fun Conversation(conversation: Conversation) {
         tween(durationMillis = 500, delayMillis = 40, easing = LinearOutSlowInEasing)
     )
 
+    val background = Modifier
+        .fillMaxWidth()
+        .clickable { isSelected = !isSelected }
+        .background(color = surfaceColor, shape = RoundedCornerShape(4.dp))
+    when (conversation.direction) {
+        SENT -> ConversationSent(background, conversation)
+        RECEIVED -> ConversationReceived(background, conversation)
+    }
+
+
+}
+
+@Composable
+private fun ConversationReceived(
+    modifier: Modifier,
+    conversation: Conversation
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { isSelected = !isSelected }
-            .background(color = surfaceColor, shape = RoundedCornerShape(4.dp))
-            .padding(4.dp)
+        modifier = modifier
+            .padding(4.dp, 4.dp, 60.dp, 4.dp),
+        horizontalArrangement = Arrangement.Start
     ) {
-        Column {
-            Image(
-                painter = rememberAsyncImagePainter(conversation.sender.avatar),
-                contentDescription = "User profile",
-                modifier = Modifier
-                    .size(64.dp)
-                    .clip(CircleShape)
-                    .border(1.5.dp, Color(0xff76d275), CircleShape)
-            )
+        ConversationAvatar(conversation)
+        Spacer(modifier = Modifier.width(8.dp))
+        Column(modifier = Modifier.weight(1.0f), horizontalAlignment = Alignment.Start) {
+            ConversationMessage(conversation, TextAlign.Start)
+        }
+    }
+}
+
+@Composable
+private fun ConversationSent(
+    modifier: Modifier,
+    conversation: Conversation
+) {
+    Row(
+        modifier = modifier
+            .padding(60.dp, 4.dp, 4.dp, 4.dp),
+        horizontalArrangement = Arrangement.End
+    ) {
+        Column(modifier = Modifier.weight(1.0f), horizontalAlignment = Alignment.End) {
+            ConversationMessage(conversation, TextAlign.End)
         }
         Spacer(modifier = Modifier.width(8.dp))
-        Column {
-            Text(
-                text = conversation.sender.name,
-                color = Color(0xff43a047),
-                style = MaterialTheme.typography.subtitle2,
-                modifier = Modifier.padding(start = 4.dp, end = 4.dp)
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Surface(
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colors.surface,
-                elevation = 1.dp
-            ) {
-                Text(
-                    text = conversation.message,
-                    style = MaterialTheme.typography.body2,
-                    modifier = Modifier.padding(4.dp)
-                )
-            }
-        }
+        ConversationAvatar(conversation)
+    }
+}
+
+@Composable
+private fun ConversationMessage(conversation: Conversation, textAlign: TextAlign) {
+    Text(
+        text = conversation.sender.name,
+        color = Color(0xff43a047),
+        style = MaterialTheme.typography.subtitle2,
+        modifier = Modifier
+            .padding(start = 4.dp, end = 4.dp)
+            .fillMaxWidth(),
+        textAlign = textAlign
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+    Surface(
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colors.surface,
+        elevation = 1.dp
+    ) {
+        Text(
+            text = conversation.message,
+            style = MaterialTheme.typography.body2,
+            modifier = Modifier.padding(4.dp)
+        )
+    }
+}
+
+@Composable
+private fun ConversationAvatar(conversation: Conversation) {
+    Column {
+        Image(
+            painter = rememberAsyncImagePainter(conversation.sender.avatar),
+            contentDescription = "User profile",
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .border(1.5.dp, Color(0xff76d275), CircleShape)
+        )
     }
 }
 
@@ -307,7 +361,20 @@ fun GreetingsPreview() {
     Conversation(
         Conversation(
             User("John", "https://placekitten.com/200/300"),
-            "Hello Jack! How are you today? Can you me those presentations"
+            "Hello Jack! How are you today? Can you me those presentations",
+            SENT
+        )
+    )
+}
+
+@Preview(name = "Light mode")
+@Composable
+fun GreetingsReceivedPreview() {
+    Conversation(
+        Conversation(
+            User("John", "https://placekitten.com/200/300"),
+            "Hello Jack! How are you today? Can you me those presentations",
+            RECEIVED
         )
     )
 }
