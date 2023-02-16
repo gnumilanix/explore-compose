@@ -1,4 +1,4 @@
-package com.example.compose
+package com.ignitetech.compose
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -29,16 +29,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import com.example.compose.Direction.*
-import com.example.compose.ui.theme.ComposeTheme
-import com.example.compose.ui.theme.Green50
-import com.example.compose.ui.theme.Grey400
+import com.ignitetech.compose.Direction.*
+import com.ignitetech.compose.ui.theme.ComposeTheme
+import com.ignitetech.compose.ui.theme.Green50
+import com.ignitetech.compose.ui.theme.Grey400
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -103,7 +104,7 @@ private fun AppBar(user: User?) {
                     avatar.isNullOrEmpty() -> rememberVectorPainter(Icons.Default.Face)
                     else -> rememberAsyncImagePainter(user)
                 },
-                contentDescription = "Current user",
+                contentDescription = stringResource(R.string.cd_current_user),
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
@@ -144,7 +145,7 @@ private fun Editor(
                     mutableStateOf("")
                 }
 
-                EditorIconButton(Icons.Default.Face, "Emoji") {
+                EditorIconButton(Icons.Default.Face, stringResource(R.string.cd_emoji)) {
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar("Show emoji")
                     }
@@ -155,7 +156,7 @@ private fun Editor(
                     onValueChange = { message = it },
                     placeholder = {
                         Text(
-                            "Message",
+                            stringResource(R.string.ph_message),
                             modifier = Modifier
                                 .background(Color.Transparent)
                                 .fillMaxWidth()
@@ -171,13 +172,13 @@ private fun Editor(
                         .weight(1.0f),
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                EditorIconButton(Icons.Default.Add, "Attach file") {
+                EditorIconButton(Icons.Default.Add, stringResource(R.string.cd_attach_file)) {
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar("Launch attach")
                     }
                 }
                 Spacer(modifier = Modifier.width(8.dp))
-                EditorIconButton(Icons.Default.LocationOn, "Attach Location") {
+                EditorIconButton(Icons.Default.LocationOn, stringResource(R.string.cd_attach_location)) {
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar("Enable location")
                     }
@@ -185,7 +186,7 @@ private fun Editor(
             }
         }
         Spacer(modifier = Modifier.width(4.dp))
-        EditorIconButton(Icons.Default.Send, "Send Message") {
+        EditorIconButton(Icons.Default.Send, stringResource(R.string.cd_send_message)) {
             scope.launch {
                 scaffoldState.snackbarHostState.showSnackbar("Sending message")
             }
@@ -341,7 +342,7 @@ private fun ConversationAvatar(conversation: Conversation) {
     Column {
         Image(
             painter = rememberAsyncImagePainter(conversation.sender.avatar),
-            contentDescription = "User profile",
+            contentDescription = stringResource(R.string.cd_user_profile),
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)

@@ -1,4 +1,4 @@
-package com.example.compose
+package com.ignitetech.compose
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.*

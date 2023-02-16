@@ -1,4 +1,4 @@
-package com.example.compose
+package com.ignitetech.compose
 
 data class Conversation(val sender: User, val message: String, val direction: Direction)
 

@@ -1,4 +1,4 @@
-package com.example.compose
+package com.ignitetech.compose
 
 object SampleData {
     val userJohn = User("John", "http://placekitten.com/200/300")

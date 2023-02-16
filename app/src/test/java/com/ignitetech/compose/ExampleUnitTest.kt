@@ -1,4 +1,4 @@
-package com.example.compose
+package com.ignitetech.compose
 
 import org.junit.Test
 

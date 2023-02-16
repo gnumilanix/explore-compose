@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.compose'
+    namespace 'com.ignitetech.compose'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.compose"
+        applicationId "com.ignitetech.compose"
         minSdk 26
         targetSdk 33
         versionCode 1

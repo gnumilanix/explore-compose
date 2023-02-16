@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Compose</string>
+
+    <!-- Place holders -->
+    <string name="ph_message">Message</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_current_user">Current user</string>
+    <string name="cd_user_profile">User profile</string>
+    <string name="cd_emoji">Emoji</string>
+    <string name="cd_attach_file">Attach file</string>
+    <string name="cd_attach_location">Attach Location</string>
+    <string name="cd_send_message">Send Message</string>
+
 </resources>
