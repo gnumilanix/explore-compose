@@ -1,4 +1,4 @@
-package com.ignitetech.compose
+package com.ignitetech.compose.conversation
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -36,7 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import com.ignitetech.compose.Direction.*
+import com.ignitetech.compose.R
+import com.ignitetech.compose.conversation.Direction.*
 import com.ignitetech.compose.ui.theme.ComposeTheme
 import com.ignitetech.compose.ui.theme.Green50
 import com.ignitetech.compose.ui.theme.Grey400
@@ -67,7 +68,7 @@ fun Content(content: @Composable () -> Unit) {
 
 @Composable
 fun ConversationScreen(
-    viewModel: HomeViewModel = viewModel()
+    viewModel: ConversationViewModel = viewModel()
 ) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()

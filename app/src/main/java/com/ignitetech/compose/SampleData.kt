@@ -1,5 +1,9 @@
 package com.ignitetech.compose
 
+import com.ignitetech.compose.conversation.Conversation
+import com.ignitetech.compose.conversation.Direction
+import com.ignitetech.compose.conversation.User
+
 object SampleData {
     val userJohn = User("John", "http://placekitten.com/200/300")
     val userJack = User("Jack", "http://placekitten.com/200/400")
