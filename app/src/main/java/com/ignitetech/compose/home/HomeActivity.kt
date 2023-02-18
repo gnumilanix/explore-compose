@@ -37,8 +37,77 @@ class HomeActivity : ComponentActivity() {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun HomeScreen(
+    viewModel: HomeViewModel = viewModel()
+) {
+    val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
+
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = { AppBar() },
+        floatingActionButton = { FloatingButton(scaffoldState, scope) }
+    ) { padding ->
+        val tabs by viewModel.tabs.collectAsState()
+        val pagerState = rememberPagerState(0)
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            Tabs(scope, pagerState, tabs)
+            TabContents(pagerState, tabs)
+        }
+    }
+}
+
+
+@Composable
+private fun AppBar() {
+    TopAppBar(
+        title = { Text(text = stringResource(id = R.string.app_name)) },
+        actions = {
+            var showDropDown by remember {
+                mutableStateOf(false)
+            }
+
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_search_24),
+                    contentDescription = stringResource(id = R.string.cd_search_conversation)
+                )
+            }
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_archive_24),
+                    contentDescription = stringResource(id = R.string.cd_archive_chat)
+                )
+            }
+            Box {
+                val dismissDropDown = { showDropDown = false }
+                IconButton(onClick = { showDropDown = !showDropDown }) {
+                    Icon(Icons.Default.MoreVert, stringResource(id = R.string.cd_more_items))
+                }
+                DropdownMenu(
+                    expanded = showDropDown,
+                    onDismissRequest = dismissDropDown
+                ) {
+                    DropdownMenuItem(onClick = {
+                        dismissDropDown()
+                        /*TODO*/
+                    }) {
+                        Text(text = stringResource(id = R.string.new_group))
+                    }
+                    DropdownMenuItem(onClick = {
+                        dismissDropDown()
+                        /*TODO*/
+                    }) {
+                        Text(text = stringResource(id = R.string.settings))
+                    }
+                }
+            }
+        })
 }
 
 @Composable

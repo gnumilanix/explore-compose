@@ -37,14 +37,16 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.ignitetech.compose.R
-import com.ignitetech.compose.conversation.Direction.*
+import com.ignitetech.compose.data.conversation.Conversation
+import com.ignitetech.compose.data.conversation.Direction.*
+import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.ui.theme.ComposeTheme
 import com.ignitetech.compose.ui.theme.Green50
 import com.ignitetech.compose.ui.theme.Grey400
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class HomeActivity : ComponentActivity() {
+class ConversationActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -179,7 +181,10 @@ private fun Editor(
                     }
                 }
                 Spacer(modifier = Modifier.width(8.dp))
-                EditorIconButton(Icons.Default.LocationOn, stringResource(R.string.cd_attach_location)) {
+                EditorIconButton(
+                    Icons.Default.LocationOn,
+                    stringResource(R.string.cd_attach_location)
+                ) {
                     scope.launch {
                         scaffoldState.snackbarHostState.showSnackbar("Enable location")
                     }
@@ -316,7 +321,7 @@ private fun ConversationSent(
 @Composable
 private fun ConversationMessage(conversation: Conversation, textAlign: TextAlign) {
     Text(
-        text = conversation.sender.name,
+        text = conversation.sender?.name ?: "",
         color = Color(0xff43a047),
         style = MaterialTheme.typography.subtitle2,
         modifier = Modifier
@@ -342,7 +347,7 @@ private fun ConversationMessage(conversation: Conversation, textAlign: TextAlign
 private fun ConversationAvatar(conversation: Conversation) {
     Column {
         Image(
-            painter = rememberAsyncImagePainter(conversation.sender.avatar),
+            painter = rememberAsyncImagePainter(conversation.sender?.avatar),
             contentDescription = stringResource(R.string.cd_user_profile),
             modifier = Modifier
                 .size(48.dp)
@@ -362,9 +367,11 @@ private fun ConversationAvatar(conversation: Conversation) {
 fun GreetingsPreview() {
     Conversation(
         Conversation(
-            User("John", "https://placekitten.com/200/300"),
+            1,
+            1,
             "Hello Jack! How are you today? Can you me those presentations",
-            SENT
+            SENT,
+            User(1, "John", "https://placekitten.com/200/300")
         )
     )
 }
@@ -374,9 +381,11 @@ fun GreetingsPreview() {
 fun GreetingsReceivedPreview() {
     Conversation(
         Conversation(
-            User("John", "https://placekitten.com/200/300"),
+            1,
+            1,
             "Hello Jack! How are you today? Can you me those presentations",
-            RECEIVED
+            RECEIVED,
+            User(1, "John", "https://placekitten.com/200/300")
         )
     )
 }
