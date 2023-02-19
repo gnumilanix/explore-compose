@@ -37,7 +37,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.ignitetech.compose.R
 import com.ignitetech.compose.data.conversation.Conversation
-import com.ignitetech.compose.data.conversation.Direction.*
+import com.ignitetech.compose.data.conversation.Direction.RECEIVED
+import com.ignitetech.compose.data.conversation.Direction.SENT
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.ui.theme.ComposeTheme
 import com.ignitetech.compose.ui.theme.Green50
@@ -73,16 +74,21 @@ fun Content(content: @Composable () -> Unit) {
 fun ConversationScreen(
     viewModel: ConversationViewModel = viewModel()
 ) {
+    val user by viewModel.user.collectAsState(null)
+    val conversations by viewModel.conversation.collectAsState()
+
+    ConversationScreen(user, conversations)
+}
+
+@Composable
+fun ConversationScreen(user: User?, conversations: Map<String, List<Conversation>>) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-    val user by viewModel.user.collectAsState(null)
 
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = { AppBar(user) }
     ) { padding ->
-        val conversations by viewModel.conversation.collectAsState()
-
         Column {
             ConversationsByTime(
                 conversations,
@@ -361,7 +367,7 @@ fun UserAvatar(avatar: String?) {
     showBackground = true
 )
 @Composable
-fun GreetingsPreview() {
+fun ConversationSentPreview() {
     Conversation(
         Conversation(
             1,
@@ -375,7 +381,7 @@ fun GreetingsPreview() {
 
 @Preview(name = "Light mode")
 @Composable
-fun GreetingsReceivedPreview() {
+fun ConversationReceivedPreview() {
     Conversation(
         Conversation(
             1,
@@ -394,7 +400,27 @@ fun GreetingsReceivedPreview() {
 )
 @Composable
 fun ConversationsScreenPreview() {
-    ConversationScreen()
+    ConversationScreen(
+        User(1, "John", "https://placekitten.com/200/300"),
+        mapOf(
+            "yesterday" to listOf(
+                Conversation(
+                    1,
+                    1,
+                    "Hello Jack! How are you today? Can you me those presentations",
+                    SENT,
+                    User(1, "John", "http://placekitten.com/200/300")
+                ),
+                Conversation(
+                    2,
+                    2,
+                    "Hello John! I am good. How about you?",
+                    RECEIVED,
+                    User(2, "Jane", "http://placekitten.com/200/100")
+                )
+            )
+        )
+    )
 }
 
 @Preview
