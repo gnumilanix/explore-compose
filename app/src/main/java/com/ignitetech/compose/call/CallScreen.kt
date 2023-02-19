@@ -21,15 +21,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ignitetech.compose.R
-import com.ignitetech.compose.conversation.UserAvatar
-import com.ignitetech.compose.data.call.Call
+import com.ignitetech.compose.utility.UserAvatar
 import com.ignitetech.compose.data.call.Type
 import com.ignitetech.compose.data.call.Type.*
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.ui.theme.Green500
 import com.ignitetech.compose.ui.theme.Red500
-import java.text.SimpleDateFormat
-import java.util.*
 
 @Composable
 fun CallScreen(viewModel: CallViewModel = viewModel()) {
@@ -38,22 +35,17 @@ fun CallScreen(viewModel: CallViewModel = viewModel()) {
 }
 
 @Composable
-fun CallScreen(calls: Map<String, List<Call>>) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            calls.forEach { (time, calls) ->
-                item {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    CallTime(time)
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-                itemsIndexed(calls) { callIndex, call ->
-                    Row {
-                        Call(call)
-                    }
+fun CallScreen(calls: Map<String, List<CallUiState>>) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        calls.forEach { (time, calls) ->
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+                CallTime(time)
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            itemsIndexed(calls) { callIndex, call ->
+                Row {
+                    Call(call)
                 }
             }
         }
@@ -83,7 +75,7 @@ private fun CallTime(time: String) {
 }
 
 @Composable
-private fun Call(call: Call) {
+private fun Call(call: CallUiState) {
     Row(modifier = Modifier
         .clickable { }
         .padding(16.dp, 8.dp, 16.dp, 8.dp)
@@ -97,6 +89,7 @@ private fun Call(call: Call) {
             Text(
                 text = call.caller?.name ?: "",
                 style = MaterialTheme.typography.subtitle2,
+                maxLines = 1,
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -104,10 +97,7 @@ private fun Call(call: Call) {
                 CallTypeIcon(call.type)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = SimpleDateFormat(
-                        "MMMM dd, HH mm",
-                        Locale.getDefault()
-                    ).format(call.date.time),
+                    text = call.date,
                     style = MaterialTheme.typography.caption
                 )
             }
@@ -160,25 +150,25 @@ fun CallScreenPreview() {
     CallScreen(
         mapOf(
             "Today" to listOf(
-                Call(
+                CallUiState(
                     0, 1, 1000, INCOMING,
-                    Calendar.getInstance(),
+                    "February 19, 10:00",
                     User(1, "John", "http://placekitten.com/200/300")
                 )
             ),
             "Yesterday" to listOf(
-                Call(
+                CallUiState(
                     0, 1, 60000, OUTGOING,
-                    Calendar.getInstance(),
+                    "February 19, 10:00",
                     User(2, "Jane", "http://placekitten.com/200/100")
-                ), Call(
+                ), CallUiState(
                     0, 1, 0, INCOMING_MISSED,
-                    Calendar.getInstance(),
+                    "February 19, 10:00",
                     User(1, "John", "http://placekitten.com/200/300")
                 ),
-                Call(
+                CallUiState(
                     0, 1, 0, OUTGOING_MISSED,
-                    Calendar.getInstance(),
+                    "February 19, 10:00",
                     User(2, "Jane", "http://placekitten.com/200/100")
                 )
             )

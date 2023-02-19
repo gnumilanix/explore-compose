@@ -3,13 +3,11 @@ package com.ignitetech.compose.home
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -20,7 +18,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.*
 import com.ignitetech.compose.R
 import com.ignitetech.compose.call.CallScreen
+import com.ignitetech.compose.chat.ChatsScreen
 import com.ignitetech.compose.conversation.*
+import com.ignitetech.compose.groups.GroupScreen
+import com.ignitetech.compose.utility.Content
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -38,20 +39,25 @@ class HomeActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = viewModel()
 ) {
+    val tabs by viewModel.tabs.collectAsState()
+
+    HomeScreen(tabs)
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun HomeScreen(tabs: List<HomeTabs>) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = { AppBar() },
         floatingActionButton = { FloatingButton(scaffoldState, scope) }
     ) { padding ->
-        val tabs by viewModel.tabs.collectAsState()
         val pagerState = rememberPagerState(0)
 
         Column(
@@ -64,7 +70,6 @@ fun HomeScreen(
         }
     }
 }
-
 
 @Composable
 private fun AppBar() {
@@ -177,45 +182,15 @@ private fun TabContents(pagerState: PagerState, tabs: List<HomeTabs>) {
         modifier = Modifier.fillMaxSize()
     ) {
         when (val tab = tabs[it]) {
-            HomeTabs.Chat -> ChatScreen(tab)
+            HomeTabs.Chat -> ChatsScreen()
             HomeTabs.Group -> GroupScreen(tab)
             else -> CallScreen()
         }
     }
 }
 
-@Composable
-private fun ChatScreen(tab: HomeTabs) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0XFF88FFFF))
-    ) {
-        Text(text = stringResource(id = tab.name))
-    }
-}
-
-@Composable
-private fun GroupScreen(tab: HomeTabs) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0XFFE1FFB1))
-    ) {
-        Text(text = stringResource(id = tab.name))
-    }
-}
-
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen()
-}
-
-@Preview
-@Composable
-fun ChatScreenPreview() {
-    ChatScreen(HomeTabs.Chat)
+    HomeScreen(listOf(HomeTabs.Chat, HomeTabs.Group, HomeTabs.Call))
 }

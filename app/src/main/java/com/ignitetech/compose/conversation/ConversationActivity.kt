@@ -36,16 +36,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.ignitetech.compose.R
-import com.ignitetech.compose.data.conversation.Conversation
-import com.ignitetech.compose.data.conversation.Direction.RECEIVED
-import com.ignitetech.compose.data.conversation.Direction.SENT
+import com.ignitetech.compose.data.chat.Chat
+import com.ignitetech.compose.data.chat.Direction.RECEIVED
+import com.ignitetech.compose.data.chat.Direction.SENT
 import com.ignitetech.compose.data.user.User
-import com.ignitetech.compose.ui.theme.ComposeTheme
 import com.ignitetech.compose.ui.theme.Green50
 import com.ignitetech.compose.ui.theme.Grey400
+import com.ignitetech.compose.utility.Content
+import com.ignitetech.compose.utility.UserAvatar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.util.*
 
 @AndroidEntryPoint
 class ConversationActivity : ComponentActivity() {
@@ -62,15 +64,6 @@ class ConversationActivity : ComponentActivity() {
 }
 
 @Composable
-fun Content(content: @Composable () -> Unit) {
-    ComposeTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            content()
-        }
-    }
-}
-
-@Composable
 fun ConversationScreen(
     viewModel: ConversationViewModel = viewModel()
 ) {
@@ -81,7 +74,7 @@ fun ConversationScreen(
 }
 
 @Composable
-fun ConversationScreen(user: User?, conversations: Map<String, List<Conversation>>) {
+fun ConversationScreen(user: User?, conversations: Map<String, List<Chat>>) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
@@ -224,7 +217,7 @@ private fun EditorIconButton(
 }
 
 @Composable
-fun ConversationsByTime(conversations: Map<String, List<Conversation>>, modifier: Modifier) {
+fun ConversationsByTime(conversations: Map<String, List<Chat>>, modifier: Modifier) {
     LazyColumn(modifier = modifier) {
         conversations.forEach { (time, conversations) ->
             item {
@@ -265,7 +258,7 @@ private fun ConversationTime(time: String) {
 }
 
 @Composable
-private fun Conversation(conversation: Conversation) {
+private fun Conversation(chat: Chat) {
     var isSelected by remember {
         mutableStateOf(false)
     }
@@ -278,26 +271,26 @@ private fun Conversation(conversation: Conversation) {
         .fillMaxWidth()
         .clickable { isSelected = !isSelected }
         .background(color = surfaceColor, shape = RoundedCornerShape(4.dp))
-    when (conversation.direction) {
-        SENT -> ConversationSent(background, conversation)
-        RECEIVED -> ConversationReceived(background, conversation)
+    when (chat.direction) {
+        SENT -> ConversationSent(background, chat)
+        RECEIVED -> ConversationReceived(background, chat)
     }
 }
 
 @Composable
 private fun ConversationReceived(
     modifier: Modifier,
-    conversation: Conversation
+    chat: Chat
 ) {
     Row(
         modifier = modifier
             .padding(4.dp, 4.dp, 60.dp, 4.dp),
         horizontalArrangement = Arrangement.Start
     ) {
-        UserAvatar(conversation.sender?.avatar)
+        UserAvatar(chat.sender?.avatar)
         Spacer(modifier = Modifier.width(8.dp))
         Column(modifier = Modifier.weight(1.0f), horizontalAlignment = Alignment.Start) {
-            ConversationMessage(conversation, TextAlign.Start)
+            ConversationMessage(chat, TextAlign.Start)
         }
     }
 }
@@ -305,7 +298,7 @@ private fun ConversationReceived(
 @Composable
 private fun ConversationSent(
     modifier: Modifier,
-    conversation: Conversation
+    chat: Chat
 ) {
     Row(
         modifier = modifier
@@ -313,19 +306,20 @@ private fun ConversationSent(
         horizontalArrangement = Arrangement.End
     ) {
         Column(modifier = Modifier.weight(1.0f), horizontalAlignment = Alignment.End) {
-            ConversationMessage(conversation, TextAlign.End)
+            ConversationMessage(chat, TextAlign.End)
         }
         Spacer(modifier = Modifier.width(8.dp))
-        UserAvatar(conversation.sender?.avatar)
+        UserAvatar(chat.sender?.avatar)
     }
 }
 
 @Composable
-private fun ConversationMessage(conversation: Conversation, textAlign: TextAlign) {
+private fun ConversationMessage(chat: Chat, textAlign: TextAlign) {
     Text(
-        text = conversation.sender?.name ?: "",
+        text = chat.sender?.name ?: "",
         color = Color(0xff43a047),
         style = MaterialTheme.typography.subtitle2,
+        maxLines = 1,
         modifier = Modifier
             .padding(start = 4.dp, end = 4.dp)
             .fillMaxWidth(),
@@ -338,24 +332,10 @@ private fun ConversationMessage(conversation: Conversation, textAlign: TextAlign
         elevation = 1.dp
     ) {
         Text(
-            text = conversation.message,
+            text = chat.message,
             style = MaterialTheme.typography.body2,
+            maxLines = 1,
             modifier = Modifier.padding(4.dp)
-        )
-    }
-}
-
-@Composable
-fun UserAvatar(avatar: String?) {
-    Column {
-        AsyncImage(
-            model = avatar,
-            placeholder = painterResource(id = R.drawable.baseline_person_24),
-            contentDescription = stringResource(R.string.cd_user_profile),
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape)
-                .border(1.5.dp, Color(0xff76d275), CircleShape)
         )
     }
 }
@@ -369,11 +349,12 @@ fun UserAvatar(avatar: String?) {
 @Composable
 fun ConversationSentPreview() {
     Conversation(
-        Conversation(
+        Chat(
             1,
             1,
             "Hello Jack! How are you today? Can you me those presentations",
             SENT,
+            Calendar.getInstance(),
             User(1, "John", "https://placekitten.com/200/300")
         )
     )
@@ -383,11 +364,12 @@ fun ConversationSentPreview() {
 @Composable
 fun ConversationReceivedPreview() {
     Conversation(
-        Conversation(
+        Chat(
             1,
             1,
             "Hello Jack! How are you today? Can you me those presentations",
             RECEIVED,
+            Calendar.getInstance(),
             User(1, "John", "https://placekitten.com/200/300")
         )
     )
@@ -404,18 +386,20 @@ fun ConversationsScreenPreview() {
         User(1, "John", "https://placekitten.com/200/300"),
         mapOf(
             "yesterday" to listOf(
-                Conversation(
+                Chat(
                     1,
                     1,
                     "Hello Jack! How are you today? Can you me those presentations",
                     SENT,
+                    Calendar.getInstance(),
                     User(1, "John", "http://placekitten.com/200/300")
                 ),
-                Conversation(
+                Chat(
                     2,
                     2,
                     "Hello John! I am good. How about you?",
                     RECEIVED,
+                    Calendar.getInstance(),
                     User(2, "Jane", "http://placekitten.com/200/100")
                 )
             )

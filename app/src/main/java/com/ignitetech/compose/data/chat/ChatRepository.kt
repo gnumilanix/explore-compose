@@ -1,61 +1,68 @@
-package com.ignitetech.compose.data.conversation
+package com.ignitetech.compose.data.chat
 
 import com.ignitetech.compose.data.user.User
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ConversationRepository @Inject constructor() {
-    fun getConversations(): List<Conversation> {
+class ChatRepository @Inject constructor() {
+    fun getChats(): List<Chat> {
         return listOf(
-            Conversation(
+            Chat(
                 1,
                 1,
                 "Hello Jack! How are you today? Can you me those presentations",
                 Direction.SENT,
+                Calendar.getInstance(),
                 User(1, "John", "http://placekitten.com/200/300")
             ),
-            Conversation(
+            Chat(
                 2,
                 2,
                 "Hello Jack! How are you today? Can you me those presentations",
                 Direction.SENT,
+                Calendar.getInstance(),
                 User(2, "Jane", "http://placekitten.com/200/100")
             )
         )
     }
 
-    fun getConversations(id: Int): Map<String, List<Conversation>> {
+    fun getChats(id: Int): Map<String, List<Chat>> {
         return mapOf(
             "yesterday" to listOf(
-                Conversation(
+                Chat(
                     1,
                     1,
                     "Hello Jack! How are you today? Can you me those presentations",
                     Direction.SENT,
+                    Calendar.getInstance(),
                     User(1, "John", "http://placekitten.com/200/300")
                 ),
-                Conversation(
+                Chat(
                     2,
                     2,
                     "Hello John! I am good. How about you?",
                     Direction.RECEIVED,
+                    Calendar.getInstance(),
                     User(2, "Jane", "http://placekitten.com/200/100")
                 ),
-                Conversation(
+                Chat(
                     3,
                     1,
                     "I am good as well",
                     Direction.SENT,
+                    Calendar.getInstance(),
                     User(1, "John", "http://placekitten.com/200/300")
                 )
             ),
             "moments ago" to listOf(
-                Conversation(
+                Chat(
                     4,
                     2,
                     "What are you doing these days?",
                     Direction.RECEIVED,
+                    Calendar.getInstance(),
                     User(2, "Jane", "http://placekitten.com/200/100")
                 )
             )

@@ -1,8 +1,8 @@
 package com.ignitetech.compose.conversation
 
 import androidx.lifecycle.ViewModel
-import com.ignitetech.compose.data.conversation.Conversation
-import com.ignitetech.compose.data.conversation.ConversationRepository
+import com.ignitetech.compose.data.chat.Chat
+import com.ignitetech.compose.data.chat.ChatRepository
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.data.user.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,16 +12,16 @@ import javax.inject.Inject
 @HiltViewModel
 class ConversationViewModel @Inject constructor(
     userRepository: UserRepository,
-    conversationRepository: ConversationRepository
+    chatRepository: ChatRepository
 ) : ViewModel() {
     private val _user = MutableSharedFlow<User>()
     val user = _user.asSharedFlow()
 
-    private val _conversations = MutableStateFlow(mapOf<String, List<Conversation>>())
+    private val _conversations = MutableStateFlow(mapOf<String, List<Chat>>())
     val conversation = _conversations.asStateFlow()
 
     init {
         _user.tryEmit(userRepository.getMe())
-        _conversations.update { conversationRepository.getConversations(1) }
+        _conversations.update { chatRepository.getChats(1) }
     }
 }

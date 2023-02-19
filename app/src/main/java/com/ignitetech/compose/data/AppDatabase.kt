@@ -6,12 +6,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.ignitetech.compose.data.conversation.Conversation
+import com.ignitetech.compose.data.chat.Chat
 import com.ignitetech.compose.data.user.User
 
 const val DATABASE_NAME = "compose-db"
 
-@Database(entities = [User::class, Conversation::class], version = 1)
+@Database(entities = [User::class, Chat::class], version = 2)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
