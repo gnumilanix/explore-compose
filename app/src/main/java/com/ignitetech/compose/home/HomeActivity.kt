@@ -19,10 +19,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.*
 import com.ignitetech.compose.R
+import com.ignitetech.compose.call.CallScreen
 import com.ignitetech.compose.conversation.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class HomeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -176,7 +179,7 @@ private fun TabContents(pagerState: PagerState, tabs: List<HomeTabs>) {
         when (val tab = tabs[it]) {
             HomeTabs.Chat -> ChatScreen(tab)
             HomeTabs.Group -> GroupScreen(tab)
-            else -> CallScreen(tab)
+            else -> CallScreen()
         }
     }
 }
@@ -200,18 +203,6 @@ private fun GroupScreen(tab: HomeTabs) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0XFFE1FFB1))
-    ) {
-        Text(text = stringResource(id = tab.name))
-    }
-}
-
-@Composable
-private fun CallScreen(tab: HomeTabs) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0XFFFFFFA8))
     ) {
         Text(text = stringResource(id = tab.name))
     }

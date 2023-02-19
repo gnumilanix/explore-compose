@@ -8,8 +8,9 @@ define Android UI)
 ### Composable preview
 
 ![screenshot](screenshots/preview.png)
-![screenshot](screenshots/preview_home.png)
+![screenshot](screenshots/preview_calls.png)
 
 ### Emulator preview
 
 ![screenshot](screenshots/emulator.png)
+![screenshot](screenshots/emulator_home.png)

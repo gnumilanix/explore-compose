@@ -5,9 +5,11 @@ import com.ignitetech.compose.data.conversation.Conversation
 import com.ignitetech.compose.data.conversation.ConversationRepository
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.data.user.UserRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
+@HiltViewModel
 class ConversationViewModel @Inject constructor(
     userRepository: UserRepository,
     conversationRepository: ConversationRepository

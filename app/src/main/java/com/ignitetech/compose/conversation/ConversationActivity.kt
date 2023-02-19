@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,14 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 import com.ignitetech.compose.R
 import com.ignitetech.compose.data.conversation.Conversation
 import com.ignitetech.compose.data.conversation.Direction.*
@@ -43,9 +42,11 @@ import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.ui.theme.ComposeTheme
 import com.ignitetech.compose.ui.theme.Green50
 import com.ignitetech.compose.ui.theme.Grey400
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ConversationActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,12 +102,9 @@ private fun AppBar(user: User?) {
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val avatar = user?.avatar
-            Image(
-                painter = when {
-                    avatar.isNullOrEmpty() -> rememberVectorPainter(Icons.Default.Face)
-                    else -> rememberAsyncImagePainter(user)
-                },
+            AsyncImage(
+                model = user?.avatar,
+                placeholder = painterResource(id = R.drawable.baseline_person_24),
                 contentDescription = stringResource(R.string.cd_current_user),
                 modifier = Modifier
                     .size(40.dp)
@@ -278,8 +276,6 @@ private fun Conversation(conversation: Conversation) {
         SENT -> ConversationSent(background, conversation)
         RECEIVED -> ConversationReceived(background, conversation)
     }
-
-
 }
 
 @Composable
@@ -292,7 +288,7 @@ private fun ConversationReceived(
             .padding(4.dp, 4.dp, 60.dp, 4.dp),
         horizontalArrangement = Arrangement.Start
     ) {
-        ConversationAvatar(conversation)
+        UserAvatar(conversation.sender?.avatar)
         Spacer(modifier = Modifier.width(8.dp))
         Column(modifier = Modifier.weight(1.0f), horizontalAlignment = Alignment.Start) {
             ConversationMessage(conversation, TextAlign.Start)
@@ -314,7 +310,7 @@ private fun ConversationSent(
             ConversationMessage(conversation, TextAlign.End)
         }
         Spacer(modifier = Modifier.width(8.dp))
-        ConversationAvatar(conversation)
+        UserAvatar(conversation.sender?.avatar)
     }
 }
 
@@ -344,10 +340,11 @@ private fun ConversationMessage(conversation: Conversation, textAlign: TextAlign
 }
 
 @Composable
-private fun ConversationAvatar(conversation: Conversation) {
+fun UserAvatar(avatar: String?) {
     Column {
-        Image(
-            painter = rememberAsyncImagePainter(conversation.sender?.avatar),
+        AsyncImage(
+            model = avatar,
+            placeholder = painterResource(id = R.drawable.baseline_person_24),
             contentDescription = stringResource(R.string.cd_user_profile),
             modifier = Modifier
                 .size(48.dp)
