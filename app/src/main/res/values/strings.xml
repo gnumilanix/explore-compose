@@ -10,6 +10,7 @@
     <string name="ph_message">Message</string>
 
     <!-- Content descriptions -->
+    <string name="cd_back">Back</string>
     <string name="cd_current_user">Current user</string>
     <string name="cd_user_profile">User profile</string>
     <string name="cd_emoji">Emoji</string>

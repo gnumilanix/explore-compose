@@ -1,4 +1,4 @@
-package com.ignitetech.compose.conversation
+package com.ignitetech.compose.chat
 
 import androidx.lifecycle.ViewModel
 import com.ignitetech.compose.data.chat.Chat
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
-class ConversationViewModel @Inject constructor(
+class ChatViewModel @Inject constructor(
     userRepository: UserRepository,
     chatRepository: ChatRepository
 ) : ViewModel() {

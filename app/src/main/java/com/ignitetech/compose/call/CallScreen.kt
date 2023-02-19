@@ -19,17 +19,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ignitetech.compose.R
-import com.ignitetech.compose.utility.UserAvatar
 import com.ignitetech.compose.data.call.Type
 import com.ignitetech.compose.data.call.Type.*
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.ui.theme.Green500
 import com.ignitetech.compose.ui.theme.Red500
+import com.ignitetech.compose.utility.UserAvatar
 
 @Composable
-fun CallScreen(viewModel: CallViewModel = viewModel()) {
+fun CallScreen(viewModel: CallViewModel = hiltViewModel()) {
     val calls by viewModel.calls.collectAsState()
     CallScreen(calls)
 }

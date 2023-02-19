@@ -10,17 +10,26 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.google.accompanist.pager.*
 import com.ignitetech.compose.R
 import com.ignitetech.compose.call.CallScreen
+import com.ignitetech.compose.chat.ChatScreen
 import com.ignitetech.compose.chat.ChatsScreen
-import com.ignitetech.compose.conversation.*
 import com.ignitetech.compose.groups.GroupScreen
+import com.ignitetech.compose.ui.Arguments
+import com.ignitetech.compose.ui.Routes
 import com.ignitetech.compose.utility.Content
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -40,19 +49,46 @@ class HomeActivity : ComponentActivity() {
 }
 
 @Composable
+fun HomeScreen() {
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = Routes.Home
+    ) {
+        composable(route = Routes.Home) {
+            HomeScreen(navController = navController)
+        }
+        composable(route = Routes.Chats,
+            arguments = listOf(
+                navArgument(Arguments.UserId) {
+                    type = NavType.IntType
+                }
+            )
+        ) {
+            ChatScreen(navController, it.arguments!!.getInt(Arguments.UserId))
+        }
+    }
+}
+
+@Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = viewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val tabs by viewModel.tabs.collectAsState()
 
-    HomeScreen(tabs)
+    HomeScreen(navController, tabs)
 }
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun HomeScreen(tabs: List<HomeTabs>) {
+fun HomeScreen(
+    navController: NavController,
+    tabs: List<HomeTabs>
+) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = { AppBar() },
@@ -66,7 +102,7 @@ fun HomeScreen(tabs: List<HomeTabs>) {
                 .padding(padding)
         ) {
             Tabs(scope, pagerState, tabs)
-            TabContents(pagerState, tabs)
+            TabContents(navController, pagerState, tabs)
         }
     }
 }
@@ -175,16 +211,22 @@ private fun Tabs(
 
 @Composable
 @OptIn(ExperimentalPagerApi::class)
-private fun TabContents(pagerState: PagerState, tabs: List<HomeTabs>) {
+private fun TabContents(
+    navController: NavController,
+    pagerState: PagerState,
+    tabs: List<HomeTabs>
+) {
     HorizontalPager(
         count = tabs.size,
         state = pagerState,
         modifier = Modifier.fillMaxSize()
     ) {
-        when (val tab = tabs[it]) {
-            HomeTabs.Chat -> ChatsScreen()
-            HomeTabs.Group -> GroupScreen(tab)
-            else -> CallScreen()
+        if (!LocalInspectionMode.current) {
+            when (val tab = tabs[it]) {
+                HomeTabs.Chat -> ChatsScreen(navController)
+                HomeTabs.Group -> GroupScreen(tab)
+                else -> CallScreen()
+            }
         }
     }
 }
@@ -192,5 +234,5 @@ private fun TabContents(pagerState: PagerState, tabs: List<HomeTabs>) {
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(listOf(HomeTabs.Chat, HomeTabs.Group, HomeTabs.Call))
+    HomeScreen(rememberNavController(), listOf(HomeTabs.Chat, HomeTabs.Group, HomeTabs.Call))
 }

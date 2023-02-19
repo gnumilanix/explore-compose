@@ -1,6 +1,9 @@
 package com.ignitetech.compose.data.chat
 
-import androidx.room.*
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.ignitetech.compose.data.user.User
 import java.util.*
 

@@ -1,9 +1,6 @@
-package com.ignitetech.compose.conversation
+package com.ignitetech.compose.chat
 
 import android.content.res.Configuration
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -17,10 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +27,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.ignitetech.compose.R
 import com.ignitetech.compose.data.chat.Chat
@@ -42,45 +38,35 @@ import com.ignitetech.compose.data.chat.Direction.SENT
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.ui.theme.Green50
 import com.ignitetech.compose.ui.theme.Grey400
-import com.ignitetech.compose.utility.Content
 import com.ignitetech.compose.utility.UserAvatar
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.*
 
-@AndroidEntryPoint
-class ConversationActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setContent {
-            Content {
-                ConversationScreen()
-            }
-        }
-    }
-}
-
 @Composable
-fun ConversationScreen(
-    viewModel: ConversationViewModel = viewModel()
+fun ChatScreen(
+    navController: NavController,
+    userId: Int,
+    viewModel: ChatViewModel = hiltViewModel()
 ) {
     val user by viewModel.user.collectAsState(null)
     val conversations by viewModel.conversation.collectAsState()
 
-    ConversationScreen(user, conversations)
+    ChatScreen(navController, user, conversations)
 }
 
 @Composable
-fun ConversationScreen(user: User?, conversations: Map<String, List<Chat>>) {
+fun ChatScreen(
+    navController: NavController,
+    user: User?,
+    conversations: Map<String, List<Chat>>
+) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { AppBar(user) }
+        topBar = { AppBar(navController, user) }
     ) { padding ->
         Column {
             ConversationsByTime(
@@ -95,12 +81,21 @@ fun ConversationScreen(user: User?, conversations: Map<String, List<Chat>>) {
 }
 
 @Composable
-private fun AppBar(user: User?) {
+private fun AppBar(
+    navController: NavController,
+    user: User?
+) {
     TopAppBar {
         Row(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            IconButton(onClick = { navController.navigateUp() }) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = stringResource(id = R.string.cd_back)
+                )
+            }
             AsyncImage(
                 model = user?.avatar,
                 placeholder = painterResource(id = R.drawable.baseline_person_24),
@@ -382,7 +377,8 @@ fun ConversationReceivedPreview() {
 )
 @Composable
 fun ConversationsScreenPreview() {
-    ConversationScreen(
+    ChatScreen(
+        rememberNavController(),
         User(1, "John", "https://placekitten.com/200/300"),
         mapOf(
             "yesterday" to listOf(

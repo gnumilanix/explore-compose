@@ -13,54 +13,65 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ignitetech.compose.utility.UserAvatar
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.ignitetech.compose.data.chat.Direction
 import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.ui.Destination
+import com.ignitetech.compose.utility.UserAvatar
 
 @Composable
-fun ChatsScreen(viewModel: ChatsViewModel = viewModel()) {
+fun ChatsScreen(
+    navController: NavController,
+    viewModel: ChatsViewModel = hiltViewModel()
+) {
     val chats by viewModel.chats.collectAsState()
-    ChatsScreen(chats)
+    ChatsScreen(navController, chats)
 }
 
 @Composable
-fun ChatsScreen(chats: List<ChatUiState>) {
+fun ChatsScreen(navController: NavController, chats: List<ChatUiState>) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(chats) { chat ->
-            Row(modifier = Modifier
-                .clickable { }
-                .padding(16.dp, 8.dp, 16.dp, 8.dp)
-            ) {
-                UserAvatar(chat.sender?.avatar)
-                Column(
-                    modifier = Modifier
-                        .weight(1.0f)
-                        .padding(8.dp, 0.dp, 0.dp, 0.dp)
-                ) {
-                    Row {
-                        Text(
-                            text = chat.sender?.name ?: "",
-                            style = MaterialTheme.typography.subtitle2,
-                            maxLines = 1,
-                            modifier = Modifier.weight(1.0f)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = chat.date,
-                            style = MaterialTheme.typography.overline
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = chat.message,
-                        style = MaterialTheme.typography.caption,
-                        maxLines = 1,
-                        modifier = Modifier.fillMaxWidth(),
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+            Chat(navController, chat)
+        }
+    }
+}
+
+@Composable
+private fun Chat(navController: NavController, chat: ChatUiState) {
+    Row(modifier = Modifier
+        .clickable { navController.navigate("${Destination.Chats}/${chat.sender!!.id}") }
+        .padding(16.dp, 8.dp, 16.dp, 8.dp)
+    ) {
+        UserAvatar(chat.sender?.avatar)
+        Column(
+            modifier = Modifier
+                .weight(1.0f)
+                .padding(8.dp, 0.dp, 0.dp, 0.dp)
+        ) {
+            Row {
+                Text(
+                    text = chat.sender?.name ?: "",
+                    style = MaterialTheme.typography.subtitle2,
+                    maxLines = 1,
+                    modifier = Modifier.weight(1.0f)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = chat.date,
+                    style = MaterialTheme.typography.overline
+                )
             }
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = chat.message,
+                style = MaterialTheme.typography.caption,
+                maxLines = 1,
+                modifier = Modifier.fillMaxWidth(),
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
@@ -69,6 +80,7 @@ fun ChatsScreen(chats: List<ChatUiState>) {
 @Composable
 fun ChatsScreenPreview() {
     ChatsScreen(
+        rememberNavController(),
         listOf(
             ChatUiState(
                 1,

@@ -1,7 +1,7 @@
 package com.ignitetech.compose.data
 
 import androidx.room.TypeConverter
-import java.util.Calendar
+import java.util.*
 
 class Converters {
     @TypeConverter
