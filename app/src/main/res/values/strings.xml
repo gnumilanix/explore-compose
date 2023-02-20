@@ -5,6 +5,12 @@
     <string name="calls">Calls</string>
     <string name="settings">Settings</string>
     <string name="new_group">New Group</string>
+    <string name="begin">Let\'s Begin</string>
+    <string name="onboard_title">Welcome to compose</string>
+    <string name="onboard_message">Let\'s begin composing new messages</string>
+    <string name="onboard_chat">Compose chats with your friends and families</string>
+    <string name="onboard_groups">Compose chats in groups of your friends and families</string>
+    <string name="onboard_call">Make calls with your friends and families</string>
 
     <!-- Place holders -->
     <string name="ph_message">Message</string>

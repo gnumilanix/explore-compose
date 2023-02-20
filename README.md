@@ -12,6 +12,15 @@ define Android UI)
 
 ### Emulator preview
 
+#### On-boarding
+
+<img alt="screenshot" height="600" src="screenshots/emulator_onboard.png" width="280"/>
+
+#### Chat
+
 <img alt="screenshot" height="600" src="screenshots/emulator_chats.png" width="280"/>
 <img alt="screenshot" height="600" src="screenshots/emulator_chat.png" width="280"/>
+
+#### Calls
+
 <img alt="screenshot" height="600" src="screenshots/emulator_calls.png" width="280"/>

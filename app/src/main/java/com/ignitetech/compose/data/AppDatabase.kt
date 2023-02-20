@@ -8,8 +8,7 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.ignitetech.compose.data.chat.Chat
 import com.ignitetech.compose.data.user.User
-
-const val DATABASE_NAME = "compose-db"
+import com.ignitetech.compose.utility.Constants
 
 @Database(entities = [User::class, Chat::class], version = 2)
 @TypeConverters(Converters::class)
@@ -25,7 +24,7 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private fun buildDatabase(context: Context): AppDatabase {
-            return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+            return Room.databaseBuilder(context, AppDatabase::class.java, Constants.DATABASE_NAME)
                 .addCallback(
                     object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
