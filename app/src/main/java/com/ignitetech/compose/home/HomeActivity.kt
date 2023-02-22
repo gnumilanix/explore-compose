@@ -17,8 +17,8 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.ignitetech.compose.chat.ChatScreen
 import com.ignitetech.compose.chat.ChatViewModel
-import com.ignitetech.compose.ui.Routes
-import com.ignitetech.compose.utility.Content
+import com.ignitetech.compose.ui.Content
+import com.ignitetech.compose.ui.Screens
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -42,18 +42,18 @@ fun AppNav(viewModel: HomeViewModel = hiltViewModel()) {
 
     AnimatedNavHost(
         navController = navController,
-        startDestination = Routes.Home
+        startDestination = Screens.Home.route
     ) {
-        composable(route = Routes.Home) {
+        composable(route = Screens.Home.route) {
             HomeScreen(viewModel, navController)
         }
         composable(
-            route = Routes.Chats,
+            route = Screens.Chats.route,
             arguments = listOf(navArgument(ChatViewModel.RecipientId) {
                 type = NavType.IntType
             }),
             enterTransition = {
-                slideIntoContainer(AnimatedContentScope.SlideDirection.Left, tween(300))
+                slideIntoContainer(AnimatedContentScope.SlideDirection.Left, tween(500))
             },
             exitTransition = {
                 slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, tween(300))

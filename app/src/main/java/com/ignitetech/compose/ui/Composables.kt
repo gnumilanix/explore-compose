@@ -1,4 +1,4 @@
-package com.ignitetech.compose.utility
+package com.ignitetech.compose.ui
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column

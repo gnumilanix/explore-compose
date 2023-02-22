@@ -18,8 +18,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ignitetech.compose.data.chat.Direction
 import com.ignitetech.compose.data.user.User
-import com.ignitetech.compose.ui.Destination
-import com.ignitetech.compose.utility.UserAvatar
+import com.ignitetech.compose.ui.Screens
+import com.ignitetech.compose.ui.UserAvatar
 
 @Composable
 fun ChatsScreen(
@@ -42,7 +42,7 @@ fun ChatsScreen(navController: NavController, chats: List<ChatUiState>) {
 @Composable
 private fun Chat(navController: NavController, chat: ChatUiState) {
     Row(modifier = Modifier
-        .clickable { navController.navigate("${Destination.Chats}/${chat.sender!!.id}") }
+        .clickable { navController.navigate(Screens.Chats.route(chat.sender!!.id)) }
         .padding(16.dp, 8.dp, 16.dp, 8.dp)
     ) {
         UserAvatar(chat.sender?.avatar)

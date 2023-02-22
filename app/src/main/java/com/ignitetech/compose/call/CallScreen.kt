@@ -24,9 +24,9 @@ import com.ignitetech.compose.R
 import com.ignitetech.compose.data.call.Type
 import com.ignitetech.compose.data.call.Type.*
 import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.ui.UserAvatar
 import com.ignitetech.compose.ui.theme.Green500
 import com.ignitetech.compose.ui.theme.Red500
-import com.ignitetech.compose.utility.UserAvatar
 
 @Composable
 fun CallScreen(viewModel: CallViewModel = hiltViewModel()) {

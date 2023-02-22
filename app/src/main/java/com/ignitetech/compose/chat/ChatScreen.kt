@@ -35,9 +35,9 @@ import com.ignitetech.compose.R
 import com.ignitetech.compose.data.chat.Direction.RECEIVED
 import com.ignitetech.compose.data.chat.Direction.SENT
 import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.ui.UserAvatar
 import com.ignitetech.compose.ui.theme.Green50
 import com.ignitetech.compose.ui.theme.Grey400
-import com.ignitetech.compose.utility.UserAvatar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
