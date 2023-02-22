@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,8 +15,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ignitetech.compose.R
 import com.ignitetech.compose.ui.theme.ComposeTheme
+import com.ignitetech.compose.ui.theme.Grey500
+
+@Composable
+fun ShowSystemBars(show: Boolean) {
+    rememberSystemUiController().apply {
+        setStatusBarColor(
+            if (MaterialTheme.colors.isLight) {
+                if (show) MaterialTheme.colors.primaryVariant else Color.White
+            } else {
+                if (show) MaterialTheme.colors.surface else Grey500
+            }
+        )
+    }
+}
 
 @Composable
 fun Content(content: @Composable () -> Unit) {
