@@ -32,7 +32,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.ignitetech.compose.R
-import com.ignitetech.compose.data.chat.Chat
 import com.ignitetech.compose.data.chat.Direction.RECEIVED
 import com.ignitetech.compose.data.chat.Direction.SENT
 import com.ignitetech.compose.data.user.User
@@ -41,16 +40,14 @@ import com.ignitetech.compose.ui.theme.Grey400
 import com.ignitetech.compose.utility.UserAvatar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.util.*
 
 @Composable
 fun ChatScreen(
     navController: NavController,
-    userId: Int,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
-    val user by viewModel.user.collectAsState(null)
-    val conversations by viewModel.conversation.collectAsState()
+    val user by viewModel.users.collectAsState(ChatUsersUiState())
+    val conversations by viewModel.chats.collectAsState()
 
     ChatScreen(navController, user, conversations)
 }
@@ -58,22 +55,21 @@ fun ChatScreen(
 @Composable
 fun ChatScreen(
     navController: NavController,
-    user: User?,
-    conversations: Map<String, List<Chat>>
+    users: ChatUsersUiState,
+    conversations: Map<String, List<ChatUiState>>
 ) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { AppBar(navController, user) }
+        topBar = { AppBar(navController, users.recipient) }
     ) { padding ->
-        Column {
+        Column(modifier = Modifier.padding(padding)) {
             ConversationsByTime(
+                users,
                 conversations,
-                Modifier
-                    .padding(padding)
-                    .weight(1.0f)
+                Modifier.weight(1.0f)
             )
             Editor(scaffoldState, scope)
         }
@@ -107,7 +103,7 @@ private fun AppBar(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Conversations", style = MaterialTheme.typography.subtitle1,
+                text = user?.name ?: "", style = MaterialTheme.typography.subtitle1,
                 modifier = Modifier.weight(1.0f)
             )
         }
@@ -212,7 +208,11 @@ private fun EditorIconButton(
 }
 
 @Composable
-fun ConversationsByTime(conversations: Map<String, List<Chat>>, modifier: Modifier) {
+fun ConversationsByTime(
+    users: ChatUsersUiState,
+    conversations: Map<String, List<ChatUiState>>,
+    modifier: Modifier
+) {
     LazyColumn(modifier = modifier) {
         conversations.forEach { (time, conversations) ->
             item {
@@ -222,7 +222,7 @@ fun ConversationsByTime(conversations: Map<String, List<Chat>>, modifier: Modifi
             items(conversations) { conversation ->
                 Spacer(modifier = Modifier.height(4.dp))
                 Row {
-                    Conversation(conversation)
+                    Conversation(users, conversation)
                 }
             }
         }
@@ -253,7 +253,7 @@ private fun ConversationTime(time: String) {
 }
 
 @Composable
-private fun Conversation(chat: Chat) {
+private fun Conversation(users: ChatUsersUiState, chat: ChatUiState) {
     var isSelected by remember {
         mutableStateOf(false)
     }
@@ -266,26 +266,28 @@ private fun Conversation(chat: Chat) {
         .fillMaxWidth()
         .clickable { isSelected = !isSelected }
         .background(color = surfaceColor, shape = RoundedCornerShape(4.dp))
+        .padding(16.dp, 0.dp, 16.dp, 0.dp)
     when (chat.direction) {
-        SENT -> ConversationSent(background, chat)
-        RECEIVED -> ConversationReceived(background, chat)
+        SENT -> ConversationSent(background, users.me, chat)
+        RECEIVED -> ConversationReceived(background, users.recipient, chat)
     }
 }
 
 @Composable
 private fun ConversationReceived(
     modifier: Modifier,
-    chat: Chat
+    user: User?,
+    chat: ChatUiState
 ) {
     Row(
         modifier = modifier
-            .padding(4.dp, 4.dp, 60.dp, 4.dp),
+            .padding(0.dp, 4.dp, 60.dp, 4.dp),
         horizontalArrangement = Arrangement.Start
     ) {
-        UserAvatar(chat.sender?.avatar)
+        UserAvatar(user?.avatar)
         Spacer(modifier = Modifier.width(8.dp))
         Column(modifier = Modifier.weight(1.0f), horizontalAlignment = Alignment.Start) {
-            ConversationMessage(chat, TextAlign.Start)
+            ConversationMessage(user, chat, TextAlign.Start)
         }
     }
 }
@@ -293,25 +295,26 @@ private fun ConversationReceived(
 @Composable
 private fun ConversationSent(
     modifier: Modifier,
-    chat: Chat
+    user: User?,
+    chat: ChatUiState
 ) {
     Row(
         modifier = modifier
-            .padding(60.dp, 4.dp, 4.dp, 4.dp),
+            .padding(60.dp, 4.dp, 0.dp, 4.dp),
         horizontalArrangement = Arrangement.End
     ) {
         Column(modifier = Modifier.weight(1.0f), horizontalAlignment = Alignment.End) {
-            ConversationMessage(chat, TextAlign.End)
+            ConversationMessage(user, chat, TextAlign.End)
         }
         Spacer(modifier = Modifier.width(8.dp))
-        UserAvatar(chat.sender?.avatar)
+        UserAvatar(user?.avatar)
     }
 }
 
 @Composable
-private fun ConversationMessage(chat: Chat, textAlign: TextAlign) {
+private fun ConversationMessage(user: User?, chat: ChatUiState, textAlign: TextAlign) {
     Text(
-        text = chat.sender?.name ?: "",
+        text = user?.name ?: "",
         color = Color(0xff43a047),
         style = MaterialTheme.typography.subtitle2,
         maxLines = 1,
@@ -329,7 +332,7 @@ private fun ConversationMessage(chat: Chat, textAlign: TextAlign) {
         Text(
             text = chat.message,
             style = MaterialTheme.typography.body2,
-            maxLines = 1,
+            maxLines = 4,
             modifier = Modifier.padding(4.dp)
         )
     }
@@ -344,12 +347,13 @@ private fun ConversationMessage(chat: Chat, textAlign: TextAlign) {
 @Composable
 fun ConversationSentPreview() {
     Conversation(
-        Chat(
+        ChatUsersUiState(me = User(1, "Jack", "https://placekitten.com/200/300")),
+        ChatUiState(
             1,
             1,
             "Hello Jack! How are you today? Can you me those presentations",
             SENT,
-            Calendar.getInstance(),
+            "22/02",
             User(1, "John", "https://placekitten.com/200/300")
         )
     )
@@ -359,12 +363,13 @@ fun ConversationSentPreview() {
 @Composable
 fun ConversationReceivedPreview() {
     Conversation(
-        Chat(
+        ChatUsersUiState(me = User(1, "John", "https://placekitten.com/200/300")),
+        ChatUiState(
             1,
             1,
             "Hello Jack! How are you today? Can you me those presentations",
             RECEIVED,
-            Calendar.getInstance(),
+            "22/02",
             User(1, "John", "https://placekitten.com/200/300")
         )
     )
@@ -379,23 +384,26 @@ fun ConversationReceivedPreview() {
 fun ConversationsScreenPreview() {
     ChatScreen(
         rememberNavController(),
-        User(1, "John", "https://placekitten.com/200/300"),
+        ChatUsersUiState(
+            User(1, "Jack", "https://placekitten.com/200/300"),
+            User(1, "John", "https://placekitten.com/200/300")
+        ),
         mapOf(
             "yesterday" to listOf(
-                Chat(
+                ChatUiState(
                     1,
                     1,
                     "Hello Jack! How are you today? Can you me those presentations",
                     SENT,
-                    Calendar.getInstance(),
+                    "22/02",
                     User(1, "John", "http://placekitten.com/200/300")
                 ),
-                Chat(
+                ChatUiState(
                     2,
                     2,
                     "Hello John! I am good. How about you?",
                     RECEIVED,
-                    Calendar.getInstance(),
+                    "22/02",
                     User(2, "Jane", "http://placekitten.com/200/100")
                 )
             )

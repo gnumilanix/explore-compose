@@ -1,26 +1,36 @@
 package com.ignitetech.compose.data.user
 
+import com.ignitetech.compose.data.preference.PreferenceRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserRepository @Inject constructor() {
-    fun getMe(): User {
-        return User(0, "Jack", "http://placekitten.com/200/400")
+class UserRepository @Inject constructor(
+    private val userDao: UserDao,
+    private val preferenceRepository: PreferenceRepository
+) {
+    fun getMe(): Flow<User?> {
+        return flow {
+            emit(
+                when (val userId = preferenceRepository.userId()) {
+                    null -> null
+                    else -> userDao.getUser(userId)
+                }
+            )
+        }
     }
 
-    fun getUsers(): List<User> {
-        return listOf(
-            User(1, "John", "http://placekitten.com/200/300"),
-            User(2, "Jane", "http://placekitten.com/200/100")
-        )
+    fun getUsers(): Flow<List<User>> {
+        return userDao.getAll()
     }
 
-    fun getUser(id: Int): User? {
-        return listOf(
-            User(0, "Jack", "http://placekitten.com/200/400"),
-            User(1, "John", "http://placekitten.com/200/300"),
-            User(2, "Jane", "http://placekitten.com/200/100")
-        ).firstOrNull { it.id == id }
+    fun getUsers(vararg ids: Int): Flow<List<User>> {
+        return userDao.getUsers(*ids)
+    }
+
+    fun getUser(id: Int): Flow<User> {
+        return userDao.getUserFlow(id)
     }
 }

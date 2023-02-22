@@ -1,13 +1,12 @@
 package com.ignitetech.compose.data
 
 import androidx.room.TypeConverter
-import java.util.*
+import kotlinx.datetime.Instant
 
 class Converters {
     @TypeConverter
-    fun calendarToDatestamp(calendar: Calendar): Long = calendar.timeInMillis
+    fun instantToTimestamp(instant: Instant): Long = instant.toEpochMilliseconds()
 
     @TypeConverter
-    fun datestampToCalendar(value: Long): Calendar =
-        Calendar.getInstance().apply { timeInMillis = value }
+    fun timestampToInstant(instant: Long): Instant = Instant.fromEpochMilliseconds(instant)
 }

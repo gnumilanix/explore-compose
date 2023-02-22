@@ -3,15 +3,20 @@ package com.ignitetech.compose.home
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.*
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.ignitetech.compose.chat.ChatScreen
-import com.ignitetech.compose.ui.Arguments
+import com.ignitetech.compose.chat.ChatViewModel
 import com.ignitetech.compose.ui.Routes
 import com.ignitetech.compose.utility.Content
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,25 +35,31 @@ class HomeActivity : ComponentActivity() {
 }
 
 @Composable
+@OptIn(ExperimentalAnimationApi::class)
 fun AppNav(viewModel: HomeViewModel = hiltViewModel()) {
-    val navController = rememberNavController()
-    val onboardComplete by viewModel.onboardComplete.collectAsState(initial = false)
+    val navController = rememberAnimatedNavController()
+    val onboardComplete by viewModel.onboardComplete.collectAsState(initial = true)
 
-    NavHost(
+    AnimatedNavHost(
         navController = navController,
         startDestination = Routes.Home
     ) {
         composable(route = Routes.Home) {
             HomeScreen(viewModel, navController)
         }
-        composable(route = Routes.Chats,
-            arguments = listOf(
-                navArgument(Arguments.UserId) {
-                    type = NavType.IntType
-                }
-            )
+        composable(
+            route = Routes.Chats,
+            arguments = listOf(navArgument(ChatViewModel.RecipientId) {
+                type = NavType.IntType
+            }),
+            enterTransition = {
+                slideIntoContainer(AnimatedContentScope.SlideDirection.Left, tween(300))
+            },
+            exitTransition = {
+                slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, tween(300))
+            }
         ) {
-            ChatScreen(navController, it.arguments!!.getInt(Arguments.UserId))
+            ChatScreen(navController)
         }
     }
 

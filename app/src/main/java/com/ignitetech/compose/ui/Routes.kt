@@ -8,7 +8,3 @@ object Routes {
 object Destination {
     const val Chats = "Chats"
 }
-
-object Arguments {
-    const val UserId = "userId"
-}

@@ -4,13 +4,13 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.ignitetech.compose.data.user.User
 
-data class SenderWithChat(
+data class ChatWithSender(
     @Embedded
-    val sender: User,
+    val chat: Chat,
 
     @Relation(
-        parentColumn = User.FIELD_ID,
-        entityColumn = Chat.FIELD_USER_ID
+        parentColumn = Chat.FIELD_USER_ID,
+        entityColumn = User.FIELD_ID
     )
-    val chat: Chat
+    val sender: User
 )

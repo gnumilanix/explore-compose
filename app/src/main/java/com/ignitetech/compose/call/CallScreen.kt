@@ -80,14 +80,14 @@ private fun Call(call: CallUiState) {
         .clickable { }
         .padding(16.dp, 8.dp, 16.dp, 8.dp)
     ) {
-        UserAvatar(call.caller?.avatar)
+        UserAvatar(call.target.avatar)
         Column(
             modifier = Modifier
                 .weight(1.0f)
                 .padding(8.dp, 0.dp, 8.dp, 0.dp)
         ) {
             Text(
-                text = call.caller?.name ?: "",
+                text = call.target.name,
                 style = MaterialTheme.typography.subtitle2,
                 maxLines = 1,
                 modifier = Modifier.fillMaxWidth()
@@ -151,23 +151,23 @@ fun CallScreenPreview() {
         mapOf(
             "Today" to listOf(
                 CallUiState(
-                    0, 1, 1000, INCOMING,
+                    0, 1000, INCOMING,
                     "February 19, 10:00",
                     User(1, "John", "http://placekitten.com/200/300")
                 )
             ),
             "Yesterday" to listOf(
                 CallUiState(
-                    0, 1, 60000, OUTGOING,
+                    0, 60000, OUTGOING,
                     "February 19, 10:00",
                     User(2, "Jane", "http://placekitten.com/200/100")
                 ), CallUiState(
-                    0, 1, 0, INCOMING_MISSED,
+                    0, 0, INCOMING_MISSED,
                     "February 19, 10:00",
                     User(1, "John", "http://placekitten.com/200/300")
                 ),
                 CallUiState(
-                    0, 1, 0, OUTGOING_MISSED,
+                    0, 0, OUTGOING_MISSED,
                     "February 19, 10:00",
                     User(2, "Jane", "http://placekitten.com/200/100")
                 )

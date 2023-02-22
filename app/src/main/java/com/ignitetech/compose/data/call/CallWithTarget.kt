@@ -4,13 +4,13 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.ignitetech.compose.data.user.User
 
-data class CallerWithCall(
+data class CallWithTarget(
     @Embedded
-    val caller: User,
+    val call: Call,
 
     @Relation(
-        parentColumn = User.FIELD_ID,
-        entityColumn = Call.FIELD_USER_ID
+        parentColumn = Call.FIELD_USER_ID,
+        entityColumn = User.FIELD_ID
     )
-    val call: Call
+    val target: User
 )

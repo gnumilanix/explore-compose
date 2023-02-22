@@ -6,13 +6,24 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.ignitetech.compose.data.call.Call
+import com.ignitetech.compose.data.call.CallDao
 import com.ignitetech.compose.data.chat.Chat
+import com.ignitetech.compose.data.chat.ChatDao
+import com.ignitetech.compose.data.seed.DatabaseSeedWorker
 import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.data.user.UserDao
 import com.ignitetech.compose.utility.Constants
 
-@Database(entities = [User::class, Chat::class], version = 2)
+@Database(entities = [User::class, Chat::class, Call::class], version = 3)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun userDao(): UserDao
+    abstract fun chatDao(): ChatDao
+    abstract fun callDao(): CallDao
+
     companion object {
         @Volatile
         private var instance: AppDatabase? = null
@@ -29,7 +40,10 @@ abstract class AppDatabase : RoomDatabase() {
                     object : Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
-                            // TODO Add initial data
+                            WorkManager.getInstance(context).enqueue(
+                                OneTimeWorkRequestBuilder<DatabaseSeedWorker>()
+                                    .build()
+                            )
                         }
                     }
                 )

@@ -1,15 +1,21 @@
 package com.ignitetech.compose.call
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ignitetech.compose.data.call.CallRepository
+import com.ignitetech.compose.data.call.CallWithTarget
 import com.ignitetech.compose.data.call.Type
 import com.ignitetech.compose.data.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.text.SimpleDateFormat
-import java.util.*
+import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,29 +26,44 @@ class CallViewModel @Inject constructor(
     val calls = _calls.asStateFlow()
 
     init {
-        val callDateFormat = SimpleDateFormat("MMMM dd, HH mm", Locale.getDefault())
-        _calls.update {
-            callRepository.getCalls().map {
-                it.key to it.value.map { call ->
-                    CallUiState(
-                        call.id,
-                        call.userId,
-                        call.duration,
-                        call.type,
-                        callDateFormat.format(call.date.time),
-                        call.caller
-                    )
+        val groupDateFormatter = DateTimeFormatter.ofPattern("MMMM dd")
+        val dateFormatter = DateTimeFormatter.ofPattern("MMMM dd, HH mm")
+        val timeZone = TimeZone.currentSystemDefault()
+
+        viewModelScope.launch {
+            callRepository.getCalls().collect { calls ->
+                _calls.update {
+                    calls.map { it.call.date.toLocalDateTime(timeZone).date to it }
+                        .groupBy { it.first }
+                        .map { it.key to it.value.map { callMap -> callMap.second } }
+                        .associate {
+                            groupDateFormatter.format(it.first.toJavaLocalDate()) to it.second.map { call ->
+                                call.toUiState(dateFormatter, timeZone)
+                            }
+                        }
                 }
-            }.toMap()
+            }
         }
     }
 }
 
+private fun CallWithTarget.toUiState(
+    dateFormatter: DateTimeFormatter,
+    timeZone: TimeZone
+) = CallUiState(
+    call.id,
+    call.duration,
+    call.type,
+    dateFormatter.format(
+        call.date.toLocalDateTime(timeZone).toJavaLocalDateTime()
+    ),
+    target
+)
+
 data class CallUiState(
     val id: Int,
-    val userId: Int,
     val duration: Int,
     val type: Type,
     val date: String,
-    val caller: User? = null,
+    val target: User
 )
