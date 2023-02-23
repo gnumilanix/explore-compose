@@ -32,7 +32,12 @@ fun SetUpNavGraph(viewModel: HomeViewModel = hiltViewModel()) {
             ShowSystemBars(show = true)
             HomeScreen(viewModel, navController)
         }
-        composable(route = Screens.Onboard.route) {
+        composable(
+            route = Screens.Onboard.route,
+            exitTransition = {
+                slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, tween(300))
+            }
+        ) {
             ShowSystemBars(show = true)
             OnboardScreen {
                 viewModel.onboardComplete()
