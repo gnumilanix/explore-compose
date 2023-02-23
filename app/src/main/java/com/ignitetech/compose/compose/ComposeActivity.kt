@@ -1,4 +1,4 @@
-package com.ignitetech.compose.home
+package com.ignitetech.compose.compose
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,7 +7,7 @@ import com.ignitetech.compose.ui.Content
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HomeActivity : ComponentActivity() {
+class ComposeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

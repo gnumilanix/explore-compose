@@ -1,4 +1,4 @@
-package com.ignitetech.compose.home
+package com.ignitetech.compose.compose
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -12,6 +12,9 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.ignitetech.compose.chat.ChatScreen
 import com.ignitetech.compose.chat.ChatViewModel
+import com.ignitetech.compose.home.HomeScreen
+import com.ignitetech.compose.home.HomeViewModel
+import com.ignitetech.compose.home.OnboardScreen
 import com.ignitetech.compose.splash.SplashScreen
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.ShowSystemBars

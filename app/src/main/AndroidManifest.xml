@@ -15,7 +15,7 @@
         android:theme="@style/Theme.Compose"
         tools:targetApi="31">
         <activity
-            android:name="com.ignitetech.compose.home.HomeActivity"
+            android:name="com.ignitetech.compose.compose.ComposeActivity"
             android:exported="true"
             android:theme="@style/Theme.Compose">
             <intent-filter>
