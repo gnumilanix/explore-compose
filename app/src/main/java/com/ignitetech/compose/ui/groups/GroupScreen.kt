@@ -1,4 +1,4 @@
-package com.ignitetech.compose.groups
+package com.ignitetech.compose.ui.groups
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.ignitetech.compose.home.HomeTabs
+import com.ignitetech.compose.ui.home.HomeTabs
 
 @Composable
 fun GroupScreen(tab: HomeTabs) {

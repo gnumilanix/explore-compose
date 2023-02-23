@@ -1,4 +1,4 @@
-package com.ignitetech.compose.call
+package com.ignitetech.compose.ui.call
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

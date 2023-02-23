@@ -1,4 +1,4 @@
-package com.ignitetech.compose.chat
+package com.ignitetech.compose.ui.chat
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState

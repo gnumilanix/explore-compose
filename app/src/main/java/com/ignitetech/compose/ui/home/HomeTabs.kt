@@ -1,4 +1,4 @@
-package com.ignitetech.compose.home
+package com.ignitetech.compose.ui.home
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

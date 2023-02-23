@@ -1,4 +1,4 @@
-package com.ignitetech.compose.call
+package com.ignitetech.compose.ui.call
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

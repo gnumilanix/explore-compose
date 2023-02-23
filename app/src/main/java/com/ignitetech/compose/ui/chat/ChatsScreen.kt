@@ -1,4 +1,4 @@
-package com.ignitetech.compose.chat
+package com.ignitetech.compose.ui.chat
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

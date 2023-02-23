@@ -1,4 +1,4 @@
-package com.ignitetech.compose.compose
+package com.ignitetech.compose.ui.compose
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

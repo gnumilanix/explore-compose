@@ -1,4 +1,4 @@
-package com.ignitetech.compose.splash
+package com.ignitetech.compose.ui.splash
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
@@ -20,7 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.ignitetech.compose.R
-import com.ignitetech.compose.home.HomeViewModel
+import com.ignitetech.compose.ui.home.HomeViewModel
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.ShowSystemBars
 import kotlinx.coroutines.delay

@@ -1,4 +1,4 @@
-package com.ignitetech.compose.home
+package com.ignitetech.compose.ui.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -16,9 +16,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.*
 import com.ignitetech.compose.R
-import com.ignitetech.compose.call.CallScreen
-import com.ignitetech.compose.chat.ChatsScreen
-import com.ignitetech.compose.groups.GroupScreen
+import com.ignitetech.compose.ui.call.CallScreen
+import com.ignitetech.compose.ui.chat.ChatsScreen
+import com.ignitetech.compose.ui.groups.GroupScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

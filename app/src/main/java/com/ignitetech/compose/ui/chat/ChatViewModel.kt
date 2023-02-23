@@ -1,4 +1,4 @@
-package com.ignitetech.compose.chat
+package com.ignitetech.compose.ui.chat
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
