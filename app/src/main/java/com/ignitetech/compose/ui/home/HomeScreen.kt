@@ -16,6 +16,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.*
 import com.ignitetech.compose.R
+import com.ignitetech.compose.ui.Screens
+import com.ignitetech.compose.ui.Screens.HomeScreens
 import com.ignitetech.compose.ui.call.CallScreen
 import com.ignitetech.compose.ui.chat.ChatsScreen
 import com.ignitetech.compose.ui.groups.GroupScreen
@@ -36,14 +38,14 @@ fun HomeScreen(
 @Composable
 fun HomeScreen(
     navController: NavController,
-    tabs: List<HomeTabs>
+    tabs: List<HomeScreens>
 ) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { AppBar() },
+        topBar = { AppBar(navController) },
         floatingActionButton = { FloatingButton(scaffoldState, scope) }
     ) { padding ->
         val pagerState = rememberPagerState(0)
@@ -60,7 +62,7 @@ fun HomeScreen(
 }
 
 @Composable
-private fun AppBar() {
+private fun AppBar(navController: NavController) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
         actions = {
@@ -97,7 +99,7 @@ private fun AppBar() {
                     }
                     DropdownMenuItem(onClick = {
                         dismissDropDown()
-                        /*TODO*/
+                        navController.navigate(Screens.Settings.route)
                     }) {
                         Text(text = stringResource(id = R.string.settings))
                     }
@@ -127,7 +129,7 @@ fun FloatingButton(scaffoldState: ScaffoldState, scope: CoroutineScope) {
 private fun Tabs(
     scope: CoroutineScope,
     pagerState: PagerState,
-    tabs: List<HomeTabs>
+    tabs: List<HomeScreens>
 ) {
     TabRow(
         selectedTabIndex = pagerState.currentPage,
@@ -166,7 +168,7 @@ private fun Tabs(
 private fun TabContents(
     navController: NavController,
     pagerState: PagerState,
-    tabs: List<HomeTabs>
+    tabs: List<HomeScreens>
 ) {
     HorizontalPager(
         count = tabs.size,
@@ -175,8 +177,8 @@ private fun TabContents(
     ) {
         if (!LocalInspectionMode.current) {
             when (val tab = tabs[it]) {
-                HomeTabs.Chat -> ChatsScreen(navController)
-                HomeTabs.Group -> GroupScreen(tab)
+                HomeScreens.Chats -> ChatsScreen(navController)
+                HomeScreens.Groups -> GroupScreen(tab)
                 else -> CallScreen()
             }
         }
@@ -186,5 +188,8 @@ private fun TabContents(
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(rememberNavController(), listOf(HomeTabs.Chat, HomeTabs.Group, HomeTabs.Call))
+    HomeScreen(
+        rememberNavController(),
+        listOf(HomeScreens.Chats, HomeScreens.Groups, HomeScreens.Calls)
+    )
 }

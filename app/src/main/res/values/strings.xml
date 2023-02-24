@@ -11,6 +11,14 @@
     <string name="onboard_chat">Compose chats with your friends and families</string>
     <string name="onboard_groups">Compose chats in groups of your friends and families</string>
     <string name="onboard_call">Make calls with your friends and families</string>
+    <string name="lorem_ipsum">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</string>
+    <string name="allow">Allow</string>
+    <string name="deny">Deny</string>
+    <string name="not_now">Not now</string>
+
+    <string name="camera_permission_title">Allow camera access</string>
+    <string name="camera_permission_message">Compose needs camera permission to take photos for this feature</string>
+    <string name="camera_permission_message_detail">Compose needs camera permission to take photos for this feature. Tap Settings > Permissions, and turn Camera on</string>
 
     <!-- Place holders -->
     <string name="ph_message">Message</string>

@@ -14,7 +14,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +39,7 @@ import com.ignitetech.compose.R
 import com.ignitetech.compose.data.chat.Direction.RECEIVED
 import com.ignitetech.compose.data.chat.Direction.SENT
 import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.ui.AppBarBackButton
 import com.ignitetech.compose.ui.UserAvatar
 import com.ignitetech.compose.ui.theme.Green50
 import com.ignitetech.compose.ui.theme.Grey400
@@ -87,12 +91,7 @@ private fun AppBar(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { navController.navigateUp() }) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = stringResource(id = R.string.cd_back)
-                )
-            }
+            AppBarBackButton(navController)
             AsyncImage(
                 model = user?.avatar,
                 placeholder = painterResource(id = R.drawable.baseline_person_24),

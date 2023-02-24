@@ -10,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.ignitetech.compose.ui.home.HomeTabs
+import com.ignitetech.compose.ui.Screens.HomeScreens
 
 @Composable
-fun GroupScreen(tab: HomeTabs) {
+fun GroupScreen(tab: HomeScreens) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -27,5 +27,5 @@ fun GroupScreen(tab: HomeTabs) {
 @Preview(showBackground = true)
 @Composable
 fun GroupScreenPreview() {
-    GroupScreen(tab = HomeTabs.Group)
+    GroupScreen(tab = HomeScreens.Groups)
 }

@@ -36,3 +36,7 @@ define Android UI) and other state of art Android libraries
 #### Calls
 
 <img alt="screenshot" height="600" src="screenshots/emulator_calls.png" width="280"/>
+
+#### Permissions
+
+<img alt="screenshot" height="600" src="screenshots/emulator_permissions.png" width="280"/>

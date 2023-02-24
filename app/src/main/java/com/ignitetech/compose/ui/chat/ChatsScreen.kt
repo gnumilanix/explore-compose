@@ -32,7 +32,11 @@ fun ChatsScreen(
 
 @Composable
 fun ChatsScreen(navController: NavController, chats: List<ChatUiState>) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(0.dp, 8.dp, 0.dp, 8.dp)
+    ) {
         items(chats) { chat ->
             Chat(navController, chat)
         }

@@ -1,23 +1,27 @@
 package com.ignitetech.compose.ui.compose
 
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.ignitetech.compose.home.OnboardScreen
+import com.ignitetech.compose.ui.Screens
+import com.ignitetech.compose.ui.ShowSystemBars
 import com.ignitetech.compose.ui.chat.ChatScreen
 import com.ignitetech.compose.ui.chat.ChatViewModel
 import com.ignitetech.compose.ui.home.HomeScreen
 import com.ignitetech.compose.ui.home.HomeViewModel
-import com.ignitetech.compose.home.OnboardScreen
+import com.ignitetech.compose.ui.settings.SettingsScreen
 import com.ignitetech.compose.ui.splash.SplashScreen
-import com.ignitetech.compose.ui.Screens
-import com.ignitetech.compose.ui.ShowSystemBars
 
 @Composable
 @OptIn(ExperimentalAnimationApi::class)
@@ -37,9 +41,7 @@ fun SetUpNavGraph(viewModel: HomeViewModel = hiltViewModel()) {
         }
         composable(
             route = Screens.Onboard.route,
-            exitTransition = {
-                slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, tween(300))
-            }
+            exitTransition = slideOutOfContainerLeft()
         ) {
             ShowSystemBars(show = true)
             OnboardScreen {
@@ -56,14 +58,32 @@ fun SetUpNavGraph(viewModel: HomeViewModel = hiltViewModel()) {
             arguments = listOf(navArgument(ChatViewModel.RecipientId) {
                 type = NavType.IntType
             }),
-            enterTransition = {
-                slideIntoContainer(AnimatedContentScope.SlideDirection.Left, tween(500))
-            },
-            exitTransition = {
-                slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, tween(300))
-            }
+            enterTransition = slideIntoContainerRight(),
+            exitTransition = slideOutOfContainerRight()
         ) {
             ChatScreen(navController)
         }
+        composable(
+            route = Screens.Settings.route,
+            enterTransition = slideIntoContainerRight(),
+            exitTransition = slideOutOfContainerRight()
+        ) {
+            SettingsScreen(navController, viewModel = hiltViewModel())
+        }
     }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+fun slideOutOfContainerLeft(): AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition? = {
+    slideOutOfContainer(AnimatedContentScope.SlideDirection.Left, tween(300))
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+fun slideOutOfContainerRight(): AnimatedContentScope<NavBackStackEntry>.() -> ExitTransition? = {
+    slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, tween(300))
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+fun slideIntoContainerRight(): AnimatedContentScope<NavBackStackEntry>.() -> EnterTransition? = {
+    slideIntoContainer(AnimatedContentScope.SlideDirection.Left, tween(500))
 }

@@ -25,7 +25,7 @@ class PreferenceRepository @Inject constructor(
     }
 
     suspend fun onboardComplete(): Boolean {
-        return dataStore.data.first().toPreferences()[ONBOARD_COMPLETE] ?: false
+        return preferences()[ONBOARD_COMPLETE] ?: false
     }
 
     suspend fun onboardComplete(completed: Boolean) {
@@ -36,7 +36,7 @@ class PreferenceRepository @Inject constructor(
 
     suspend fun userId(): Int? {
         //TODO Temporary hardcoded value
-        return dataStore.data.first().toPreferences()[USER_ID] ?: 0
+        return preferences()[USER_ID] ?: 0
     }
 
     suspend fun userId(userId: Int?) {
@@ -47,4 +47,6 @@ class PreferenceRepository @Inject constructor(
             }
         }
     }
+
+    private suspend fun preferences() = dataStore.data.first().toPreferences()
 }
