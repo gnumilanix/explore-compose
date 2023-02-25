@@ -62,7 +62,9 @@ fun SettingsScreen(
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
+        Column(modifier = Modifier
+            .padding(padding)
+            .padding(16.dp, 16.dp, 16.dp, 0.dp)) {
             ProfileImage(permissionState)
             Text(
                 text = stringResource(R.string.lorem_ipsum),
@@ -84,7 +86,6 @@ private fun ProfileImage(
         Box(
             modifier = Modifier
                 .size(150.dp)
-                .padding(8.dp)
         ) {
             PermissionHandling(
                 permissionState = permissionState,
@@ -106,6 +107,7 @@ private fun ProfileImage(
                     modifier = Modifier
                         .clip(CircleShape)
                         .border(1.dp, MaterialTheme.colors.secondary, CircleShape)
+                        .fillMaxSize()
                         .clickable { permissionHandle() }
                 )
                 Icon(
