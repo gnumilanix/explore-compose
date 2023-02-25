@@ -99,7 +99,7 @@ private fun ProfileImage(
                 denialMessage = R.string.camera_permission_message_detail,
             ) { permissionHandle ->
                 AsyncImage(
-                    model = "http://placekitten.com/200/400",
+                    model = "https://placekitten.com/200/400",
                     placeholder = painterResource(id = R.drawable.baseline_person_24),
                     contentDescription = stringResource(R.string.cd_user_profile),
                     contentScale = ContentScale.Crop,

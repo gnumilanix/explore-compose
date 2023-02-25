@@ -397,7 +397,7 @@ fun ConversationsScreenPreview() {
                     "Hello Jack! How are you today? Can you me those presentations",
                     SENT,
                     "22/02",
-                    User(1, "John", "http://placekitten.com/200/300")
+                    User(1, "John", "https://placekitten.com/200/300")
                 ),
                 ChatUiState(
                     2,
@@ -405,7 +405,7 @@ fun ConversationsScreenPreview() {
                     "Hello John! I am good. How about you?",
                     RECEIVED,
                     "22/02",
-                    User(2, "Jane", "http://placekitten.com/200/100")
+                    User(2, "Jane", "https://placekitten.com/200/100")
                 )
             )
         )

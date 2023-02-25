@@ -176,9 +176,9 @@ private fun TabContents(
         modifier = Modifier.fillMaxSize()
     ) {
         if (!LocalInspectionMode.current) {
-            when (val tab = tabs[it]) {
+            when (tabs[it]) {
                 HomeScreens.Chats -> ChatsScreen(navController)
-                HomeScreens.Groups -> GroupScreen(tab)
+                HomeScreens.Groups -> GroupScreen()
                 else -> CallScreen()
             }
         }

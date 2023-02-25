@@ -57,6 +57,8 @@ fun UserAvatar(avatar: String?) {
         AsyncImage(
             model = avatar,
             placeholder = painterResource(id = R.drawable.baseline_person_24),
+            error = painterResource(id = R.drawable.baseline_person_24),
+            fallback = painterResource(id = R.drawable.baseline_person_24),
             contentDescription = stringResource(R.string.cd_user_profile),
             contentScale = ContentScale.Crop,
             modifier = Modifier

@@ -153,23 +153,23 @@ fun CallScreenPreview() {
                 CallUiState(
                     0, 1000, INCOMING,
                     "February 19, 10:00",
-                    User(1, "John", "http://placekitten.com/200/300")
+                    User(1, "John", "https://placekitten.com/200/300")
                 )
             ),
             "Yesterday" to listOf(
                 CallUiState(
                     0, 60000, OUTGOING,
                     "February 19, 10:00",
-                    User(2, "Jane", "http://placekitten.com/200/100")
+                    User(2, "Jane", "https://placekitten.com/200/100")
                 ), CallUiState(
                     0, 0, INCOMING_MISSED,
                     "February 19, 10:00",
-                    User(1, "John", "http://placekitten.com/200/300")
+                    User(1, "John", "https://placekitten.com/200/300")
                 ),
                 CallUiState(
                     0, 0, OUTGOING_MISSED,
                     "February 19, 10:00",
-                    User(2, "Jane", "http://placekitten.com/200/100")
+                    User(2, "Jane", "https://placekitten.com/200/100")
                 )
             )
         )

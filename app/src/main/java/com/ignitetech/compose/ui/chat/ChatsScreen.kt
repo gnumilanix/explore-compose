@@ -92,7 +92,7 @@ fun ChatsScreenPreview() {
                 "Hello Jack! How are you today? Can you me those presentations",
                 Direction.SENT,
                 "10:00",
-                User(1, "John", "http://placekitten.com/200/300")
+                User(1, "John", "https://placekitten.com/200/300")
             ),
             ChatUiState(
                 2,
@@ -100,7 +100,7 @@ fun ChatsScreenPreview() {
                 "Hello Jack! How are you today? Can you me those presentations",
                 Direction.SENT,
                 "Yesterday",
-                User(2, "Jane", "http://placekitten.com/200/100")
+                User(2, "Jane", "https://placekitten.com/200/100")
             )
         )
     )

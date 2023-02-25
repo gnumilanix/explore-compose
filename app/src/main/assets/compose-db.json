@@ -3,17 +3,17 @@
     {
       "id": 0,
       "name": "Jack",
-      "avatar": "http://placekitten.com/200/400"
+      "avatar": "https://placekitten.com/200/400"
     },
     {
       "id": 1,
       "name": "John",
-      "avatar": "http://placekitten.com/200/300"
+      "avatar": "https://placekitten.com/200/300"
     },
     {
       "id": 2,
       "name": "Jane",
-      "avatar": "http://placekitten.com/200/100"
+      "avatar": "https://placekitten.com/200/100"
     }
   ],
   "chats": [

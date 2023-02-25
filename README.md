@@ -4,16 +4,26 @@ Repo to track personal journey about exploring and learning Jetpack Compose (A d
 define Android UI) and other state of art Android libraries
 
 ### Libraries explored
-- [Jetpack Compose](https://developer.android.com/jetpack/compose): To define Android UI in _declarative_ way
-    - [Navigation](https://developer.android.com/jetpack/compose/navigation): _The Navigation component providing support for Jetpack Compose_
-    - [Accompanist](https://github.com/google/accompanist): Collection of _libraries that aim to supplement Jetpack Compose_
-- [Room](https://developer.android.com/jetpack/androidx/releases/room): _SQLite abstraction_ for Android
-- [DataStore](https://developer.android.com/topic/libraries/architecture/datastore): Storage solution to _asynchronously, consistently, and transactionally_ store key-values or Protobuf
+
+- [Jetpack Compose](https://developer.android.com/jetpack/compose): To define Android UI in _
+  declarative_ way
+    - [Navigation](https://developer.android.com/jetpack/compose/navigation): _The Navigation
+      component providing support for Jetpack Compose_
+    - [Accompanist](https://github.com/google/accompanist): Collection of _libraries that aim to
+      supplement Jetpack Compose_
+- [Room](https://developer.android.com/jetpack/androidx/releases/room): _SQLite abstraction_ for
+  Android
+- [DataStore](https://developer.android.com/topic/libraries/architecture/datastore): Storage
+  solution to _asynchronously, consistently, and transactionally_ store key-values or Protobuf
 - [Hilt](https://dagger.dev/hilt/): Simplifies _Dagger implementation_ on Android
-- [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager): _The recommended solution for persistent work_
-- [kotlinx.serialization](https://kotlinlang.org/docs/serialization.html): _Kotlin multiplatform reflectionless serialization_
-- [kotlinx-datetime](https://github.com/Kotlin/kotlinx-datetime): _A multiplatform Kotlin library for working with date and time_
-- [kotlinx.coroutines](https://kotlinlang.org/docs/coroutines-overview.html): _Way to write asynchronous code that is readable and maintainable_
+- [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager): _The
+  recommended solution for persistent work_
+- [kotlinx.serialization](https://kotlinlang.org/docs/serialization.html): _Kotlin multiplatform
+  reflectionless serialization_
+- [kotlinx-datetime](https://github.com/Kotlin/kotlinx-datetime): _A multiplatform Kotlin library
+  for working with date and time_
+- [kotlinx.coroutines](https://kotlinlang.org/docs/coroutines-overview.html): _Way to write
+  asynchronous code that is readable and maintainable_
 
 ## Screenshots
 
@@ -32,6 +42,10 @@ define Android UI) and other state of art Android libraries
 
 <img alt="screenshot" height="600" src="screenshots/emulator_chats.png" width="280"/>
 <img alt="screenshot" height="600" src="screenshots/emulator_chat.png" width="280"/>
+
+#### Groups
+
+<img alt="screenshot" height="600" src="screenshots/emulator_groups.png" width="280"/>
 
 #### Calls
 
