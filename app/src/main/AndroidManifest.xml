@@ -20,7 +20,8 @@
         <activity
             android:name="com.ignitetech.compose.ui.compose.ComposeActivity"
             android:exported="true"
-            android:theme="@style/Theme.Compose">
+            android:theme="@style/Theme.Compose"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
