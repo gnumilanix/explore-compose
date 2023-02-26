@@ -96,11 +96,8 @@ fun ChatScreen(
         Column(modifier = Modifier.padding(padding)) {
             Column(modifier = Modifier.weight(1.0f)) {
                 Box(modifier = Modifier.weight(1.0f)) {
-                    ConversationsByTime(
-                        users,
-                        conversations,
+                    ConversationsByTime(users, conversations)
 
-                        )
                     if (showSelector != Selector.None) {
                         Box(modifier = Modifier
                             .fillMaxSize()
@@ -119,20 +116,25 @@ fun ChatScreen(
             }
 
             AnimatedVisibility(visible = showSelector == Selector.Emoji) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
-                        .background(secondaryBackgroundColor())
-                        .fillMaxWidth()
-                        .height(250.dp)
-                ) {
-                    Text(text = "Emoji", modifier = Modifier.align(Alignment.Center))
-                }
+                EmojiSelector()
             }
             AnimatedVisibility(visible = showSelector == Selector.Attachment) {
                 AttachmentSelector()
             }
         }
+    }
+}
+
+@Composable
+private fun EmojiSelector() {
+    Box(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
+            .background(secondaryBackgroundColor())
+            .fillMaxWidth()
+            .height(250.dp)
+    ) {
+        Text(text = "Emoji", modifier = Modifier.align(Alignment.Center))
     }
 }
 
