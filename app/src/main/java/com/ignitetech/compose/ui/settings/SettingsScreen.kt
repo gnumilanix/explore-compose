@@ -9,11 +9,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
@@ -89,12 +91,15 @@ private fun ProfileImage(
             modifier = Modifier
                 .size(150.dp)
         ) {
+            var image by remember {
+                mutableStateOf<Any?>("https://placekitten.com/200/400")
+            }
             PermissionHandling(
                 permissionState = permissionState,
                 activityResultLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.TakePicturePreview()
                 ) {
-                    //TODO
+                    image = it
                 },
                 rationaleTitle = R.string.camera_permission_title,
                 rationaleMessage = R.string.camera_permission_message,
@@ -102,7 +107,7 @@ private fun ProfileImage(
                 denialMessage = R.string.camera_permission_message_detail,
             ) { permissionHandle ->
                 AsyncImage(
-                    model = "https://placekitten.com/200/400",
+                    model = ImageRequest.Builder(LocalContext.current).data(image).build(),
                     placeholder = painterResource(id = R.drawable.baseline_person_24),
                     contentDescription = stringResource(R.string.cd_user_profile),
                     contentScale = ContentScale.Crop,
