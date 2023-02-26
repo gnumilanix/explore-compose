@@ -1,6 +1,7 @@
 package com.ignitetech.compose.ui.chat
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
@@ -53,14 +54,18 @@ import com.ignitetech.compose.ui.composable.AppBarBackButton
 import com.ignitetech.compose.ui.composable.AppBarTitle
 import com.ignitetech.compose.ui.composable.UserAvatar
 import com.ignitetech.compose.ui.theme.*
+import com.ignitetech.compose.utility.isActive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+private interface Selector
 
-sealed class Selector {
-    object None : Selector()
-    object Emoji : Selector()
-    object Attachment : Selector()
+sealed class EditorState {
+
+    object None : EditorState()
+    object Typing : EditorState()
+    object Emoji : EditorState(), Selector
+    object Attachment : EditorState(), Selector
 }
 
 @Composable
@@ -79,7 +84,7 @@ fun ChatScreen(
     navController: NavController,
     users: ChatUsersUiState,
     conversations: Map<String, List<ChatUiState>>,
-    selector: Selector = Selector.None
+    editorState: EditorState = EditorState.None
 ) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
@@ -89,10 +94,18 @@ fun ChatScreen(
         topBar = { AppBar(navController, users.recipient) }
     ) { padding ->
         var showSelector by remember {
-            mutableStateOf(selector)
+            mutableStateOf(editorState)
         }
         var dismissActions by remember {
             mutableStateOf(false)
+        }
+
+        BackHandler(showSelector is Selector) {
+            showSelector = EditorState.None
+        }
+
+        if (showSelector != EditorState.Typing) {
+            LocalFocusManager.current.clearFocus()
         }
 
         Column(modifier = Modifier.padding(padding)) {
@@ -100,28 +113,27 @@ fun ChatScreen(
                 Box(modifier = Modifier.weight(1.0f)) {
                     ConversationsByTime(users, conversations)
 
-                    if (showSelector != Selector.None) {
-                        LocalFocusManager.current.clearFocus()
+                    if (showSelector is Selector) {
                         Box(modifier = Modifier
                             .fillMaxSize()
                             .background(Color.Transparent)
                             .pointerInput(Unit) {
                                 detectTapGestures(onTap = {
-                                    showSelector = Selector.None
+                                    showSelector = EditorState.None
                                 })
                             })
                     }
                 }
                 Editor(scaffoldState, scope) {
                     showSelector = it
-                    dismissActions = it != Selector.None
+                    dismissActions = it != EditorState.None
                 }
             }
 
-            AnimatedVisibility(visible = showSelector == Selector.Emoji) {
+            AnimatedVisibility(visible = showSelector == EditorState.Emoji) {
                 EmojiSelector()
             }
-            AnimatedVisibility(visible = showSelector == Selector.Attachment) {
+            AnimatedVisibility(visible = showSelector == EditorState.Attachment) {
                 AttachmentSelector()
             }
         }
@@ -248,7 +260,7 @@ private fun AppBar(
 private fun Editor(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
     scope: CoroutineScope = rememberCoroutineScope(),
-    showSelector: (Selector) -> Unit = {}
+    editorStateChange: (EditorState) -> Unit = {}
 ) {
     Row(
         modifier = Modifier
@@ -272,15 +284,12 @@ private fun Editor(
                 }
 
                 EditorIconButton(Icons.Default.Face, stringResource(R.string.cd_emoji)) {
-                    showSelector(Selector.Emoji)
+                    editorStateChange(EditorState.Emoji)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 TextField(
                     value = message,
-                    onValueChange = {
-                        message = it
-                        showSelector(Selector.None)
-                    },
+                    onValueChange = { message = it },
                     placeholder = {
                         Text(
                             stringResource(R.string.ph_message),
@@ -300,14 +309,14 @@ private fun Editor(
                         .navigationBarsPadding()
                         .imePadding()
                         .onFocusChanged {
-                            if (it.hasFocus || it.isFocused) {
-                                showSelector(Selector.None)
+                            if (it.isActive) {
+                                editorStateChange(EditorState.Typing)
                             }
                         }
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 EditorIconButton(Icons.Default.Add, stringResource(R.string.cd_attach_file)) {
-                    showSelector(Selector.Attachment)
+                    editorStateChange(EditorState.Attachment)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 EditorIconButton(
@@ -580,7 +589,7 @@ fun ChatScreenEmojiSelectorPreview() {
             User(1, "John", "https://placekitten.com/200/300")
         ),
         mapOf(),
-        Selector.Emoji
+        EditorState.Emoji
     )
 }
 
@@ -594,7 +603,7 @@ fun ChatScreenAttachmentSelectorPreview() {
             User(1, "John", "https://placekitten.com/200/300")
         ),
         mapOf(),
-        Selector.Attachment
+        EditorState.Attachment
     )
 }
 
