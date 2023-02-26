@@ -19,7 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ignitetech.compose.data.chat.Direction
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.ui.Screens
-import com.ignitetech.compose.ui.UserAvatar
+import com.ignitetech.compose.ui.composable.UserAvatar
 
 @Composable
 fun ChatsScreen(

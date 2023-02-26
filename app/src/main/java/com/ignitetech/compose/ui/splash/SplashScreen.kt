@@ -21,7 +21,7 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.ignitetech.compose.R
 import com.ignitetech.compose.ui.Screens
-import com.ignitetech.compose.ui.ShowSystemBars
+import com.ignitetech.compose.ui.composable.ShowSystemBars
 import com.ignitetech.compose.ui.home.HomeViewModel
 import kotlinx.coroutines.delay
 

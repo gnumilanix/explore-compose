@@ -1,18 +1,25 @@
 package com.ignitetech.compose.ui.chat
 
 import android.content.res.Configuration
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults.buttonColors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Face
@@ -24,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,12 +47,19 @@ import com.ignitetech.compose.R
 import com.ignitetech.compose.data.chat.Direction.RECEIVED
 import com.ignitetech.compose.data.chat.Direction.SENT
 import com.ignitetech.compose.data.user.User
-import com.ignitetech.compose.ui.AppBarBackButton
-import com.ignitetech.compose.ui.UserAvatar
-import com.ignitetech.compose.ui.theme.Green50
-import com.ignitetech.compose.ui.theme.Grey400
+import com.ignitetech.compose.ui.composable.AppBarBackButton
+import com.ignitetech.compose.ui.composable.AppBarTitle
+import com.ignitetech.compose.ui.composable.UserAvatar
+import com.ignitetech.compose.ui.theme.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
+
+sealed class Selector {
+    object None : Selector()
+    object Emoji : Selector()
+    object Attachment : Selector()
+}
 
 @Composable
 fun ChatScreen(
@@ -61,7 +76,8 @@ fun ChatScreen(
 fun ChatScreen(
     navController: NavController,
     users: ChatUsersUiState,
-    conversations: Map<String, List<ChatUiState>>
+    conversations: Map<String, List<ChatUiState>>,
+    selector: Selector = Selector.None
 ) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
@@ -70,14 +86,129 @@ fun ChatScreen(
         scaffoldState = scaffoldState,
         topBar = { AppBar(navController, users.recipient) }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding)) {
-            ConversationsByTime(
-                users,
-                conversations,
-                Modifier.weight(1.0f)
-            )
-            Editor(scaffoldState, scope)
+        var showSelector by remember {
+            mutableStateOf(selector)
         }
+        var dismissActions by remember {
+            mutableStateOf(false)
+        }
+
+        Column(modifier = Modifier.padding(padding)) {
+            Column(modifier = Modifier.weight(1.0f)) {
+                Box(modifier = Modifier.weight(1.0f)) {
+                    ConversationsByTime(
+                        users,
+                        conversations,
+
+                        )
+                    if (showSelector != Selector.None) {
+                        Box(modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Transparent)
+                            .pointerInput(Unit) {
+                                detectTapGestures(onTap = {
+                                    showSelector = Selector.None
+                                })
+                            })
+                    }
+                }
+                Editor(scaffoldState, scope) {
+                    showSelector = it
+                    dismissActions = it != Selector.None
+                }
+            }
+
+            AnimatedVisibility(visible = showSelector == Selector.Emoji) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
+                        .background(secondaryBackgroundColor())
+                        .fillMaxWidth()
+                        .height(250.dp)
+                ) {
+                    Text(text = "Emoji", modifier = Modifier.align(Alignment.Center))
+                }
+            }
+            AnimatedVisibility(visible = showSelector == Selector.Attachment) {
+                AttachmentSelector()
+            }
+        }
+    }
+}
+
+@Composable
+private fun AttachmentSelector() {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(70.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
+            .background(secondaryBackgroundColor())
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        item {
+            AttachmentButton(
+                R.drawable.baseline_file_24,
+                R.string.cd_document,
+                R.string.document,
+                Purple300
+            )
+        }
+        item {
+            AttachmentButton(
+                R.drawable.baseline_photo_camera_24,
+                R.string.cd_camera,
+                R.string.camera,
+                Red300
+            )
+        }
+        item {
+            AttachmentButton(
+                R.drawable.baseline_image_24,
+                R.string.cd_gallery,
+                R.string.gallery,
+                Pink300
+            )
+        }
+    }
+}
+
+@Composable
+private fun AttachmentButton(
+    @DrawableRes icon: Int,
+    @StringRes contentDescription: Int,
+    @StringRes text: Int,
+    buttonColor: Color
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Button(
+            onClick = {},
+            shape = CircleShape,
+            colors = buttonColors(buttonColor),
+            modifier = Modifier
+                .size(60.dp)
+                .padding(4.dp)
+                .aspectRatio(1.0f)
+        ) {
+            Icon(
+                painterResource(icon),
+                stringResource(id = contentDescription),
+                modifier = Modifier.fillMaxSize(),
+                tint = Color.White
+            )
+        }
+        Text(
+            text = stringResource(id = text),
+            style = MaterialTheme.typography.caption,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(4.dp)
+        )
+
     }
 }
 
@@ -98,15 +229,12 @@ private fun AppBar(
                 contentDescription = stringResource(R.string.cd_current_user),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
+                    .padding(8.dp, 0.dp, 8.dp, 0.dp)
                     .size(40.dp)
                     .clip(CircleShape)
                     .border(1.5.dp, Color(0xff76d275), CircleShape)
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = user?.name ?: "", style = MaterialTheme.typography.subtitle1,
-                modifier = Modifier.weight(1.0f)
-            )
+            AppBarTitle(title = user?.name ?: "", modifier = Modifier.weight(1.0f))
         }
     }
 }
@@ -114,7 +242,8 @@ private fun AppBar(
 @Composable
 private fun Editor(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    scope: CoroutineScope = rememberCoroutineScope()
+    scope: CoroutineScope = rememberCoroutineScope(),
+    showSelector: (Selector) -> Unit = {}
 ) {
     Row(
         modifier = Modifier
@@ -124,7 +253,7 @@ private fun Editor(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Surface(
-            color = Grey400,
+            color = secondaryBackgroundColor(),
             modifier = Modifier
                 .weight(1.0f),
             shape = RoundedCornerShape(32.dp),
@@ -138,14 +267,15 @@ private fun Editor(
                 }
 
                 EditorIconButton(Icons.Default.Face, stringResource(R.string.cd_emoji)) {
-                    scope.launch {
-                        scaffoldState.snackbarHostState.showSnackbar("Show emoji")
-                    }
+                    showSelector(Selector.Emoji)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 TextField(
                     value = message,
-                    onValueChange = { message = it },
+                    onValueChange = {
+                        message = it
+                        showSelector(Selector.None)
+                    },
                     placeholder = {
                         Text(
                             stringResource(R.string.ph_message),
@@ -161,13 +291,11 @@ private fun Editor(
                         unfocusedIndicatorColor = Color.Transparent
                     ),
                     modifier = Modifier
-                        .weight(1.0f),
+                        .weight(1.0f)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 EditorIconButton(Icons.Default.Add, stringResource(R.string.cd_attach_file)) {
-                    scope.launch {
-                        scaffoldState.snackbarHostState.showSnackbar("Launch attach")
-                    }
+                    showSelector(Selector.Attachment)
                 }
                 Spacer(modifier = Modifier.width(8.dp))
                 EditorIconButton(
@@ -181,7 +309,10 @@ private fun Editor(
             }
         }
         Spacer(modifier = Modifier.width(4.dp))
-        EditorIconButton(Icons.Default.Send, stringResource(R.string.cd_send_message)) {
+        EditorIconButton(
+            Icons.Default.Send, stringResource(R.string.cd_send_message),
+            PaddingValues(8.dp)
+        ) {
             scope.launch {
                 scaffoldState.snackbarHostState.showSnackbar("Sending message")
             }
@@ -193,6 +324,7 @@ private fun Editor(
 private fun EditorIconButton(
     icon: ImageVector,
     contentDescription: String,
+    contentPadding: PaddingValues = PaddingValues(4.dp),
     onClick: () -> Unit
 ) {
     Button(
@@ -200,10 +332,11 @@ private fun EditorIconButton(
         shape = CircleShape,
         modifier = Modifier
             .size(40.dp),
-        contentPadding = PaddingValues(4.dp)
+        contentPadding = contentPadding,
+        colors = buttonColors(Purple500)
     ) {
         Icon(
-            icon, contentDescription, modifier = Modifier.fillMaxSize()
+            icon, contentDescription, modifier = Modifier.fillMaxSize(), tint = Color.White
         )
     }
 }
@@ -211,10 +344,9 @@ private fun EditorIconButton(
 @Composable
 fun ConversationsByTime(
     users: ChatUsersUiState,
-    conversations: Map<String, List<ChatUiState>>,
-    modifier: Modifier
+    conversations: Map<String, List<ChatUiState>>
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(Modifier.fillMaxSize()) {
         conversations.forEach { (time, conversations) ->
             item {
                 ConversationTime(time)
@@ -254,7 +386,10 @@ private fun ConversationTime(time: String) {
 }
 
 @Composable
-private fun Conversation(users: ChatUsersUiState, chat: ChatUiState) {
+private fun Conversation(
+    users: ChatUsersUiState,
+    chat: ChatUiState
+) {
     var isSelected by remember {
         mutableStateOf(false)
     }
@@ -412,9 +547,42 @@ fun ConversationsScreenPreview() {
     )
 }
 
-@Preview
+@Preview(name = "Light mode")
+@Preview(
+    name = "Dark mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true
+)
 @Composable
 fun EditorPreview() {
     Editor()
+}
+
+@Composable
+@Preview(name = "Light mode")
+fun ChatScreenEmojiSelectorPreview() {
+    ChatScreen(
+        rememberNavController(),
+        ChatUsersUiState(
+            User(1, "Jack", "https://placekitten.com/200/300"),
+            User(1, "John", "https://placekitten.com/200/300")
+        ),
+        mapOf(),
+        Selector.Emoji
+    )
+}
+
+@Composable
+@Preview(name = "Light mode")
+fun ChatScreenAttachmentSelectorPreview() {
+    ChatScreen(
+        rememberNavController(),
+        ChatUsersUiState(
+            User(1, "Jack", "https://placekitten.com/200/300"),
+            User(1, "John", "https://placekitten.com/200/300")
+        ),
+        mapOf(),
+        Selector.Attachment
+    )
 }
 

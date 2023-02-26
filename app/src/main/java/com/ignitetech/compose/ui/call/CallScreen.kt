@@ -3,7 +3,7 @@ package com.ignitetech.compose.ui.call
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -24,7 +24,7 @@ import com.ignitetech.compose.R
 import com.ignitetech.compose.data.call.Type
 import com.ignitetech.compose.data.call.Type.*
 import com.ignitetech.compose.data.user.User
-import com.ignitetech.compose.ui.UserAvatar
+import com.ignitetech.compose.ui.composable.UserAvatar
 import com.ignitetech.compose.ui.theme.Green500
 import com.ignitetech.compose.ui.theme.Red500
 
@@ -43,7 +43,7 @@ fun CallScreen(calls: Map<String, List<CallUiState>>) {
                 CallTime(time)
                 Spacer(modifier = Modifier.height(8.dp))
             }
-            itemsIndexed(calls) { callIndex, call ->
+            items(calls) { call ->
                 Row {
                     Call(call)
                 }

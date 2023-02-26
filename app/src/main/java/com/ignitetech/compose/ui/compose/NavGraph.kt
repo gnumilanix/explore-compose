@@ -15,9 +15,9 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.ignitetech.compose.home.OnboardScreen
 import com.ignitetech.compose.ui.Screens
-import com.ignitetech.compose.ui.ShowSystemBars
 import com.ignitetech.compose.ui.chat.ChatScreen
 import com.ignitetech.compose.ui.chat.ChatViewModel
+import com.ignitetech.compose.ui.composable.ShowSystemBars
 import com.ignitetech.compose.ui.home.HomeScreen
 import com.ignitetech.compose.ui.home.HomeViewModel
 import com.ignitetech.compose.ui.settings.SettingsScreen

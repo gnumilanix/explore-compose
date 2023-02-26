@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
     primary = Purple200,
@@ -42,4 +43,12 @@ fun ComposeTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composabl
         shapes = Shapes,
         content = content
     )
+}
+
+@Composable
+fun secondaryBackgroundColor(): Color {
+    return when {
+        MaterialTheme.colors.isLight -> Grey200
+        else -> Grey900Primary
+    }
 }

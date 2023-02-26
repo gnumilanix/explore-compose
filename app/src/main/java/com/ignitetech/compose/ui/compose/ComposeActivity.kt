@@ -3,7 +3,7 @@ package com.ignitetech.compose.ui.compose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.ignitetech.compose.ui.Content
+import com.ignitetech.compose.ui.composable.Content
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

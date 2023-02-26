@@ -15,6 +15,9 @@
     <string name="allow">Allow</string>
     <string name="deny">Deny</string>
     <string name="not_now">Not now</string>
+    <string name="document">Document</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
 
     <string name="camera_permission_title">Allow camera access</string>
     <string name="camera_permission_message">Compose needs camera permission to take photos for this feature</string>
@@ -40,5 +43,8 @@
     <string name="cd_call_outgoing">Outgoing call</string>
     <string name="cd_call_incoming_missed">Incoming missed call</string>
     <string name="cd_call_outgoing_missed">Outgoing missed call</string>
+    <string name="cd_document">Attach document</string>
+    <string name="cd_camera">Take photo</string>
+    <string name="cd_gallery">Select image</string>
 
 </resources>

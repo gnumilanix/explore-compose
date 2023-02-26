@@ -26,7 +26,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.ignitetech.compose.R
-import com.ignitetech.compose.ui.AppBarBackButton
+import com.ignitetech.compose.ui.composable.AppBarBackButtonIcon
 import com.ignitetech.compose.ui.permissions.PermissionHandling
 import com.ignitetech.compose.ui.permissions.PreviewPermissionState
 
@@ -58,13 +58,15 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = { Text(text = stringResource(id = R.string.settings)) },
-                navigationIcon = { AppBarBackButton(navController = navController) }
+                navigationIcon = { AppBarBackButtonIcon(navController = navController) }
             )
         }
     ) { padding ->
-        Column(modifier = Modifier
-            .padding(padding)
-            .padding(16.dp, 16.dp, 16.dp, 0.dp)) {
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .padding(16.dp, 16.dp, 16.dp, 0.dp)
+        ) {
             ProfileImage(permissionState)
             Text(
                 text = stringResource(R.string.lorem_ipsum),
