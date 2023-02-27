@@ -8,7 +8,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ignitetech.compose.R
 import com.ignitetech.compose.data.call.Type
 import com.ignitetech.compose.data.call.Type.*
@@ -30,12 +30,12 @@ import com.ignitetech.compose.ui.theme.Red500
 
 @Composable
 fun CallScreen(viewModel: CallViewModel = hiltViewModel()) {
-    val calls by viewModel.calls.collectAsState()
-    CallScreen(calls)
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    CallScreen(state.calls)
 }
 
 @Composable
-fun CallScreen(calls: Map<String, List<CallUiState>>) {
+fun CallScreen(calls: Map<String, List<CallUiState.CallDetail>>) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         calls.forEach { (time, calls) ->
             item {
@@ -75,7 +75,7 @@ private fun CallTime(time: String) {
 }
 
 @Composable
-private fun Call(call: CallUiState) {
+private fun Call(call: CallUiState.CallDetail) {
     Row(modifier = Modifier
         .clickable { }
         .padding(16.dp, 8.dp, 16.dp, 8.dp)
@@ -150,23 +150,23 @@ fun CallScreenPreview() {
     CallScreen(
         mapOf(
             "Today" to listOf(
-                CallUiState(
+                CallUiState.CallDetail(
                     0, 1000, INCOMING,
                     "February 19, 10:00",
                     User(1, "John", "https://placekitten.com/200/300")
                 )
             ),
             "Yesterday" to listOf(
-                CallUiState(
+                CallUiState.CallDetail(
                     0, 60000, OUTGOING,
                     "February 19, 10:00",
                     User(2, "Jane", "https://placekitten.com/200/100")
-                ), CallUiState(
+                ), CallUiState.CallDetail(
                     0, 0, INCOMING_MISSED,
                     "February 19, 10:00",
                     User(1, "John", "https://placekitten.com/200/300")
                 ),
-                CallUiState(
+                CallUiState.CallDetail(
                     0, 0, OUTGOING_MISSED,
                     "February 19, 10:00",
                     User(2, "Jane", "https://placekitten.com/200/100")

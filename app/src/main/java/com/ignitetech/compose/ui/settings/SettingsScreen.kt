@@ -79,7 +79,7 @@ fun SettingsScreen(
                 .padding(padding)
                 .padding(16.dp, 16.dp, 16.dp, 0.dp)
         ) {
-            ProfileImage(state, permissionState, onImageSelect)
+            ProfileImage(state.avatar, permissionState, onImageSelect)
             Text(
                 text = stringResource(state.message),
                 style = MaterialTheme.typography.body2,
@@ -94,7 +94,7 @@ fun SettingsScreen(
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 private fun ProfileImage(
-    state: SettingsUiState,
+    avatar: Any?,
     permissionState: @Composable (onPermissionResult: (Boolean) -> Unit) -> PermissionState,
     onImageSelect: (Bitmap?) -> Unit = {}
 ) {
@@ -116,7 +116,7 @@ private fun ProfileImage(
                 denialMessage = R.string.camera_permission_message_detail,
             ) { permissionHandle ->
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(state.avatar).build(),
+                    model = ImageRequest.Builder(LocalContext.current).data(avatar).build(),
                     placeholder = painterResource(id = R.drawable.baseline_person_24),
                     contentDescription = stringResource(R.string.cd_user_profile),
                     contentScale = ContentScale.Crop,
@@ -158,7 +158,7 @@ fun SettingsScreenPreview() {
 @OptIn(ExperimentalPermissionsApi::class)
 fun ProfileImagePreview() {
     ProfileImage(
-        state = SettingsUiState(),
+        null,
         permissionState = { PreviewPermissionState() },
         onImageSelect = {}
     )

@@ -12,6 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.*
@@ -29,9 +30,9 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     navController: NavController
 ) {
-    val tabs by viewModel.tabs.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    HomeScreen(navController, tabs)
+    HomeScreen(navController, state.tabs)
 }
 
 @OptIn(ExperimentalPagerApi::class)

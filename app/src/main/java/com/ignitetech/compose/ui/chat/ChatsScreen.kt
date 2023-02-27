@@ -7,13 +7,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ignitetech.compose.data.chat.Direction
@@ -26,12 +26,12 @@ fun ChatsScreen(
     navController: NavController,
     viewModel: ChatsViewModel = hiltViewModel()
 ) {
-    val chats by viewModel.chats.collectAsState()
-    ChatsScreen(navController, chats)
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    ChatsScreen(navController, state.chats)
 }
 
 @Composable
-fun ChatsScreen(navController: NavController, chats: List<ChatUiState>) {
+fun ChatsScreen(navController: NavController, chats: List<ChatsUiState.ChatDetail>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -44,7 +44,7 @@ fun ChatsScreen(navController: NavController, chats: List<ChatUiState>) {
 }
 
 @Composable
-private fun Chat(navController: NavController, chat: ChatUiState) {
+private fun Chat(navController: NavController, chat: ChatsUiState.ChatDetail) {
     Row(modifier = Modifier
         .clickable { navController.navigate(Screens.Chats.route(chat.sender!!.id)) }
         .padding(16.dp, 8.dp, 16.dp, 8.dp)
@@ -86,7 +86,7 @@ fun ChatsScreenPreview() {
     ChatsScreen(
         rememberNavController(),
         listOf(
-            ChatUiState(
+            ChatsUiState.ChatDetail(
                 1,
                 1,
                 "Hello Jack! How are you today? Can you me those presentations",
@@ -94,7 +94,7 @@ fun ChatsScreenPreview() {
                 "10:00",
                 User(1, "John", "https://placekitten.com/200/300")
             ),
-            ChatUiState(
+            ChatsUiState.ChatDetail(
                 2,
                 2,
                 "Hello Jack! How are you today? Can you me those presentations",

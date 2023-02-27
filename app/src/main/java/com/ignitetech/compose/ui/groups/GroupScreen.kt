@@ -12,7 +12,6 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,6 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.ignitetech.compose.R
 import com.ignitetech.compose.data.group.Group
@@ -33,8 +33,8 @@ import com.ignitetech.compose.ui.theme.Grey200
 
 @Composable
 fun GroupScreen(viewModel: GroupsViewModel = hiltViewModel()) {
-    val groups by viewModel.groups.collectAsState(listOf())
-    GroupScreen(groups)
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    GroupScreen(state.groups)
 }
 
 @Composable
@@ -129,14 +129,13 @@ fun GroupScreenPreview() {
         User(1, "Cindy", "https://placekitten.com/200/300"),
         User(1, "Mandy", "https://placekitten.com/200/300")
     )
-    GroupScreen(
-        listOf(
-            Group("Friends", moreUsers),
-            Group("Family", users),
-            Group("Friends", moreUsers),
-            Group("Family", users),
-            Group("Friends", moreUsers),
-            Group("Family", lotsOfUsers),
-        )
+    val groups = listOf(
+        Group("Friends", moreUsers),
+        Group("Family", users),
+        Group("Friends", moreUsers),
+        Group("Family", users),
+        Group("Friends", moreUsers),
+        Group("Family", lotsOfUsers),
     )
+    GroupScreen(groups)
 }

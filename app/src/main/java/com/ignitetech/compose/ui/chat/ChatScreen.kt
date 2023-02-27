@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -73,17 +74,15 @@ fun ChatScreen(
     navController: NavController,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
-    val user by viewModel.users.collectAsState(ChatUsersUiState())
-    val conversations by viewModel.chats.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
-    ChatScreen(navController, user, conversations)
+    ChatScreen(navController, state)
 }
 
 @Composable
 fun ChatScreen(
     navController: NavController,
-    users: ChatUsersUiState,
-    conversations: Map<String, List<ChatUiState>>,
+    state: ChatUiState,
     editorState: EditorState = EditorState.None
 ) {
     val scaffoldState = rememberScaffoldState()
@@ -91,7 +90,7 @@ fun ChatScreen(
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { AppBar(navController, users.recipient) }
+        topBar = { AppBar(navController, state.recipient) }
     ) { padding ->
         var showSelector by remember {
             mutableStateOf(editorState)
@@ -111,7 +110,7 @@ fun ChatScreen(
         Column(modifier = Modifier.padding(padding)) {
             Column(modifier = Modifier.weight(1.0f)) {
                 Box(modifier = Modifier.weight(1.0f)) {
-                    ConversationsByTime(users, conversations)
+                    ConversationsByTime(state)
 
                     if (showSelector is Selector) {
                         Box(modifier = Modifier
@@ -144,7 +143,7 @@ fun ChatScreen(
 private fun EmojiSelector() {
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
+            .clip(RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp))
             .background(secondaryBackgroundColor())
             .fillMaxWidth()
             .height(250.dp)
@@ -160,7 +159,7 @@ private fun AttachmentSelector() {
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier
-            .clip(RoundedCornerShape(8.dp, 8.dp, 0.dp, 0.dp))
+            .clip(RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp))
             .background(secondaryBackgroundColor())
             .fillMaxWidth()
             .padding(8.dp)
@@ -364,11 +363,10 @@ private fun EditorIconButton(
 
 @Composable
 fun ConversationsByTime(
-    users: ChatUsersUiState,
-    conversations: Map<String, List<ChatUiState>>
+    state: ChatUiState
 ) {
     LazyColumn(Modifier.fillMaxSize()) {
-        conversations.forEach { (time, conversations) ->
+        state.chats.forEach { (time, conversations) ->
             item {
                 ConversationTime(time)
                 Spacer(modifier = Modifier.height(2.dp))
@@ -376,12 +374,13 @@ fun ConversationsByTime(
             items(conversations) { conversation ->
                 Spacer(modifier = Modifier.height(4.dp))
                 Row {
-                    Conversation(users, conversation)
+                    Conversation(state.me, state.recipient, conversation)
                 }
             }
         }
     }
 }
+
 
 @Composable
 private fun ConversationTime(time: String) {
@@ -407,9 +406,10 @@ private fun ConversationTime(time: String) {
 }
 
 @Composable
-private fun Conversation(
-    users: ChatUsersUiState,
-    chat: ChatUiState
+fun Conversation(
+    me: User?,
+    recipient: User?,
+    chat: ChatsUiState.ChatDetail
 ) {
     var isSelected by remember {
         mutableStateOf(false)
@@ -425,8 +425,8 @@ private fun Conversation(
         .background(color = surfaceColor, shape = RoundedCornerShape(4.dp))
         .padding(16.dp, 0.dp, 16.dp, 0.dp)
     when (chat.direction) {
-        SENT -> ConversationSent(background, users.me, chat)
-        RECEIVED -> ConversationReceived(background, users.recipient, chat)
+        SENT -> ConversationSent(background, me, chat)
+        RECEIVED -> ConversationReceived(background, recipient, chat)
     }
 }
 
@@ -434,7 +434,7 @@ private fun Conversation(
 private fun ConversationReceived(
     modifier: Modifier,
     user: User?,
-    chat: ChatUiState
+    chat: ChatsUiState.ChatDetail
 ) {
     Row(
         modifier = modifier
@@ -453,7 +453,7 @@ private fun ConversationReceived(
 private fun ConversationSent(
     modifier: Modifier,
     user: User?,
-    chat: ChatUiState
+    chat: ChatsUiState.ChatDetail
 ) {
     Row(
         modifier = modifier
@@ -469,7 +469,7 @@ private fun ConversationSent(
 }
 
 @Composable
-private fun ConversationMessage(user: User?, chat: ChatUiState, textAlign: TextAlign) {
+private fun ConversationMessage(user: User?, chat: ChatsUiState.ChatDetail, textAlign: TextAlign) {
     Text(
         text = user?.name ?: "",
         color = Color(0xff43a047),
@@ -504,8 +504,9 @@ private fun ConversationMessage(user: User?, chat: ChatUiState, textAlign: TextA
 @Composable
 fun ConversationSentPreview() {
     Conversation(
-        ChatUsersUiState(me = User(1, "Jack", "https://placekitten.com/200/300")),
-        ChatUiState(
+        User(1, "Jack", "https://placekitten.com/200/300"),
+        User(1, "Jack", "https://placekitten.com/200/300"),
+        ChatsUiState.ChatDetail(
             1,
             1,
             "Hello Jack! How are you today? Can you me those presentations",
@@ -520,8 +521,9 @@ fun ConversationSentPreview() {
 @Composable
 fun ConversationReceivedPreview() {
     Conversation(
-        ChatUsersUiState(me = User(1, "John", "https://placekitten.com/200/300")),
-        ChatUiState(
+        User(1, "Jack", "https://placekitten.com/200/300"),
+        User(1, "Jack", "https://placekitten.com/200/300"),
+        ChatsUiState.ChatDetail(
             1,
             1,
             "Hello Jack! How are you today? Can you me those presentations",
@@ -541,27 +543,27 @@ fun ConversationReceivedPreview() {
 fun ConversationsScreenPreview() {
     ChatScreen(
         rememberNavController(),
-        ChatUsersUiState(
+        ChatUiState(
             User(1, "Jack", "https://placekitten.com/200/300"),
-            User(1, "John", "https://placekitten.com/200/300")
-        ),
-        mapOf(
-            "yesterday" to listOf(
-                ChatUiState(
-                    1,
-                    1,
-                    "Hello Jack! How are you today? Can you me those presentations",
-                    SENT,
-                    "22/02",
-                    User(1, "John", "https://placekitten.com/200/300")
-                ),
-                ChatUiState(
-                    2,
-                    2,
-                    "Hello John! I am good. How about you?",
-                    RECEIVED,
-                    "22/02",
-                    User(2, "Jane", "https://placekitten.com/200/100")
+            User(1, "John", "https://placekitten.com/200/300"),
+            mapOf(
+                "yesterday" to listOf(
+                    ChatsUiState.ChatDetail(
+                        1,
+                        1,
+                        "Hello Jack! How are you today? Can you me those presentations",
+                        SENT,
+                        "22/02",
+                        User(1, "John", "https://placekitten.com/200/300")
+                    ),
+                    ChatsUiState.ChatDetail(
+                        2,
+                        2,
+                        "Hello John! I am good. How about you?",
+                        RECEIVED,
+                        "22/02",
+                        User(2, "Jane", "https://placekitten.com/200/100")
+                    )
                 )
             )
         )
@@ -584,11 +586,11 @@ fun EditorPreview() {
 fun ChatScreenEmojiSelectorPreview() {
     ChatScreen(
         rememberNavController(),
-        ChatUsersUiState(
+        ChatUiState(
             User(1, "Jack", "https://placekitten.com/200/300"),
-            User(1, "John", "https://placekitten.com/200/300")
+            User(1, "John", "https://placekitten.com/200/300"),
+            mapOf()
         ),
-        mapOf(),
         EditorState.Emoji
     )
 }
@@ -598,11 +600,11 @@ fun ChatScreenEmojiSelectorPreview() {
 fun ChatScreenAttachmentSelectorPreview() {
     ChatScreen(
         rememberNavController(),
-        ChatUsersUiState(
+        ChatUiState(
             User(1, "Jack", "https://placekitten.com/200/300"),
-            User(1, "John", "https://placekitten.com/200/300")
+            User(1, "John", "https://placekitten.com/200/300"),
+            mapOf()
         ),
-        mapOf(),
         EditorState.Attachment
     )
 }

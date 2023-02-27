@@ -1,47 +1,30 @@
 package com.ignitetech.compose.ui.groups
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ignitetech.compose.data.group.Group
-import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.data.group.GroupRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
-class GroupsViewModel @Inject constructor() : ViewModel() {
-    private val _groups = MutableStateFlow(listOf<Group>())
-    val groups = _groups.asStateFlow()
+class GroupsViewModel @Inject constructor(
+    groupsRepository: GroupRepository
+) : ViewModel() {
+    private val groups = groupsRepository.getGroups()
 
-    init {
-        _groups.update { sampleGroups }
-    }
+    val state = groups
+        .map { GroupsUiState(it) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(2_000),
+            initialValue = GroupsUiState()
+        )
 }
 
-private val users = listOf(
-    User(1, "John", "https://placekitten.com/200/300"),
-    User(1, "Jack", "https://placekitten.com/300/200")
-)
-private val moreUsers = listOf(
-    User(1, "John", "https://placekitten.com/200/300"),
-    User(1, "Jack", "https://placekitten.com/300/200"),
-    User(1, "Jane", "https://placekitten.com/200/400")
-)
-private val lotsOfUsers = listOf(
-    User(1, "John", "https://placekitten.com/200/300"),
-    User(1, "Jack", "https://placekitten.com/300/200"),
-    User(1, "Jane", "https://placekitten.com/200/400"),
-    User(1, "Amy", "https://placekitten.com/300/300"),
-    User(1, "Cindy", "https://placekitten.com/200/200"),
-    User(1, "Mandy", "https://placekitten.com/400/300")
-)
-
-val sampleGroups = listOf(
-    Group("Friends", moreUsers),
-    Group("Family", users),
-    Group("Friends", moreUsers),
-    Group("Family", users),
-    Group("Friends", moreUsers),
-    Group("Family", lotsOfUsers),
+data class GroupsUiState(
+    val groups: List<Group> = listOf()
 )

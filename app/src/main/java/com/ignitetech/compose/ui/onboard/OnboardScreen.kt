@@ -1,4 +1,4 @@
-package com.ignitetech.compose.home
+package com.ignitetech.compose.ui.onboard
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -13,7 +13,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.ignitetech.compose.R
+import com.ignitetech.compose.ui.Screens
+import com.ignitetech.compose.ui.home.HomeViewModel
+
+@Composable
+fun OnboardScreen(
+    viewModel: HomeViewModel,
+    navController: NavController
+) {
+    OnboardScreen {
+        viewModel.onboardComplete()
+        navController.navigate(Screens.Home.route) {
+            popUpTo(Screens.Onboard.route) {
+                inclusive = true
+            }
+        }
+    }
+}
 
 @Composable
 fun OnboardScreen(onBoardComplete: () -> Unit = {}) {

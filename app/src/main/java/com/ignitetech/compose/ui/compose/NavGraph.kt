@@ -13,13 +13,13 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-import com.ignitetech.compose.home.OnboardScreen
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.chat.ChatScreen
 import com.ignitetech.compose.ui.chat.ChatViewModel
 import com.ignitetech.compose.ui.composable.ShowSystemBars
 import com.ignitetech.compose.ui.home.HomeScreen
 import com.ignitetech.compose.ui.home.HomeViewModel
+import com.ignitetech.compose.ui.onboard.OnboardScreen
 import com.ignitetech.compose.ui.settings.SettingsScreen
 import com.ignitetech.compose.ui.splash.SplashScreen
 
@@ -33,7 +33,7 @@ fun SetUpNavGraph(viewModel: HomeViewModel = hiltViewModel()) {
         startDestination = Screens.Splash.route
     ) {
         composable(route = Screens.Splash.route) {
-            SplashScreen(viewModel, navController)
+            SplashScreen(navController, viewModel)
         }
         composable(route = Screens.Home.route) {
             ShowSystemBars(show = true)
@@ -44,14 +44,7 @@ fun SetUpNavGraph(viewModel: HomeViewModel = hiltViewModel()) {
             exitTransition = slideOutOfContainerLeft()
         ) {
             ShowSystemBars(show = true)
-            OnboardScreen {
-                viewModel.onboardComplete()
-                navController.navigate(Screens.Home.route) {
-                    popUpTo(Screens.Onboard.route) {
-                        inclusive = true
-                    }
-                }
-            }
+            OnboardScreen(viewModel, navController)
         }
         composable(
             route = Screens.Chats.route,

@@ -2,7 +2,7 @@ package com.ignitetech.compose.data.user
 
 import com.ignitetech.compose.data.preference.PreferenceRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,13 +12,11 @@ class UserRepository @Inject constructor(
     private val preferenceRepository: PreferenceRepository
 ) {
     fun getMe(): Flow<User?> {
-        return flow {
-            emit(
-                when (val userId = preferenceRepository.userId()) {
-                    null -> null
-                    else -> userDao.getUser(userId)
-                }
-            )
+        return preferenceRepository.userIdFlow.map {
+            when (it) {
+                null -> null
+                else -> userDao.getUser(it)
+            }
         }
     }
 

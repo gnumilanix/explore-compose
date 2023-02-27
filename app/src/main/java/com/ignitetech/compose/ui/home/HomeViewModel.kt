@@ -1,13 +1,17 @@
 package com.ignitetech.compose.ui.home
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ignitetech.compose.data.preference.PreferenceRepository
 import com.ignitetech.compose.ui.Screens.HomeScreens
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,20 +19,35 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val preferenceRepository: PreferenceRepository
 ) : ViewModel() {
-    val onboardComplete = preferenceRepository.onboardCompleteFlow
+    private val onboardComplete = preferenceRepository.onboardCompleteFlow
+    private var tabs by mutableStateOf(defaultTabs)
 
-    private val _tabs = MutableStateFlow(listOf<HomeScreens>())
-    val tabs = _tabs.asStateFlow()
-
-    init {
-        _tabs.update {
-            listOf(HomeScreens.Chats, HomeScreens.Groups, HomeScreens.Calls)
-        }
-    }
+    val state = combine(
+        onboardComplete,
+        snapshotFlow { tabs }
+    ) { onboardComplete, tabs ->
+        HomeUiState(onboardComplete, tabs)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(2_000),
+        initialValue = HomeUiState()
+    )
 
     fun onboardComplete() {
         viewModelScope.launch {
+            preferenceRepository.userId(0) //TODO Temporary hardcoded value
             preferenceRepository.onboardComplete(true)
         }
     }
 }
+
+private val defaultTabs = listOf(
+    HomeScreens.Chats,
+    HomeScreens.Groups,
+    HomeScreens.Calls
+)
+
+data class HomeUiState(
+    val onboardComplete: Boolean? = null,
+    val tabs: List<HomeScreens> = defaultTabs
+)

@@ -8,7 +8,6 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import com.ignitetech.compose.data.preference.PreferenceRepository.PreferencesKeys.ONBOARD_COMPLETE
 import com.ignitetech.compose.data.preference.PreferenceRepository.PreferencesKeys.USER_ID
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -24,19 +23,14 @@ class PreferenceRepository @Inject constructor(
         it[ONBOARD_COMPLETE] ?: false
     }
 
-    suspend fun onboardComplete(): Boolean {
-        return preferences()[ONBOARD_COMPLETE] ?: false
+    val userIdFlow: Flow<Int?> = dataStore.data.map {
+        it[USER_ID]
     }
 
     suspend fun onboardComplete(completed: Boolean) {
         dataStore.edit {
             it[ONBOARD_COMPLETE] = completed
         }
-    }
-
-    suspend fun userId(): Int? {
-        //TODO Temporary hardcoded value
-        return preferences()[USER_ID] ?: 0
     }
 
     suspend fun userId(userId: Int?) {
@@ -47,6 +41,4 @@ class PreferenceRepository @Inject constructor(
             }
         }
     }
-
-    private suspend fun preferences() = dataStore.data.first().toPreferences()
 }

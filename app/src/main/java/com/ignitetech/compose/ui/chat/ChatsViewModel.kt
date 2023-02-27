@@ -7,10 +7,9 @@ import com.ignitetech.compose.data.chat.ChatWithSender
 import com.ignitetech.compose.data.chat.Direction
 import com.ignitetech.compose.data.user.User
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
@@ -21,28 +20,28 @@ import javax.inject.Inject
 class ChatsViewModel @Inject constructor(
     chatRepository: ChatRepository
 ) : ViewModel() {
-    private val _chats = MutableStateFlow(listOf<ChatUiState>())
-    val chats = _chats.asStateFlow()
+    private val dateFormatter = DateTimeFormatter.ofPattern("MM/dd")
+    private val timeZone = TimeZone.currentSystemDefault()
 
-    init {
-        val dateFormatter = DateTimeFormatter.ofPattern("MM/dd")
-        val timeZone = TimeZone.currentSystemDefault()
-        viewModelScope.launch {
-            chatRepository.getLatestChats().collect { chats ->
-                _chats.update {
-                    chats.map {
-                        it.toUiState(dateFormatter, timeZone)
-                    }
-                }
-            }
+    private val _chats = chatRepository.getLatestChats().map { chats ->
+        chats.map {
+            it.asDetail(dateFormatter, timeZone)
         }
     }
+
+    var state = _chats.map { chats ->
+        ChatsUiState(chats)
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(2_000),
+        initialValue = ChatsUiState()
+    )
 }
 
-fun ChatWithSender.toUiState(
+fun ChatWithSender.asDetail(
     dateFormatter: DateTimeFormatter,
     timeZone: TimeZone
-) = ChatUiState(
+) = ChatsUiState.ChatDetail(
     chat.id,
     chat.userId,
     chat.message,
@@ -51,11 +50,15 @@ fun ChatWithSender.toUiState(
     sender
 )
 
-data class ChatUiState(
-    val id: Int,
-    val userId: Int,
-    val message: String,
-    val direction: Direction,
-    val date: String,
-    val sender: User? = null,
-)
+data class ChatsUiState(
+    val chats: List<ChatDetail> = listOf()
+) {
+    data class ChatDetail(
+        val id: Int,
+        val userId: Int,
+        val message: String,
+        val direction: Direction,
+        val date: String,
+        val sender: User? = null,
+    )
+}
