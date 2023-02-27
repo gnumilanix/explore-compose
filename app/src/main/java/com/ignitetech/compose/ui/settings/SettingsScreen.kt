@@ -1,6 +1,7 @@
 package com.ignitetech.compose.ui.settings
 
 import android.Manifest
+import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
@@ -38,20 +40,28 @@ fun SettingsScreen(
     navController: NavController,
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
-    SettingsScreen(navController = navController, permissionState = { onPermissionResult ->
-        rememberPermissionState(Manifest.permission.CAMERA) {
-            onPermissionResult(
-                it
-            )
-        }
-    })
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    SettingsScreen(
+        navController = navController,
+        state = state,
+        permissionState = { onPermissionResult ->
+            rememberPermissionState(Manifest.permission.CAMERA) {
+                onPermissionResult(
+                    it
+                )
+            }
+        },
+        onImageSelect = { viewModel.updateAvatar(it) }
+    )
 }
 
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 fun SettingsScreen(
     navController: NavController,
+    state: SettingsUiState,
     permissionState: @Composable (onPermissionResult: (Boolean) -> Unit) -> PermissionState,
+    onImageSelect: (Bitmap?) -> Unit = {}
 ) {
     val scaffoldState = rememberScaffoldState()
 
@@ -69,9 +79,9 @@ fun SettingsScreen(
                 .padding(padding)
                 .padding(16.dp, 16.dp, 16.dp, 0.dp)
         ) {
-            ProfileImage(permissionState)
+            ProfileImage(state, permissionState, onImageSelect)
             Text(
-                text = stringResource(R.string.lorem_ipsum),
+                text = stringResource(state.message),
                 style = MaterialTheme.typography.body2,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -84,22 +94,21 @@ fun SettingsScreen(
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 private fun ProfileImage(
+    state: SettingsUiState,
     permissionState: @Composable (onPermissionResult: (Boolean) -> Unit) -> PermissionState,
+    onImageSelect: (Bitmap?) -> Unit = {}
 ) {
     Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
                 .size(150.dp)
         ) {
-            var image by remember {
-                mutableStateOf<Any?>("https://placekitten.com/200/400")
-            }
             PermissionHandling(
                 permissionState = permissionState,
                 activityResultLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.TakePicturePreview()
                 ) {
-                    image = it
+                    onImageSelect(it)
                 },
                 rationaleTitle = R.string.camera_permission_title,
                 rationaleMessage = R.string.camera_permission_message,
@@ -107,7 +116,7 @@ private fun ProfileImage(
                 denialMessage = R.string.camera_permission_message_detail,
             ) { permissionHandle ->
                 AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current).data(image).build(),
+                    model = ImageRequest.Builder(LocalContext.current).data(state.avatar).build(),
                     placeholder = painterResource(id = R.drawable.baseline_person_24),
                     contentDescription = stringResource(R.string.cd_user_profile),
                     contentScale = ContentScale.Crop,
@@ -138,13 +147,20 @@ private fun ProfileImage(
 @OptIn(ExperimentalPermissionsApi::class)
 fun SettingsScreenPreview() {
     SettingsScreen(
-        navController = rememberNavController()
-    ) { PreviewPermissionState() }
+        navController = rememberNavController(),
+        state = SettingsUiState(),
+        permissionState = { PreviewPermissionState() }
+    )
 }
 
 @Preview
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 fun ProfileImagePreview() {
-    ProfileImage { PreviewPermissionState() }
+    ProfileImage(
+        state = SettingsUiState(),
+        permissionState = { PreviewPermissionState() },
+        onImageSelect = {}
+    )
+
 }
