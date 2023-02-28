@@ -42,6 +42,8 @@ define Android UI) and other state of art Android libraries
 
 <img alt="screenshot" height="600" src="screenshots/emulator_chats.png" width="280"/>
 <img alt="screenshot" height="600" src="screenshots/emulator_chat.png" width="280"/>
+<img alt="screenshot" height="600" src="screenshots/emulator_chat_contextual.png" width="280"/>
+<img alt="screenshot" height="600" src="screenshots/emulator_chat_emoji.png" width="280"/>
 
 #### Groups
 
