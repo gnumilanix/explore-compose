@@ -106,7 +106,9 @@ private fun AppBar(navController: NavController) {
                     }
                 }
             }
-        })
+        },
+        modifier = Modifier.statusBarsPadding()
+    )
 }
 
 @Composable

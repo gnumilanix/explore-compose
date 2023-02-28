@@ -6,11 +6,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -47,6 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ignitetech.compose.R
 import com.ignitetech.compose.data.chat.Direction.RECEIVED
 import com.ignitetech.compose.data.chat.Direction.SENT
@@ -87,10 +85,13 @@ fun ChatScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+    var inSelectionMode by remember {
+        mutableStateOf(false)
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { AppBar(navController, state.recipient) }
+        topBar = { AppBar(navController, inSelectionMode, state.recipient) }
     ) { padding ->
         var showSelector by remember {
             mutableStateOf(editorState)
@@ -98,19 +99,39 @@ fun ChatScreen(
         var dismissActions by remember {
             mutableStateOf(false)
         }
+        val selectedItems = remember {
+            mutableStateMapOf<Int, Boolean>()
+        }
+
+        inSelectionMode = selectedItems.containsValue(true)
 
         BackHandler(showSelector is Selector) {
             showSelector = EditorState.None
+        }
+
+        BackHandler(inSelectionMode) {
+            selectedItems.clear()
         }
 
         if (showSelector != EditorState.Typing) {
             LocalFocusManager.current.clearFocus()
         }
 
+        if (showSelector != EditorState.None) {
+            selectedItems.clear()
+        }
+
         Column(modifier = Modifier.padding(padding)) {
             Column(modifier = Modifier.weight(1.0f)) {
                 Box(modifier = Modifier.weight(1.0f)) {
-                    ConversationsByTime(state)
+                    ConversationsByTime(
+                        state = state,
+                        chatSelected = { selected, chat ->
+                            selectedItems[chat.id] = selected
+                        },
+                        isSelected = { selectedItems[it.id] ?: false },
+                        inSelectionMode = { selectedItems.containsValue(true) }
+                    )
 
                     if (showSelector is Selector) {
                         Box(modifier = Modifier
@@ -144,7 +165,7 @@ private fun EmojiSelector() {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp))
-            .background(secondaryBackgroundColor())
+            .background(ComposeTheme.colors.secondaryBackgroundColor)
             .fillMaxWidth()
             .height(250.dp)
     ) {
@@ -160,7 +181,7 @@ private fun AttachmentSelector() {
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp, 16.dp, 0.dp, 0.dp))
-            .background(secondaryBackgroundColor())
+            .background(ComposeTheme.colors.secondaryBackgroundColor)
             .fillMaxWidth()
             .padding(8.dp)
     ) {
@@ -231,9 +252,20 @@ private fun AttachmentButton(
 @Composable
 private fun AppBar(
     navController: NavController,
+    inSelectionMode: Boolean,
     user: User?
 ) {
-    TopAppBar {
+    val systemUiController = rememberSystemUiController()
+
+    MaterialTheme.colors.isLight
+    systemUiController.setStatusBarColor(
+        color = if (inSelectionMode) ComposeTheme.colors.contextualStatusBar else ComposeTheme.colors.statusBar,
+    )
+    TopAppBar(
+        modifier = Modifier.statusBarsPadding(),
+        backgroundColor = if (inSelectionMode) ComposeTheme.colors.contextualAppBar else ComposeTheme.colors.appBar,
+        contentColor = if (inSelectionMode) ComposeTheme.colors.contextualAppBarContent else ComposeTheme.colors.appBarContent,
+    ) {
         Row(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
@@ -269,7 +301,7 @@ private fun Editor(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Surface(
-            color = secondaryBackgroundColor(),
+            color = ComposeTheme.colors.secondaryBackgroundColor,
             modifier = Modifier
                 .weight(1.0f),
             shape = RoundedCornerShape(32.dp),
@@ -363,7 +395,10 @@ private fun EditorIconButton(
 
 @Composable
 fun ConversationsByTime(
-    state: ChatUiState
+    state: ChatUiState,
+    chatSelected: (Boolean, ChatsUiState.ChatDetail) -> Unit,
+    isSelected: (ChatsUiState.ChatDetail) -> Boolean,
+    inSelectionMode: () -> Boolean
 ) {
     LazyColumn(Modifier.fillMaxSize()) {
         state.chats.forEach { (time, conversations) ->
@@ -374,7 +409,14 @@ fun ConversationsByTime(
             items(conversations) { conversation ->
                 Spacer(modifier = Modifier.height(4.dp))
                 Row {
-                    Conversation(state.me, state.recipient, conversation)
+                    Conversation(
+                        state.me,
+                        state.recipient,
+                        conversation,
+                        isSelected(conversation),
+                        chatSelected = chatSelected,
+                        inSelectionMode = inSelectionMode
+                    )
                 }
             }
         }
@@ -406,22 +448,32 @@ private fun ConversationTime(time: String) {
 }
 
 @Composable
+@OptIn(ExperimentalFoundationApi::class)
 fun Conversation(
     me: User?,
     recipient: User?,
-    chat: ChatsUiState.ChatDetail
+    chat: ChatsUiState.ChatDetail,
+    selected: Boolean,
+    chatSelected: (Boolean, ChatsUiState.ChatDetail) -> Unit,
+    inSelectionMode: () -> Boolean
 ) {
-    var isSelected by remember {
-        mutableStateOf(false)
-    }
     val surfaceColor by animateColorAsState(
-        if (isSelected) Green50 else Color.Transparent,
+        if (selected) ComposeTheme.colors.secondaryBackgroundColor else Color.Transparent,
         tween(durationMillis = 500, delayMillis = 40, easing = LinearOutSlowInEasing)
     )
 
     val background = Modifier
         .fillMaxWidth()
-        .clickable { isSelected = !isSelected }
+        .combinedClickable(
+            onClick = {
+                if (inSelectionMode()) {
+                    chatSelected(!selected, chat)
+                }
+            },
+            onLongClick = {
+                chatSelected(true, chat)
+            },
+        )
         .background(color = surfaceColor, shape = RoundedCornerShape(4.dp))
         .padding(16.dp, 0.dp, 16.dp, 0.dp)
     when (chat.direction) {
@@ -513,7 +565,10 @@ fun ConversationSentPreview() {
             SENT,
             "22/02",
             User(1, "John", "https://placekitten.com/200/300")
-        )
+        ),
+        false,
+        { _, _ -> },
+        { false }
     )
 }
 
@@ -530,7 +585,10 @@ fun ConversationReceivedPreview() {
             RECEIVED,
             "22/02",
             User(1, "John", "https://placekitten.com/200/300")
-        )
+        ),
+        false,
+        { _, _ -> },
+        { false }
     )
 }
 

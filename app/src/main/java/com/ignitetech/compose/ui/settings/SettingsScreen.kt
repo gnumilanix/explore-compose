@@ -70,7 +70,8 @@ fun SettingsScreen(
         topBar = {
             TopAppBar(
                 title = { Text(text = stringResource(id = R.string.settings)) },
-                navigationIcon = { AppBarBackButtonIcon(navController = navController) }
+                navigationIcon = { AppBarBackButtonIcon(navController = navController) },
+                modifier = Modifier.statusBarsPadding()
             )
         }
     ) { padding ->
