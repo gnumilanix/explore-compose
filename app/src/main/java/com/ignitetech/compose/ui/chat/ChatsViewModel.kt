@@ -6,26 +6,21 @@ import com.ignitetech.compose.data.chat.ChatRepository
 import com.ignitetech.compose.data.chat.ChatWithSender
 import com.ignitetech.compose.data.chat.Direction
 import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.domain.FormatInstantUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toJavaLocalDateTime
-import kotlinx.datetime.toLocalDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
 class ChatsViewModel @Inject constructor(
-    chatRepository: ChatRepository
+    chatRepository: ChatRepository,
+    formatInstantUseCase: FormatInstantUseCase
 ) : ViewModel() {
-    private val dateFormatter = DateTimeFormatter.ofPattern("MM/dd")
-    private val timeZone = TimeZone.currentSystemDefault()
-
     private val _chats = chatRepository.getLatestChats().map { chats ->
         chats.map {
-            it.asDetail(dateFormatter, timeZone)
+            it.asDetail(formatInstantUseCase)
         }
     }
 
@@ -39,14 +34,13 @@ class ChatsViewModel @Inject constructor(
 }
 
 fun ChatWithSender.asDetail(
-    dateFormatter: DateTimeFormatter,
-    timeZone: TimeZone
+    formatInstantUseCase: FormatInstantUseCase
 ) = ChatsUiState.ChatDetail(
     chat.id,
     chat.userId,
     chat.message,
     chat.direction,
-    dateFormatter.format(chat.date.toLocalDateTime(timeZone).toJavaLocalDateTime()),
+    formatInstantUseCase("MM/dd", chat.date),
     sender
 )
 

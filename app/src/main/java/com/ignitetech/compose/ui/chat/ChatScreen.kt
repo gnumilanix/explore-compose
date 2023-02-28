@@ -589,7 +589,7 @@ private fun ConversationMessage(user: User?, chat: ChatsUiState.ChatDetail, text
         style = MaterialTheme.typography.subtitle2,
         maxLines = 1,
         modifier = Modifier
-            .padding(start = 4.dp, end = 4.dp)
+            .padding(start = 8.dp, end = 8.dp)
             .fillMaxWidth(),
         textAlign = textAlign
     )
@@ -603,7 +603,7 @@ private fun ConversationMessage(user: User?, chat: ChatsUiState.ChatDetail, text
             text = chat.message,
             style = MaterialTheme.typography.body2,
             maxLines = 4,
-            modifier = Modifier.padding(4.dp)
+            modifier = Modifier.padding(8.dp, 4.dp, 8.dp, 4.dp)
         )
     }
 }
