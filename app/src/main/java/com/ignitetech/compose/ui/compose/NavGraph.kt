@@ -13,6 +13,7 @@ import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.chat.ChatScreen
 import com.ignitetech.compose.ui.chat.ChatViewModel
@@ -26,6 +27,7 @@ import com.ignitetech.compose.ui.splash.SplashScreen
 @Composable
 @OptIn(ExperimentalAnimationApi::class)
 fun SetUpNavGraph(viewModel: HomeViewModel = hiltViewModel()) {
+    val systemUiController = rememberSystemUiController()
     val navController = rememberAnimatedNavController()
 
     AnimatedNavHost(
@@ -33,17 +35,17 @@ fun SetUpNavGraph(viewModel: HomeViewModel = hiltViewModel()) {
         startDestination = Screens.Splash.route
     ) {
         composable(route = Screens.Splash.route) {
-            SplashScreen(navController, viewModel)
+            SplashScreen(systemUiController, navController, viewModel)
         }
         composable(route = Screens.Home.route) {
-            ShowSystemBars(show = true)
+            ShowSystemBars(systemUiController, show = true)
             HomeScreen(viewModel, navController)
         }
         composable(
             route = Screens.Onboard.route,
             exitTransition = slideOutOfContainerLeft()
         ) {
-            ShowSystemBars(show = true)
+            ShowSystemBars(systemUiController, show = true)
             OnboardScreen(viewModel, navController)
         }
         composable(
@@ -54,13 +56,14 @@ fun SetUpNavGraph(viewModel: HomeViewModel = hiltViewModel()) {
             enterTransition = slideIntoContainerRight(),
             exitTransition = slideOutOfContainerRight()
         ) {
-            ChatScreen(navController)
+            ChatScreen(systemUiController, navController)
         }
         composable(
             route = Screens.Settings.route,
             enterTransition = slideIntoContainerRight(),
             exitTransition = slideOutOfContainerRight()
         ) {
+            ShowSystemBars(systemUiController, show = true)
             SettingsScreen(navController, viewModel = hiltViewModel())
         }
     }

@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.systemuicontroller.SystemUiController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ignitetech.compose.R
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.composable.ShowSystemBars
@@ -26,15 +28,23 @@ import com.ignitetech.compose.ui.home.HomeViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavHostController, viewModel: HomeViewModel) {
+fun SplashScreen(
+    systemUiController: SystemUiController,
+    navController: NavHostController,
+    viewModel: HomeViewModel
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    SplashScreen(navController, state)
+    SplashScreen(systemUiController, navController, state)
 }
 
 @Composable
-fun SplashScreen(navController: NavHostController, state: HomeUiState) {
-    ShowSystemBars(show = false)
+fun SplashScreen(
+    systemUiController: SystemUiController,
+    navController: NavHostController,
+    state: HomeUiState
+) {
+    ShowSystemBars(systemUiController, show = false)
     LaunchedEffect(state.onboardComplete) {
         delay(1000) //TODO wait for db seed to complete
 
@@ -72,5 +82,5 @@ fun SplashScreen(navController: NavHostController, state: HomeUiState) {
 @Composable
 @OptIn(ExperimentalAnimationApi::class)
 fun SplashScreenPreview() {
-    SplashScreen(rememberAnimatedNavController(), HomeUiState())
+    SplashScreen(rememberSystemUiController(), rememberAnimatedNavController(), HomeUiState())
 }

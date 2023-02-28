@@ -37,6 +37,8 @@
     <string name="cd_new_chat">New chat</string>
     <string name="cd_search_conversation">Search conversation</string>
     <string name="cd_archive_chat">Archive chat</string>
+    <string name="cd_copy_chat">Delete chat</string>
+    <string name="cd_delete_chat">Copy chat</string>
     <string name="cd_more_items">More items</string>
     <string name="cd_call">Call</string>
     <string name="cd_call_incoming">Incoming call</string>

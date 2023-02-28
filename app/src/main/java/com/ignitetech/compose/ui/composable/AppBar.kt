@@ -11,8 +11,8 @@ import androidx.navigation.NavController
 import com.ignitetech.compose.R
 
 @Composable
-fun AppBarBackButton(navController: NavController) {
-    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
+fun AppBarBackButton(navController: NavController, alpha: Float = ContentAlpha.high) {
+    CompositionLocalProvider(LocalContentAlpha provides alpha) {
         AppBarBackButtonIcon(navController)
     }
 }

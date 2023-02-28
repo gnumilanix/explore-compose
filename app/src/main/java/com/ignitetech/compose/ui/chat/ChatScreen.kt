@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -44,6 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ignitetech.compose.R
 import com.ignitetech.compose.data.chat.Direction.RECEIVED
@@ -69,16 +71,18 @@ sealed class EditorState {
 
 @Composable
 fun ChatScreen(
+    systemUiController: SystemUiController,
     navController: NavController,
     viewModel: ChatViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    ChatScreen(navController, state)
+    ChatScreen(systemUiController, navController, state)
 }
 
 @Composable
 fun ChatScreen(
+    systemUiController: SystemUiController,
     navController: NavController,
     state: ChatUiState,
     editorState: EditorState = EditorState.None
@@ -88,19 +92,27 @@ fun ChatScreen(
     var inSelectionMode by remember {
         mutableStateOf(false)
     }
+    val selectedItems = remember {
+        mutableStateMapOf<Int, Boolean>()
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
-        topBar = { AppBar(navController, inSelectionMode, state.recipient) }
+        topBar = {
+            AppBar(
+                systemUiController,
+                navController,
+                inSelectionMode,
+                selectedItems,
+                state.recipient
+            )
+        }
     ) { padding ->
         var showSelector by remember {
             mutableStateOf(editorState)
         }
         var dismissActions by remember {
             mutableStateOf(false)
-        }
-        val selectedItems = remember {
-            mutableStateMapOf<Int, Boolean>()
         }
 
         inSelectionMode = selectedItems.containsValue(true)
@@ -119,6 +131,10 @@ fun ChatScreen(
 
         if (showSelector != EditorState.None) {
             selectedItems.clear()
+        }
+
+        if (inSelectionMode) {
+            showSelector = EditorState.None
         }
 
         Column(modifier = Modifier.padding(padding)) {
@@ -251,38 +267,81 @@ private fun AttachmentButton(
 
 @Composable
 private fun AppBar(
+    systemUiController: SystemUiController,
     navController: NavController,
     inSelectionMode: Boolean,
+    selectedItems: Map<Int, Boolean>,
     user: User?
 ) {
-    val systemUiController = rememberSystemUiController()
+    val transition = updateTransition(inSelectionMode, label = "inSelectionMode")
+    val transitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Color> =
+        { tween(500) }
+    val statusBarColor by transition.animateColor(
+        label = "statusBarColor",
+        transitionSpec = transitionSpec
+    ) { isInSelectionMode ->
+        if (isInSelectionMode) ComposeTheme.colors.contextualStatusBar else ComposeTheme.colors.statusBar
+    }
+    val backgroundColor by transition.animateColor(
+        label = "actionBarColor",
+        transitionSpec = transitionSpec
+    ) { isInSelectionMode ->
+        if (isInSelectionMode) ComposeTheme.colors.contextualAppBar else ComposeTheme.colors.appBar
+    }
+    val contentColor by transition.animateColor(
+        label = "actionBarContentColor",
+        transitionSpec = transitionSpec
+    ) { isInSelectionMode ->
+        if (isInSelectionMode) ComposeTheme.colors.contextualAppBarContent else ComposeTheme.colors.appBarContent
+    }
 
-    MaterialTheme.colors.isLight
-    systemUiController.setStatusBarColor(
-        color = if (inSelectionMode) ComposeTheme.colors.contextualStatusBar else ComposeTheme.colors.statusBar,
-    )
+    systemUiController.setStatusBarColor(color = statusBarColor)
+
     TopAppBar(
         modifier = Modifier.statusBarsPadding(),
-        backgroundColor = if (inSelectionMode) ComposeTheme.colors.contextualAppBar else ComposeTheme.colors.appBar,
-        contentColor = if (inSelectionMode) ComposeTheme.colors.contextualAppBarContent else ComposeTheme.colors.appBarContent,
+        backgroundColor = backgroundColor,
+        contentColor = contentColor,
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AppBarBackButton(navController)
-            AsyncImage(
-                model = user?.avatar,
-                placeholder = painterResource(id = R.drawable.baseline_person_24),
-                contentDescription = stringResource(R.string.cd_current_user),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .padding(8.dp, 0.dp, 8.dp, 0.dp)
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .border(1.5.dp, Color(0xff76d275), CircleShape)
-            )
-            AppBarTitle(title = user?.name ?: "", modifier = Modifier.weight(1.0f))
+            if (inSelectionMode) {
+                AppBarBackButton(navController, ContentAlpha.medium)
+                Text(
+                    text = "${selectedItems.filterValues { it }.size}",
+                    style = MaterialTheme.typography.h6,
+                    modifier = Modifier
+                        .padding(8.dp, 0.dp, 8.dp, 0.dp)
+                        .weight(1.0f)
+                )
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_delete_24),
+                        contentDescription = stringResource(id = R.string.cd_delete_chat)
+                    )
+                }
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_content_copy_24),
+                        contentDescription = stringResource(id = R.string.cd_copy_chat)
+                    )
+                }
+            } else {
+                AppBarBackButton(navController)
+                AsyncImage(
+                    model = user?.avatar,
+                    placeholder = painterResource(id = R.drawable.baseline_person_24),
+                    contentDescription = stringResource(R.string.cd_current_user),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .padding(8.dp, 0.dp, 8.dp, 0.dp)
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .border(1.5.dp, Color(0xff76d275), CircleShape)
+                )
+                AppBarTitle(title = user?.name ?: "", modifier = Modifier.weight(1.0f))
+            }
         }
     }
 }
@@ -471,7 +530,9 @@ fun Conversation(
                 }
             },
             onLongClick = {
-                chatSelected(true, chat)
+                if (!inSelectionMode()) {
+                    chatSelected(true, chat)
+                }
             },
         )
         .background(color = surfaceColor, shape = RoundedCornerShape(4.dp))
@@ -548,6 +609,34 @@ private fun ConversationMessage(user: User?, chat: ChatsUiState.ChatDetail, text
 }
 
 @Preview(name = "Light mode")
+@Composable
+fun AppBarPreview() {
+    ComposeTheme {
+        AppBar(
+            systemUiController = rememberSystemUiController(),
+            navController = rememberNavController(),
+            inSelectionMode = false,
+            selectedItems = mapOf(),
+            user = User(1, "Jack", "https://placekitten.com/200/300")
+        )
+    }
+}
+
+@Preview(name = "Light mode")
+@Composable
+fun AppBarSelectionModePreview() {
+    ComposeTheme {
+        AppBar(
+            systemUiController = rememberSystemUiController(),
+            navController = rememberNavController(),
+            inSelectionMode = true,
+            selectedItems = mapOf(1 to true),
+            user = User(1, "Jack", "https://placekitten.com/200/300")
+        )
+    }
+}
+
+@Preview(name = "Light mode")
 @Preview(
     name = "Dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
@@ -599,33 +688,36 @@ fun ConversationReceivedPreview() {
 )
 @Composable
 fun ConversationsScreenPreview() {
-    ChatScreen(
-        rememberNavController(),
-        ChatUiState(
-            User(1, "Jack", "https://placekitten.com/200/300"),
-            User(1, "John", "https://placekitten.com/200/300"),
-            mapOf(
-                "yesterday" to listOf(
-                    ChatsUiState.ChatDetail(
-                        1,
-                        1,
-                        "Hello Jack! How are you today? Can you me those presentations",
-                        SENT,
-                        "22/02",
-                        User(1, "John", "https://placekitten.com/200/300")
-                    ),
-                    ChatsUiState.ChatDetail(
-                        2,
-                        2,
-                        "Hello John! I am good. How about you?",
-                        RECEIVED,
-                        "22/02",
-                        User(2, "Jane", "https://placekitten.com/200/100")
+    ComposeTheme {
+        ChatScreen(
+            rememberSystemUiController(),
+            rememberNavController(),
+            ChatUiState(
+                User(1, "Jack", "https://placekitten.com/200/300"),
+                User(1, "John", "https://placekitten.com/200/300"),
+                mapOf(
+                    "yesterday" to listOf(
+                        ChatsUiState.ChatDetail(
+                            1,
+                            1,
+                            "Hello Jack! How are you today? Can you me those presentations",
+                            SENT,
+                            "22/02",
+                            User(1, "John", "https://placekitten.com/200/300")
+                        ),
+                        ChatsUiState.ChatDetail(
+                            2,
+                            2,
+                            "Hello John! I am good. How about you?",
+                            RECEIVED,
+                            "22/02",
+                            User(2, "Jane", "https://placekitten.com/200/100")
+                        )
                     )
                 )
             )
         )
-    )
+    }
 }
 
 @Preview(name = "Light mode")
@@ -636,34 +728,42 @@ fun ConversationsScreenPreview() {
 )
 @Composable
 fun EditorPreview() {
-    Editor()
+    ComposeTheme {
+        Editor()
+    }
 }
 
 @Composable
 @Preview(name = "Light mode")
 fun ChatScreenEmojiSelectorPreview() {
-    ChatScreen(
-        rememberNavController(),
-        ChatUiState(
-            User(1, "Jack", "https://placekitten.com/200/300"),
-            User(1, "John", "https://placekitten.com/200/300"),
-            mapOf()
-        ),
-        EditorState.Emoji
-    )
+    ComposeTheme {
+        ChatScreen(
+            rememberSystemUiController(),
+            rememberNavController(),
+            ChatUiState(
+                User(1, "Jack", "https://placekitten.com/200/300"),
+                User(1, "John", "https://placekitten.com/200/300"),
+                mapOf()
+            ),
+            EditorState.Emoji
+        )
+    }
 }
 
 @Composable
 @Preview(name = "Light mode")
 fun ChatScreenAttachmentSelectorPreview() {
-    ChatScreen(
-        rememberNavController(),
-        ChatUiState(
-            User(1, "Jack", "https://placekitten.com/200/300"),
-            User(1, "John", "https://placekitten.com/200/300"),
-            mapOf()
-        ),
-        EditorState.Attachment
-    )
+    ComposeTheme {
+        ChatScreen(
+            rememberSystemUiController(),
+            rememberNavController(),
+            ChatUiState(
+                User(1, "Jack", "https://placekitten.com/200/300"),
+                User(1, "John", "https://placekitten.com/200/300"),
+                mapOf()
+            ),
+            EditorState.Attachment
+        )
+    }
 }
 

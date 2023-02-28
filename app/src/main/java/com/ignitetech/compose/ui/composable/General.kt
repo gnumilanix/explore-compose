@@ -16,15 +16,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.accompanist.systemuicontroller.SystemUiController
 import com.ignitetech.compose.R
 import com.ignitetech.compose.ui.theme.ComposeTheme
 
 @Composable
-fun ShowSystemBars(show: Boolean) {
-    rememberSystemUiController().apply {
-        setStatusBarColor(colorResource(if (show) R.color.background else R.color.background_splash))
-    }
+fun ShowSystemBars(systemUiController: SystemUiController, show: Boolean) {
+    systemUiController.setStatusBarColor(colorResource(if (show) R.color.background else R.color.background_splash))
 }
 
 @Composable
