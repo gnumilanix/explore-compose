@@ -69,6 +69,35 @@ sealed class EditorState {
     object Attachment : EditorState(), Selector
 }
 
+@Stable
+class ContextualModeState(
+    initialSelectedItems: Map<Int, Boolean> = mapOf()
+) {
+    private var _selectedItems = initialSelectedItems.entries
+        .map { it.key to it.value }
+        .toMutableStateMap()
+
+    var selectedItems: Map<Int, Boolean> = mapOf()
+        get() = _selectedItems
+        private set
+
+    var inSelectionMode: Boolean = false
+        get() = selectedItems.containsValue(true)
+        private set
+
+    fun clearSelection() {
+        _selectedItems.clear()
+    }
+
+    fun selected(id: Int, selected: Boolean) {
+        _selectedItems[id] = selected
+    }
+
+    fun isSelected(id: Int): Boolean {
+        return _selectedItems.getOrElse(id) { false }
+    }
+}
+
 @Composable
 fun ChatScreen(
     systemUiController: SystemUiController,
@@ -89,11 +118,8 @@ fun ChatScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-    var inSelectionMode by remember {
-        mutableStateOf(false)
-    }
-    val selectedItems = remember {
-        mutableStateMapOf<Int, Boolean>()
+    val contextualModeState = remember {
+        ContextualModeState()
     }
 
     Scaffold(
@@ -102,8 +128,7 @@ fun ChatScreen(
             AppBar(
                 systemUiController,
                 navController,
-                inSelectionMode,
-                selectedItems,
+                contextualModeState,
                 state.recipient
             )
         }
@@ -111,18 +136,13 @@ fun ChatScreen(
         var showSelector by remember {
             mutableStateOf(editorState)
         }
-        var dismissActions by remember {
-            mutableStateOf(false)
-        }
-
-        inSelectionMode = selectedItems.containsValue(true)
 
         BackHandler(showSelector is Selector) {
             showSelector = EditorState.None
         }
 
-        BackHandler(inSelectionMode) {
-            selectedItems.clear()
+        BackHandler(contextualModeState.inSelectionMode) {
+            contextualModeState.clearSelection()
         }
 
         if (showSelector != EditorState.Typing) {
@@ -130,10 +150,10 @@ fun ChatScreen(
         }
 
         if (showSelector != EditorState.None) {
-            selectedItems.clear()
+            contextualModeState.clearSelection()
         }
 
-        if (inSelectionMode) {
+        if (contextualModeState.inSelectionMode) {
             showSelector = EditorState.None
         }
 
@@ -142,11 +162,8 @@ fun ChatScreen(
                 Box(modifier = Modifier.weight(1.0f)) {
                     ConversationsByTime(
                         state = state,
-                        chatSelected = { selected, chat ->
-                            selectedItems[chat.id] = selected
-                        },
-                        isSelected = { selectedItems[it.id] ?: false },
-                        inSelectionMode = { selectedItems.containsValue(true) }
+                        contextualModeState = contextualModeState,
+                        chatSelected = { _, _ -> showSelector = EditorState.None }
                     )
 
                     if (showSelector is Selector) {
@@ -162,7 +179,10 @@ fun ChatScreen(
                 }
                 Editor(scaffoldState, scope) {
                     showSelector = it
-                    dismissActions = it != EditorState.None
+
+                    if (it != EditorState.None) {
+                        contextualModeState.clearSelection()
+                    }
                 }
             }
 
@@ -269,11 +289,11 @@ private fun AttachmentButton(
 private fun AppBar(
     systemUiController: SystemUiController,
     navController: NavController,
-    inSelectionMode: Boolean,
-    selectedItems: Map<Int, Boolean>,
+    contextualModeState: ContextualModeState,
     user: User?
 ) {
-    val transition = updateTransition(inSelectionMode, label = "inSelectionMode")
+    val transition =
+        updateTransition(contextualModeState.inSelectionMode, label = "inSelectionMode")
     val transitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Color> =
         { tween(500) }
     val statusBarColor by transition.animateColor(
@@ -306,22 +326,22 @@ private fun AppBar(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (inSelectionMode) {
+            if (contextualModeState.inSelectionMode) {
                 AppBarBackButton(navController, ContentAlpha.medium)
                 Text(
-                    text = "${selectedItems.filterValues { it }.size}",
+                    text = "${contextualModeState.selectedItems.filterValues { it }.size}",
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier
                         .padding(8.dp, 0.dp, 8.dp, 0.dp)
                         .weight(1.0f)
                 )
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { contextualModeState.clearSelection() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_delete_24),
                         contentDescription = stringResource(id = R.string.cd_delete_chat)
                     )
                 }
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { contextualModeState.clearSelection() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_content_copy_24),
                         contentDescription = stringResource(id = R.string.cd_copy_chat)
@@ -455,9 +475,8 @@ private fun EditorIconButton(
 @Composable
 fun ConversationsByTime(
     state: ChatUiState,
-    chatSelected: (Boolean, ChatsUiState.ChatDetail) -> Unit,
-    isSelected: (ChatsUiState.ChatDetail) -> Boolean,
-    inSelectionMode: () -> Boolean
+    contextualModeState: ContextualModeState,
+    chatSelected: (Int, Boolean) -> Unit
 ) {
     LazyColumn(Modifier.fillMaxSize()) {
         state.chats.forEach { (time, conversations) ->
@@ -472,9 +491,8 @@ fun ConversationsByTime(
                         state.me,
                         state.recipient,
                         conversation,
-                        isSelected(conversation),
-                        chatSelected = chatSelected,
-                        inSelectionMode = inSelectionMode
+                        contextualModeState,
+                        chatSelected = chatSelected
                     )
                 }
             }
@@ -512,12 +530,12 @@ fun Conversation(
     me: User?,
     recipient: User?,
     chat: ChatsUiState.ChatDetail,
-    selected: Boolean,
-    chatSelected: (Boolean, ChatsUiState.ChatDetail) -> Unit,
-    inSelectionMode: () -> Boolean
+    contextualModeState: ContextualModeState,
+    chatSelected: (Int, Boolean) -> Unit
 ) {
+    val id = chat.id
     val surfaceColor by animateColorAsState(
-        if (selected) ComposeTheme.colors.secondaryBackgroundColor else Color.Transparent,
+        if (contextualModeState.isSelected(id)) ComposeTheme.colors.secondaryBackgroundColor else Color.Transparent,
         tween(durationMillis = 500, delayMillis = 40, easing = LinearOutSlowInEasing)
     )
 
@@ -525,13 +543,16 @@ fun Conversation(
         .fillMaxWidth()
         .combinedClickable(
             onClick = {
-                if (inSelectionMode()) {
-                    chatSelected(!selected, chat)
+                if (contextualModeState.inSelectionMode) {
+                    val selected = !contextualModeState.isSelected(id)
+                    contextualModeState.selected(id, selected)
+                    chatSelected(id, selected)
                 }
             },
             onLongClick = {
-                if (!inSelectionMode()) {
-                    chatSelected(true, chat)
+                if (!contextualModeState.inSelectionMode) {
+                    contextualModeState.selected(id, true)
+                    chatSelected(id, true)
                 }
             },
         )
@@ -615,8 +636,7 @@ fun AppBarPreview() {
         AppBar(
             systemUiController = rememberSystemUiController(),
             navController = rememberNavController(),
-            inSelectionMode = false,
-            selectedItems = mapOf(),
+            contextualModeState = ContextualModeState(),
             user = User(1, "Jack", "https://placekitten.com/200/300")
         )
     }
@@ -629,8 +649,7 @@ fun AppBarSelectionModePreview() {
         AppBar(
             systemUiController = rememberSystemUiController(),
             navController = rememberNavController(),
-            inSelectionMode = true,
-            selectedItems = mapOf(1 to true),
+            contextualModeState = ContextualModeState(),
             user = User(1, "Jack", "https://placekitten.com/200/300")
         )
     }
@@ -655,10 +674,8 @@ fun ConversationSentPreview() {
             "22/02",
             User(1, "John", "https://placekitten.com/200/300")
         ),
-        false,
-        { _, _ -> },
-        { false }
-    )
+        ContextualModeState()
+    ) { _, _ -> }
 }
 
 @Preview(name = "Light mode")
@@ -675,10 +692,8 @@ fun ConversationReceivedPreview() {
             "22/02",
             User(1, "John", "https://placekitten.com/200/300")
         ),
-        false,
-        { _, _ -> },
-        { false }
-    )
+        ContextualModeState()
+    ) { _, _ -> }
 }
 
 @Preview(
