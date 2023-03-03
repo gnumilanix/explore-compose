@@ -9,7 +9,7 @@ import javax.inject.Inject
 class InstantToLocalDateUseCase @Inject constructor(
     private val timeZone: TimeZone
 ) {
-    operator fun invoke(date: Instant): LocalDate {
-        return date.toLocalDateTime(timeZone).date
+    operator fun invoke(instant: Instant): LocalDate {
+        return instant.toLocalDateTime(timeZone).date
     }
 }

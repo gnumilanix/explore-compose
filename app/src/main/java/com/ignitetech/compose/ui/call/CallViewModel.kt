@@ -45,7 +45,7 @@ class CallViewModel @Inject constructor(
 private fun CallWithTarget.asDetail(
     formatInstantUseCase: FormatInstantUseCase
 ) = CallUiState.CallDetail(
-    call.id,
+    call.id!!,
     call.duration,
     call.type,
     formatInstantUseCase("MMMM dd, HH:mm", call.date),

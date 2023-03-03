@@ -13,7 +13,7 @@ import kotlinx.serialization.Transient
 @Entity
 @Serializable
 data class Call(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Int? = null,
     @ColumnInfo(name = "user_id") val userId: Int,
     @ColumnInfo(name = "duration") val duration: Int,
     @ColumnInfo(name = "type") val type: Type,
@@ -21,7 +21,7 @@ data class Call(
     @Ignore @Transient val caller: User? = null,
 ) {
     constructor(
-        id: Int,
+        id: Int?,
         userId: Int,
         duration: Int,
         type: Type,

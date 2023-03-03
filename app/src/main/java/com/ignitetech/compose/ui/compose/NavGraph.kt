@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
@@ -26,9 +27,8 @@ import com.ignitetech.compose.ui.splash.SplashScreen
 
 @Composable
 @OptIn(ExperimentalAnimationApi::class)
-fun SetUpNavGraph(viewModel: HomeViewModel = hiltViewModel()) {
+fun SetUpNavGraph(navController: NavHostController, viewModel: HomeViewModel = hiltViewModel()) {
     val systemUiController = rememberSystemUiController()
-    val navController = rememberAnimatedNavController()
 
     AnimatedNavHost(
         navController = navController,
