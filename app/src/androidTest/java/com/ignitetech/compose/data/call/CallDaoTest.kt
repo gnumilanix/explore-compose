@@ -9,7 +9,7 @@ import app.cash.turbine.test
 import com.ignitetech.compose.data.AppDatabase
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.data.user.UserDao
-import com.ignitetech.compose.utility.TestDispatcherRule
+import com.ignitetech.compose.utility.rules.TestDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock

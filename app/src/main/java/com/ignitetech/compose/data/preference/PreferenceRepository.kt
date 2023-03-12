@@ -14,7 +14,7 @@ import javax.inject.Inject
 class PreferenceRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
-    private object PreferencesKeys {
+    internal object PreferencesKeys {
         val ONBOARD_COMPLETE = booleanPreferencesKey("onboard_complete")
         val USER_ID = intPreferencesKey("user_id")
     }

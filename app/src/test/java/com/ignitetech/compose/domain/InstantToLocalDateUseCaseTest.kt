@@ -1,38 +1,38 @@
 package com.ignitetech.compose.domain
 
 import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit4.MockKRule
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import kotlinx.datetime.*
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
 
-@RunWith(MockitoJUnitRunner::class)
 class InstantToLocalDateUseCaseTest {
-    @Mock
+    @get:Rule
+    val mockkRule = MockKRule(this)
+
+    @MockK
     private lateinit var timeZone: TimeZone
 
-    @Mock
+    @MockK
     private lateinit var localDate: LocalDate
 
-    @Mock
+    @MockK
     private lateinit var localDateTime: LocalDateTime
 
-    @Mock
+    @MockK
     private lateinit var instant: Instant
 
     @Test
     fun invoke_ConvertsInstant_ToLocalDate() {
-        timeZone = mock {
+        timeZone = mockk {
 
         }
-        localDateTime = mock {
-            on { date } doReturn localDate
+        localDateTime = mockk {
+            every { date } returns localDate
         }
 
         instant = mockk {}

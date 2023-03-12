@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -25,6 +26,7 @@ import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.composable.ShowSystemBars
 import com.ignitetech.compose.ui.home.HomeUiState
 import com.ignitetech.compose.ui.home.HomeViewModel
+import com.ignitetech.compose.utility.drawableId
 import kotlinx.coroutines.delay
 
 @Composable
@@ -72,7 +74,9 @@ fun SplashScreen(
         Icon(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
             contentDescription = null,
-            modifier = Modifier.size(192.dp),
+            modifier = Modifier
+                .size(192.dp)
+                .semantics { drawableId = R.drawable.ic_launcher_foreground },
             tint = MaterialTheme.colors.primary
         )
     }

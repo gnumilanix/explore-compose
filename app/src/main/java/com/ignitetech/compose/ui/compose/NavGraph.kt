@@ -13,7 +13,6 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.chat.ChatScreen
@@ -27,7 +26,7 @@ import com.ignitetech.compose.ui.splash.SplashScreen
 
 @Composable
 @OptIn(ExperimentalAnimationApi::class)
-fun SetUpNavGraph(navController: NavHostController, viewModel: HomeViewModel = hiltViewModel()) {
+fun SetUpNavGraph(navController: NavHostController, viewModel: HomeViewModel) {
     val systemUiController = rememberSystemUiController()
 
     AnimatedNavHost(
@@ -56,7 +55,7 @@ fun SetUpNavGraph(navController: NavHostController, viewModel: HomeViewModel = h
             enterTransition = slideIntoContainerRight(),
             exitTransition = slideOutOfContainerRight()
         ) {
-            ChatScreen(systemUiController, navController)
+            ChatScreen(systemUiController, navController, hiltViewModel())
         }
         composable(
             route = Screens.Settings.route,

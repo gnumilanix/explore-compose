@@ -18,7 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ignitetech.compose.R
 import com.ignitetech.compose.data.call.Type
@@ -29,7 +28,7 @@ import com.ignitetech.compose.ui.theme.Green500
 import com.ignitetech.compose.ui.theme.Red500
 
 @Composable
-fun CallScreen(viewModel: CallViewModel = hiltViewModel()) {
+fun CallScreen(viewModel: CallViewModel) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     CallScreen(state.calls)
 }

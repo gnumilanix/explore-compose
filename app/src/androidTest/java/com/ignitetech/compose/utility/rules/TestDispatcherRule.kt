@@ -1,4 +1,4 @@
-package com.ignitetech.compose.utility
+package com.ignitetech.compose.utility.rules
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

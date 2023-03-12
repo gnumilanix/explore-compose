@@ -12,6 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -180,9 +181,9 @@ private fun TabContents(
     ) {
         if (!LocalInspectionMode.current) {
             when (tabs[it]) {
-                HomeScreens.Chats -> ChatsScreen(navController)
-                HomeScreens.Groups -> GroupScreen()
-                else -> CallScreen()
+                HomeScreens.Chats -> ChatsScreen(navController, viewModel = hiltViewModel())
+                HomeScreens.Groups -> GroupScreen(viewModel = hiltViewModel())
+                else -> CallScreen(viewModel = hiltViewModel())
             }
         }
     }
