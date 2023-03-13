@@ -1,9 +1,9 @@
 package com.ignitetech.compose.domain
 
 import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
-import io.mockk.mockk
 import io.mockk.mockkStatic
 import junit.framework.TestCase.assertEquals
 import kotlinx.datetime.*
@@ -26,20 +26,14 @@ class InstantToLocalDateUseCaseTest {
     @MockK
     private lateinit var instant: Instant
 
+    @InjectMockKs
+    private lateinit var instantToLocalDateUseCase: InstantToLocalDateUseCase
+
     @Test
     fun invoke_ConvertsInstant_ToLocalDate() {
-        timeZone = mockk {
-
-        }
-        localDateTime = mockk {
-            every { date } returns localDate
-        }
-
-        instant = mockk {}
         mockkStatic("kotlinx.datetime.TimeZoneKt")
+        every { localDateTime.date } returns localDate
         every { instant.toLocalDateTime(timeZone) } returns localDateTime
-
-        val instantToLocalDateUseCase = InstantToLocalDateUseCase(timeZone)
 
         assertEquals(instantToLocalDateUseCase(instant), localDate)
     }

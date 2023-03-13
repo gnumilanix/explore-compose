@@ -16,15 +16,19 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.accompanist.navigation.animation.AnimatedComposeNavigator
 import com.ignitetech.compose.R
 import com.ignitetech.compose.data.preference.PreferenceRepository
+import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.compose.SetUpNavGraph
 import com.ignitetech.compose.ui.home.HomeViewModel
 import com.ignitetech.compose.utility.Constants
+import com.ignitetech.compose.utility.extensions.destinationRoute
+import com.ignitetech.compose.utility.extensions.waitUntilDoesNotExist
 import com.ignitetech.compose.utility.matchers.hasDrawable
 import io.mockk.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.*
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -73,5 +77,21 @@ class SplashScreenKtTest {
     fun navHost_startDestination_is_splashScreen() = runTest {
         composeTestRule.onNode(hasDrawable(R.drawable.ic_launcher_foreground))
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun navHost_navigatesToHomeScreen_if_onboardComplete() = runTest {
+        preferenceRepository.onboardComplete(true)
+        composeTestRule.waitUntilDoesNotExist(hasDrawable(R.drawable.ic_launcher_foreground))
+
+        Assert.assertEquals(Screens.Home.route, navController.destinationRoute)
+    }
+
+    @Test
+    fun navHost_navigatesToOnboardScreen_if_onboardIncomplete() = runTest {
+        preferenceRepository.onboardComplete(false)
+        composeTestRule.waitUntilDoesNotExist(hasDrawable(R.drawable.ic_launcher_foreground))
+
+        Assert.assertEquals(Screens.Onboard.route, navController.destinationRoute)
     }
 }
