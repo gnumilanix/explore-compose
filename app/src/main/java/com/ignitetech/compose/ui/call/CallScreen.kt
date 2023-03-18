@@ -67,7 +67,7 @@ private fun CallTime(time: String) {
                 color = Color(0xff607d8b),
                 style = MaterialTheme.typography.caption,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.width(IntrinsicSize.Max),
+                modifier = Modifier.width(IntrinsicSize.Max)
             )
         }
     }
@@ -75,9 +75,10 @@ private fun CallTime(time: String) {
 
 @Composable
 private fun Call(call: CallUiState.CallDetail) {
-    Row(modifier = Modifier
-        .clickable { }
-        .padding(16.dp, 8.dp, 16.dp, 8.dp)
+    Row(
+        modifier = Modifier
+            .clickable { }
+            .padding(16.dp, 8.dp, 16.dp, 8.dp)
     ) {
         UserAvatar(call.target.avatar)
         Column(
@@ -150,23 +151,32 @@ fun CallScreenPreview() {
         mapOf(
             "Today" to listOf(
                 CallUiState.CallDetail(
-                    0, 1000, INCOMING,
+                    0,
+                    1000,
+                    INCOMING,
                     "February 19, 10:00",
                     User(1, "John", "https://placekitten.com/200/300")
                 )
             ),
             "Yesterday" to listOf(
                 CallUiState.CallDetail(
-                    0, 60000, OUTGOING,
+                    0,
+                    60000,
+                    OUTGOING,
                     "February 19, 10:00",
                     User(2, "Jane", "https://placekitten.com/200/100")
-                ), CallUiState.CallDetail(
-                    0, 0, INCOMING_MISSED,
+                ),
+                CallUiState.CallDetail(
+                    0,
+                    0,
+                    INCOMING_MISSED,
                     "February 19, 10:00",
                     User(1, "John", "https://placekitten.com/200/300")
                 ),
                 CallUiState.CallDetail(
-                    0, 0, OUTGOING_MISSED,
+                    0,
+                    0,
+                    OUTGOING_MISSED,
                     "February 19, 10:00",
                     User(2, "Jane", "https://placekitten.com/200/100")
                 )

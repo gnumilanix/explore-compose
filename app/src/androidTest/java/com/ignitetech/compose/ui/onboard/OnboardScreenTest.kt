@@ -58,12 +58,15 @@ class OnboardScreenTest {
         composeTestRule.activity.setContent {
             navController = TestNavHostController(LocalContext.current).apply {
                 navigatorProvider.addNavigator(AnimatedComposeNavigator())
-                setGraph(createGraph(Screens.Splash.route, null) {
-                    composable(route = Screens.Splash.route) {
-                    }
-                    composable(route = Screens.Home.route) {
-                    }
-                }, null)
+                setGraph(
+                    createGraph(Screens.Splash.route, null) {
+                        composable(route = Screens.Splash.route) {
+                        }
+                        composable(route = Screens.Home.route) {
+                        }
+                    },
+                    null
+                )
             }
             OnboardScreen(navController, hiltViewModel())
         }

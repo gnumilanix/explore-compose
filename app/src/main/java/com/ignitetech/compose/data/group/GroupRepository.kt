@@ -7,8 +7,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GroupRepository @Inject constructor(
-) {
+class GroupRepository @Inject constructor() {
     private val users = listOf(
         User(1, "John", "https://placekitten.com/200/300"),
         User(1, "Jack", "https://placekitten.com/300/200")
@@ -36,7 +35,7 @@ class GroupRepository @Inject constructor(
                     Group("Friends", moreUsers),
                     Group("Family", users),
                     Group("Friends", moreUsers),
-                    Group("Family", lotsOfUsers),
+                    Group("Family", lotsOfUsers)
                 )
             )
         }

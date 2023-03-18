@@ -44,9 +44,10 @@ fun ChatsScreen(navController: NavController, chats: List<ChatsUiState.ChatDetai
 
 @Composable
 private fun Chat(navController: NavController, chat: ChatsUiState.ChatDetail) {
-    Row(modifier = Modifier
-        .clickable { navController.navigate(Screens.Chats.route(chat.sender!!.id)) }
-        .padding(16.dp, 8.dp, 16.dp, 8.dp)
+    Row(
+        modifier = Modifier
+            .clickable { navController.navigate(Screens.Chats.route(chat.sender!!.id)) }
+            .padding(16.dp, 8.dp, 16.dp, 8.dp)
     ) {
         UserAvatar(chat.sender?.avatar)
         Column(

@@ -23,7 +23,7 @@ class DatabaseSeedWorker @AssistedInject constructor(
     @Assisted workerParameters: WorkerParameters,
     private val userDao: UserDao,
     private val chatDao: ChatDao,
-    private val callDao: CallDao,
+    private val callDao: CallDao
 ) : CoroutineWorker(context, workerParameters) {
     override suspend fun doWork(): Result {
         return try {

@@ -54,7 +54,6 @@ fun OnboardScreen(onBoardComplete: () -> Unit = {}) {
             Text(text = stringResource(id = R.string.begin))
         }
     }
-
 }
 
 @Composable

@@ -104,7 +104,7 @@ private fun ProfileImage(
                 .size(150.dp)
         ) {
             PermissionHandling(
-                permissionState = permissionState,
+                permissionStateProvider = permissionState,
                 activityResultLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.TakePicturePreview()
                 ) {
@@ -113,7 +113,7 @@ private fun ProfileImage(
                 rationaleTitle = R.string.camera_permission_title,
                 rationaleMessage = R.string.camera_permission_message,
                 denialTitle = R.string.camera_permission_title,
-                denialMessage = R.string.camera_permission_message_detail,
+                denialMessage = R.string.camera_permission_message_detail
             ) { permissionHandle ->
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current).data(avatar).build(),
@@ -162,5 +162,4 @@ fun ProfileImagePreview() {
         permissionState = { PreviewPermissionState() },
         onImageSelect = {}
     )
-
 }

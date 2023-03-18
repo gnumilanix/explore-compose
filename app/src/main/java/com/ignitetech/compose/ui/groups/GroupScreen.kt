@@ -134,7 +134,7 @@ fun GroupScreenPreview() {
         Group("Friends", moreUsers),
         Group("Family", users),
         Group("Friends", moreUsers),
-        Group("Family", lotsOfUsers),
+        Group("Family", lotsOfUsers)
     )
     GroupScreen(groups)
 }

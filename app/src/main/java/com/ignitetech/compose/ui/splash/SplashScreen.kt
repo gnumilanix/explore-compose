@@ -48,7 +48,7 @@ fun SplashScreen(
 ) {
     ShowSystemBars(systemUiController, show = false)
     LaunchedEffect(state.onboardComplete) {
-        delay(1000) //TODO wait for db seed to complete
+        delay(1000) // TODO wait for db seed to complete
 
         val screen = when (state.onboardComplete) {
             true -> Screens.Home.route

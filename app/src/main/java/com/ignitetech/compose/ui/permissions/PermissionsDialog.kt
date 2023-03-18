@@ -20,7 +20,7 @@ import com.ignitetech.compose.R
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 fun <O> PermissionHandling(
-    permissionState: @Composable (onPermissionResult: (Boolean) -> Unit) -> PermissionState,
+    permissionStateProvider: @Composable (onPermissionResult: (Boolean) -> Unit) -> PermissionState,
     activityResultLauncher: ManagedActivityResultLauncher<Void?, O>,
     @StringRes rationaleTitle: Int,
     @StringRes rationaleMessage: Int,
@@ -37,7 +37,7 @@ fun <O> PermissionHandling(
     var permissionAlreadyRequested by remember {
         mutableStateOf(false)
     }
-    val permissionState = permissionState {
+    val permissionState = permissionStateProvider {
         permissionAlreadyRequested = true
 
         if (it) {
@@ -195,9 +195,11 @@ fun PermissionDeniedDialog(
 }
 
 fun Context.startApplicationSettings() {
-    startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-        data = Uri.fromParts("package", packageName, null)
-    })
+    startActivity(
+        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts("package", packageName, null)
+        }
+    )
 }
 
 @Preview

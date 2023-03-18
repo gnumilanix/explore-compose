@@ -166,14 +166,16 @@ fun ChatScreen(
                     )
 
                     if (showSelector is Selector) {
-                        Box(modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Transparent)
-                            .pointerInput(Unit) {
-                                detectTapGestures(onTap = {
-                                    showSelector = EditorState.None
-                                })
-                            })
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Transparent)
+                                .pointerInput(Unit) {
+                                    detectTapGestures(onTap = {
+                                        showSelector = EditorState.None
+                                    })
+                                }
+                        )
                     }
                 }
                 Editor(scaffoldState, scope) {
@@ -280,7 +282,6 @@ private fun AttachmentButton(
                 .fillMaxWidth()
                 .padding(4.dp)
         )
-
     }
 }
 
@@ -319,7 +320,7 @@ private fun AppBar(
     TopAppBar(
         modifier = Modifier.statusBarsPadding(),
         backgroundColor = backgroundColor,
-        contentColor = contentColor,
+        contentColor = contentColor
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -382,7 +383,7 @@ private fun Editor(
             color = ComposeTheme.colors.secondaryBackgroundColor,
             modifier = Modifier
                 .weight(1.0f),
-            shape = RoundedCornerShape(32.dp),
+            shape = RoundedCornerShape(32.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -440,7 +441,8 @@ private fun Editor(
         }
         Spacer(modifier = Modifier.width(4.dp))
         EditorIconButton(
-            Icons.Default.Send, stringResource(R.string.cd_send_message),
+            Icons.Default.Send,
+            stringResource(R.string.cd_send_message),
             PaddingValues(8.dp)
         ) {
             scope.launch {
@@ -466,7 +468,10 @@ private fun EditorIconButton(
         colors = buttonColors(Purple500)
     ) {
         Icon(
-            icon, contentDescription, modifier = Modifier.fillMaxSize(), tint = Color.White
+            icon,
+            contentDescription,
+            modifier = Modifier.fillMaxSize(),
+            tint = Color.White
         )
     }
 }
@@ -499,7 +504,6 @@ fun ConversationsByTime(
     }
 }
 
-
 @Composable
 private fun ConversationTime(time: String) {
     Column(
@@ -517,7 +521,7 @@ private fun ConversationTime(time: String) {
                 color = Color(0xff607d8b),
                 style = MaterialTheme.typography.caption,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.width(IntrinsicSize.Max),
+                modifier = Modifier.width(IntrinsicSize.Max)
             )
         }
     }
@@ -553,7 +557,7 @@ fun Conversation(
                     contextualModeState.selected(id, true)
                     chatSelected(id, true)
                 }
-            },
+            }
         )
         .background(color = surfaceColor, shape = RoundedCornerShape(4.dp))
         .padding(16.dp, 0.dp, 16.dp, 0.dp)
@@ -780,4 +784,3 @@ fun ChatScreenAttachmentSelectorPreview() {
         )
     }
 }
-

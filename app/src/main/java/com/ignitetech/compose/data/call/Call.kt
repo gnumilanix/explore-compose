@@ -18,7 +18,8 @@ data class Call(
     @ColumnInfo(name = "duration") val duration: Int,
     @ColumnInfo(name = "type") val type: Type,
     @ColumnInfo(name = "date") val date: Instant = Clock.System.now(),
-    @Ignore @Transient val caller: User? = null,
+    @Ignore @Transient
+    val caller: User? = null
 ) {
     constructor(
         id: Int?,

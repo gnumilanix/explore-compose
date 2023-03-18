@@ -38,6 +38,10 @@ define Android UI) and other state of art Android libraries
 - [Turbine](https://github.com/cashapp/turbine): _Testing library for kotlinx.coroutines Flow_
 - [MockK](https://mockk.io/): _Mocking library for Kotlin_
 
+#### Style
+
+- [ktlint](https://github.com/pinterest/ktlint): Enforces _official Kotlin coding conventions and Android Kotlin Style Guide_
+
 ## Screenshots
 
 ### Composable preview

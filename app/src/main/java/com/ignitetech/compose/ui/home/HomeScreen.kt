@@ -143,7 +143,9 @@ private fun Tabs(
                 modifier = Modifier.pagerTabIndicatorOffset(
                     pagerState,
                     it
-                ), height = 4.dp, color = Color.White
+                ),
+                height = 4.dp,
+                color = Color.White
             )
         },
         modifier = Modifier
@@ -156,13 +158,13 @@ private fun Tabs(
                     pagerState.animateScrollToPage(index)
                 }
             }, icon = {
-                Icon(
-                    painter = painterResource(id = tab.icon),
-                    contentDescription = stringResource(id = tab.name)
-                )
-            }, text = {
-                Text(text = stringResource(id = tab.name))
-            })
+                    Icon(
+                        painter = painterResource(id = tab.icon),
+                        contentDescription = stringResource(id = tab.name)
+                    )
+                }, text = {
+                    Text(text = stringResource(id = tab.name))
+                })
         }
     }
 }

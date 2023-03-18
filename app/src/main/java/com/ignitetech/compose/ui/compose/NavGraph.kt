@@ -49,9 +49,11 @@ fun SetUpNavGraph(navController: NavHostController, viewModel: HomeViewModel) {
         }
         composable(
             route = Screens.Chats.route,
-            arguments = listOf(navArgument(ChatViewModel.RecipientId) {
-                type = NavType.IntType
-            }),
+            arguments = listOf(
+                navArgument(ChatViewModel.RecipientId) {
+                    type = NavType.IntType
+                }
+            ),
             enterTransition = slideIntoContainerRight(),
             exitTransition = slideOutOfContainerRight()
         ) {

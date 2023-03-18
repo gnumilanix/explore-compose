@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(
 
     fun onboardComplete() {
         viewModelScope.launch {
-            preferenceRepository.userId(0) //TODO Temporary hardcoded value
+            preferenceRepository.userId(0) // TODO Temporary hardcoded value
             preferenceRepository.onboardComplete(true)
         }
     }

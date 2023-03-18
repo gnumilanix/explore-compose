@@ -18,7 +18,8 @@ data class Chat(
     @ColumnInfo(name = "message") val message: String,
     @ColumnInfo(name = "direction") val direction: Direction,
     @ColumnInfo(name = "date") val date: Instant = Clock.System.now(),
-    @Ignore @Transient val sender: User? = null,
+    @Ignore @Transient
+    val sender: User? = null
 ) {
     constructor(
         id: Int,

@@ -53,6 +53,6 @@ data class ChatsUiState(
         val message: String,
         val direction: Direction,
         val date: String,
-        val sender: User? = null,
+        val sender: User? = null
     )
 }

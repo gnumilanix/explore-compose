@@ -62,4 +62,3 @@ data class ChatUiState(
     val recipient: User? = null,
     val chats: Map<String, List<ChatsUiState.ChatDetail>> = mapOf()
 )
-

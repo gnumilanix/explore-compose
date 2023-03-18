@@ -63,5 +63,4 @@ class PreferenceRepositoryTest {
         preferenceRepository.userId(null)
         assertNull(preferenceRepository.userIdFlow.first())
     }
-
 }
