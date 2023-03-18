@@ -20,8 +20,8 @@ import com.ignitetech.compose.ui.home.HomeViewModel
 
 @Composable
 fun OnboardScreen(
-    viewModel: HomeViewModel,
-    navController: NavController
+    navController: NavController,
+    viewModel: HomeViewModel
 ) {
     OnboardScreen {
         viewModel.onboardComplete()

@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalCoroutinesApi::class)
-
 package com.ignitetech.compose.ui.splash
 
 import android.content.Context
@@ -37,8 +35,8 @@ import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
-@OptIn(ExperimentalAnimationApi::class)
-class SplashScreenKtTest {
+@OptIn(ExperimentalAnimationApi::class, ExperimentalCoroutinesApi::class)
+class SplashScreenTest {
     @get:Rule(order = 1)
     var hiltTestRule = HiltAndroidRule(this)
 

@@ -38,14 +38,14 @@ fun SetUpNavGraph(navController: NavHostController, viewModel: HomeViewModel) {
         }
         composable(route = Screens.Home.route) {
             ShowSystemBars(systemUiController, show = true)
-            HomeScreen(viewModel, navController)
+            HomeScreen(navController, viewModel)
         }
         composable(
             route = Screens.Onboard.route,
             exitTransition = slideOutOfContainerLeft()
         ) {
             ShowSystemBars(systemUiController, show = true)
-            OnboardScreen(viewModel, navController)
+            OnboardScreen(navController, viewModel)
         }
         composable(
             route = Screens.Chats.route,

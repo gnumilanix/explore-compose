@@ -28,8 +28,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel,
-    navController: NavController
+    navController: NavController,
+    viewModel: HomeViewModel
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
