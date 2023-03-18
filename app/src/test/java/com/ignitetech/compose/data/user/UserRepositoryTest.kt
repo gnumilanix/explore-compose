@@ -32,7 +32,7 @@ class UserRepositoryTest {
     lateinit var userRepository: UserRepository
 
     @Test
-    fun `getMe returns null if current user missing otherwise user`() = runTest {
+    fun `getMe returns null if current user missing otherwise userDao getUser with id`() = runTest {
         val id = 1
         val user = mockk<User>()
 
@@ -51,7 +51,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    fun `getUsers returns all users`() = runTest {
+    fun `getUsers returns userDao getAll`() = runTest {
         val users = listOf<User>(mockk(), mockk())
 
         every { userDao.getAll() } returns flowOf(users)
@@ -66,7 +66,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    fun `getUsers returns users matching id`() = runTest {
+    fun `getUsers returns userDao getUsers with ids`() = runTest {
         val ids = intArrayOf(1, 2)
         val users = listOf<User>(mockk(), mockk())
 
@@ -82,7 +82,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    fun `getUser returns single user`() = runTest {
+    fun `getUser returns userDao getUserFlow with id`() = runTest {
         val id = 1
         val user = mockk<User>()
 

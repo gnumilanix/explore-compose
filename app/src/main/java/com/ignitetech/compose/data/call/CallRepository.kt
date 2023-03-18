@@ -12,11 +12,11 @@ class CallRepository @Inject constructor(
         return callDao.getCallsWithTarget()
     }
 
-    suspend fun saveCall(call: Call) {
-        return callDao.saveCalls(call)
+    suspend fun saveCall(vararg calls: Call) {
+        callDao.saveCalls(*calls)
     }
 
     suspend fun deleteCall(vararg calls: Call) {
-        return callDao.deleteCalls(*calls)
+        callDao.deleteCalls(*calls)
     }
 }
