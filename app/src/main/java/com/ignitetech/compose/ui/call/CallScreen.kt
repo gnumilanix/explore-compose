@@ -26,6 +26,7 @@ import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.ui.composable.UserAvatar
 import com.ignitetech.compose.ui.theme.Green500
 import com.ignitetech.compose.ui.theme.Red500
+import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 
 @Composable
 fun CallScreen(viewModel: CallViewModel) {
@@ -146,6 +147,7 @@ private fun CallTypeIcon(type: Type) {
 
 @Preview(showBackground = true)
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun CallScreenPreview() {
     CallScreen(
         mapOf(

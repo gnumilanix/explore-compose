@@ -54,6 +54,7 @@ import com.ignitetech.compose.ui.composable.AppBarBackButton
 import com.ignitetech.compose.ui.composable.AppBarTitle
 import com.ignitetech.compose.ui.composable.UserAvatar
 import com.ignitetech.compose.ui.theme.*
+import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 import com.ignitetech.compose.utility.isActive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -634,6 +635,7 @@ private fun ConversationMessage(user: User?, chat: ChatsUiState.ChatDetail, text
 
 @Preview(name = "Light mode")
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun AppBarPreview() {
     ComposeTheme {
         AppBar(
@@ -647,6 +649,7 @@ fun AppBarPreview() {
 
 @Preview(name = "Light mode")
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun AppBarSelectionModePreview() {
     ComposeTheme {
         AppBar(
@@ -665,6 +668,7 @@ fun AppBarSelectionModePreview() {
     showBackground = true
 )
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun ConversationSentPreview() {
     Conversation(
         User(1, "Jack", "https://placekitten.com/200/300"),
@@ -683,6 +687,7 @@ fun ConversationSentPreview() {
 
 @Preview(name = "Light mode")
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun ConversationReceivedPreview() {
     Conversation(
         User(1, "Jack", "https://placekitten.com/200/300"),
@@ -705,6 +710,7 @@ fun ConversationReceivedPreview() {
     showBackground = true
 )
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun ConversationsScreenPreview() {
     ComposeTheme {
         ChatScreen(
@@ -745,6 +751,7 @@ fun ConversationsScreenPreview() {
     showBackground = true
 )
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun EditorPreview() {
     ComposeTheme {
         Editor()
@@ -753,6 +760,7 @@ fun EditorPreview() {
 
 @Composable
 @Preview(name = "Light mode")
+@ExcludeFromGeneratedCoverageReport
 fun ChatScreenEmojiSelectorPreview() {
     ComposeTheme {
         ChatScreen(
@@ -770,6 +778,7 @@ fun ChatScreenEmojiSelectorPreview() {
 
 @Composable
 @Preview(name = "Light mode")
+@ExcludeFromGeneratedCoverageReport
 fun ChatScreenAttachmentSelectorPreview() {
     ComposeTheme {
         ChatScreen(

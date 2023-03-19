@@ -23,6 +23,7 @@ import com.ignitetech.compose.ui.Screens.HomeScreens
 import com.ignitetech.compose.ui.call.CallScreen
 import com.ignitetech.compose.ui.chat.ChatsScreen
 import com.ignitetech.compose.ui.groups.GroupScreen
+import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -193,6 +194,7 @@ private fun TabContents(
 
 @Preview
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun HomeScreenPreview() {
     HomeScreen(
         rememberNavController(),

@@ -42,6 +42,9 @@ define Android UI) and other state of art Android libraries
 
 - [ktlint](https://github.com/pinterest/ktlint): Enforces _official Kotlin coding conventions and Android Kotlin Style Guide_
 
+#### Build
+
+- [android-emulator-runner](https://github.com/ReactiveCircus/android-emulator-runner): _A GitHub Action for installing, configuring and running hardware-accelerated Android Emulators on macOS virtual machines._
 ## Screenshots
 
 ### Composable preview

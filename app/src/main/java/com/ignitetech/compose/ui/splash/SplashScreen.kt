@@ -26,6 +26,7 @@ import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.composable.ShowSystemBars
 import com.ignitetech.compose.ui.home.HomeUiState
 import com.ignitetech.compose.ui.home.HomeViewModel
+import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 import com.ignitetech.compose.utility.drawableId
 import kotlinx.coroutines.delay
 
@@ -84,6 +85,7 @@ fun SplashScreen(
 
 @Preview
 @Composable
+@ExcludeFromGeneratedCoverageReport
 @OptIn(ExperimentalAnimationApi::class)
 fun SplashScreenPreview() {
     SplashScreen(rememberSystemUiController(), rememberAnimatedNavController(), HomeUiState())

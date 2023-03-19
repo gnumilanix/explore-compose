@@ -29,6 +29,7 @@ import com.ignitetech.compose.R
 import com.ignitetech.compose.data.group.Group
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.ui.theme.Grey200
+import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 
 @Composable
 fun GroupScreen(viewModel: GroupsViewModel) {
@@ -110,6 +111,7 @@ fun User(user: User) {
 
 @Preview(showBackground = true)
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun GroupScreenPreview() {
     val users = listOf(
         User(1, "John", "https://placekitten.com/200/300"),

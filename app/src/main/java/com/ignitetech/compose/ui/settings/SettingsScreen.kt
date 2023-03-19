@@ -32,6 +32,7 @@ import com.ignitetech.compose.R
 import com.ignitetech.compose.ui.composable.AppBarBackButtonIcon
 import com.ignitetech.compose.ui.permissions.PermissionHandling
 import com.ignitetech.compose.ui.permissions.PreviewPermissionState
+import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
@@ -144,6 +145,7 @@ private fun ProfileImage(
 
 @Preview
 @Composable
+@ExcludeFromGeneratedCoverageReport
 @OptIn(ExperimentalPermissionsApi::class)
 fun SettingsScreenPreview() {
     SettingsScreen(
@@ -155,6 +157,7 @@ fun SettingsScreenPreview() {
 
 @Preview
 @Composable
+@ExcludeFromGeneratedCoverageReport
 @OptIn(ExperimentalPermissionsApi::class)
 fun ProfileImagePreview() {
     ProfileImage(

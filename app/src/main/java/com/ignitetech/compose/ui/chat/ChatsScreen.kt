@@ -19,6 +19,7 @@ import com.ignitetech.compose.data.chat.Direction
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.composable.UserAvatar
+import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 
 @Composable
 fun ChatsScreen(
@@ -82,6 +83,7 @@ private fun Chat(navController: NavController, chat: ChatsUiState.ChatDetail) {
 
 @Preview(showBackground = true)
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun ChatsScreenPreview() {
     ChatsScreen(
         rememberNavController(),

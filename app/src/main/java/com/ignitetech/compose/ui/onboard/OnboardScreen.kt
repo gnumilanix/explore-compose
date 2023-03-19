@@ -17,6 +17,7 @@ import androidx.navigation.NavController
 import com.ignitetech.compose.R
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.home.HomeViewModel
+import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 
 @Composable
 fun OnboardScreen(
@@ -107,6 +108,7 @@ private fun OnboardBullet(@DrawableRes image: Int, @StringRes message: Int) {
 
 @Preview(showBackground = true)
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun OnboardScreenPreview() {
     OnboardScreen()
 }

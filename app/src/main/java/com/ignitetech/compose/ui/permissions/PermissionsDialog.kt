@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.google.accompanist.permissions.*
 import com.ignitetech.compose.R
+import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
@@ -204,6 +205,7 @@ fun Context.startApplicationSettings() {
 
 @Preview
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun PermissionRationaleDialogPreview() {
     PermissionRationaleDialog(
         title = R.string.camera_permission_title,
@@ -215,6 +217,7 @@ fun PermissionRationaleDialogPreview() {
 
 @Preview
 @Composable
+@ExcludeFromGeneratedCoverageReport
 fun PermissionDeniedDialogPreview() {
     PermissionDeniedDialog(
         title = R.string.camera_permission_title,
