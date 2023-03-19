@@ -10,6 +10,9 @@ on:
         description: 'The branch from which we have to build'
         required: true
 
+env:
+  KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+
 jobs:
   build:
     name: Setup environment and build
@@ -39,6 +42,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: AVD cache
+        uses: actions/cache@v3
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-32
+
       - name: Create AVD snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
@@ -55,15 +67,6 @@ jobs:
 
       - name: Make gradlew executable
         run: chmod +x ./gradlew
-
-      - name: AVD cache
-        uses: actions/cache@v3
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ matrix.api-level }}
 
       - name: Lint check
         run: ./gradlew ktlintCheck
