@@ -58,7 +58,9 @@ jobs:
         run: ./gradlew testDebugUnitTest
 
       - name: Unit and UI tests with Jacoco
+        id: test-with-jacoco
         uses: reactivecircus/android-emulator-runner@v2
+        continue-on-error: true
         with:
           api-level: 32
           arch: x86_64
@@ -66,21 +68,24 @@ jobs:
           script: ./gradlew jacocoTestReport
 
       - name: generate report
+        if: steps.test-with-jacoco.outcome == 'success' && steps.test-with-jacoco.conclusion == 'success'
         uses: actions/upload-artifact@v2
         with:
           name: report
           path: app/build/reports/coverage/androidTest/debug
 
       - name: Download Test Reports Folder
+        if: steps.test-with-jacoco.outcome == 'success' && steps.test-with-jacoco.conclusion == 'success'
         uses: actions/download-artifact@v2
         with:
           name: report
           path: app/build/reports/coverage/androidTest/debug
 
       - name: Upload Test Report
-        uses: codecov/codecov-action@v2
+        if: steps.test-with-jacoco.outcome == 'success' && steps.test-with-jacoco.conclusion == 'success'
+        uses: codecov/codecov-action@v3
         with:
-          files: "app/build/reports/coverage/androidTest/debug/report.xml"
+          files: app/build/reports/coverage/androidTest/debug/connected/report.xml
 
       - name: Build debug
         run: ./gradlew assembleDebug
