@@ -42,6 +42,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Lint check
+        run: ./gradlew ktlintCheck
+
+      - name: Unit tests
+        run: ./gradlew testDebugUnitTest
+
       - name: AVD cache
         uses: actions/cache@v3
         id: avd-cache
@@ -53,7 +62,7 @@ jobs:
 
       - name: Create AVD snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2.7.0
+        uses: reactivecircus/android-emulator-runner@v2.28.0
         with:
           api-level: 32
           arch: x86_64
@@ -62,21 +71,12 @@ jobs:
           force-avd-creation: false
           ram-size: 4096M
           emulator-boot-timeout: 12000
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu auto -noaudio -no-boot-anim -camera-back none
           script: echo "Generated AVD snapshot for caching."
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      - name: Lint check
-        run: ./gradlew ktlintCheck
-
-      - name: Unit tests
-        run: ./gradlew testDebugUnitTest
 
       - name: Unit and UI tests with Jacoco
         id: test-with-jacoco
-        uses: reactivecircus/android-emulator-runner@v2.7.0
+        uses: reactivecircus/android-emulator-runner@v2.28.0
         continue-on-error: true
         with:
           api-level: 32
@@ -86,7 +86,7 @@ jobs:
           force-avd-creation: false
           ram-size: 4096M
           emulator-boot-timeout: 12000
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-snapshot-save
+          emulator-options: -no-window -gpu auto -noaudio -no-boot-anim -camera-back none -no-snapshot-save
           script: ./gradlew jacocoTestReport
 
       - name: Upload test report
