@@ -38,7 +38,7 @@ class SettingsViewModelTest {
     lateinit var viewModel: SettingsViewModel
 
     @Test
-    fun `state returns default HomeUiState initially`() = runTest {
+    fun `state returns default SettingsUiState initially`() = runTest {
         coEvery { userRepository.getMe() } returns flowOf()
         viewModel = SettingsViewModel(userRepository)
 

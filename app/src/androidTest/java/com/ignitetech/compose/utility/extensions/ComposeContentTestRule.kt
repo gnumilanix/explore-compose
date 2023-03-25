@@ -1,5 +1,6 @@
 package com.ignitetech.compose.utility.extensions
 
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 
@@ -15,11 +16,13 @@ fun ComposeContentTestRule.waitUntilNodeCount(
     }
 }
 
+@OptIn(ExperimentalTestApi::class)
 fun ComposeContentTestRule.waitUntilExists(
     matcher: SemanticsMatcher,
     timeoutMillis: Long = WAIT_UNTIL_TIMEOUT
 ) = waitUntilNodeCount(matcher, 1, timeoutMillis)
 
+@OptIn(ExperimentalTestApi::class)
 fun ComposeContentTestRule.waitUntilDoesNotExist(
     matcher: SemanticsMatcher,
     timeoutMillis: Long = WAIT_UNTIL_TIMEOUT

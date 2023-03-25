@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.testing.TestNavHostController
@@ -19,7 +20,6 @@ import com.ignitetech.compose.ui.compose.SetUpNavGraph
 import com.ignitetech.compose.ui.home.HomeViewModel
 import com.ignitetech.compose.utility.extensions.deleteDatastore
 import com.ignitetech.compose.utility.extensions.destinationRoute
-import com.ignitetech.compose.utility.extensions.waitUntilDoesNotExist
 import com.ignitetech.compose.utility.matchers.hasDrawable
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -35,7 +35,11 @@ import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
-@OptIn(ExperimentalAnimationApi::class, ExperimentalCoroutinesApi::class)
+@OptIn(
+    ExperimentalTestApi::class,
+    ExperimentalAnimationApi::class,
+    ExperimentalCoroutinesApi::class
+)
 class SplashScreenTest {
     @get:Rule(order = 1)
     var hiltTestRule = HiltAndroidRule(this)
