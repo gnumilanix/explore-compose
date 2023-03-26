@@ -12,7 +12,7 @@ class GetChatByDateUseCase @Inject constructor(
     private val chatRepository: ChatRepository,
     private val formatInstantUseCase: FormatInstantUseCase,
     private val formatLocalDateUseCase: FormatLocalDateUseCase,
-    private val instantToLocalDateUseCase: InstantToLocalDateUseCase,
+    private val instantToLocalDateUseCase: InstantToLocalDateUseCase
 ) {
     operator fun invoke(recipientId: Int): Flow<List<ChatsByDate>> {
         return chatRepository.getChats(recipientId).map { chats ->

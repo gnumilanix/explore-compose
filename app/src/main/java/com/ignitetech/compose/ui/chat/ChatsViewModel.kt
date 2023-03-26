@@ -34,5 +34,4 @@ class ChatsViewModel @Inject constructor(
 
 data class ChatsUiState(
     val chats: List<ChatDetail> = listOf()
-) {
-}
+)

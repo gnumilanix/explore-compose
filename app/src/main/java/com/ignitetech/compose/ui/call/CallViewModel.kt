@@ -23,7 +23,6 @@ class CallViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(2_000),
         initialValue = CallUiState()
     )
-
 }
 
 data class CallUiState(
