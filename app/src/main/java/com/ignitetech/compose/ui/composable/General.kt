@@ -14,11 +14,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.ignitetech.compose.R
 import com.ignitetech.compose.ui.theme.ComposeTheme
+import com.ignitetech.compose.utility.drawableUrl
 
 @Composable
 fun ShowSystemBars(systemUiController: SystemUiController, show: Boolean) {
@@ -48,6 +50,7 @@ fun UserAvatar(avatar: String?) {
                 .size(48.dp)
                 .clip(CircleShape)
                 .border(1.5.dp, Color(0xff76d275), CircleShape)
+                .semantics { drawableUrl = avatar ?: "" }
         )
     }
 }

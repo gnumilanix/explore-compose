@@ -21,7 +21,6 @@ import com.ignitetech.compose.utility.extensions.destinationRoute
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -31,7 +30,7 @@ import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
-@OptIn(ExperimentalAnimationApi::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalAnimationApi::class)
 class OnboardScreenTest {
     @get:Rule(order = 1)
     var hiltTestRule = HiltAndroidRule(this)

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,7 @@ import com.ignitetech.compose.ui.composable.UserAvatar
 import com.ignitetech.compose.ui.theme.Green500
 import com.ignitetech.compose.ui.theme.Red500
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
+import com.ignitetech.compose.utility.drawableId
 
 @Composable
 fun CallScreen(viewModel: CallViewModel) {
@@ -110,7 +112,10 @@ private fun Call(call: CallDetail) {
             contentDescription = stringResource(id = R.string.cd_call),
             modifier = Modifier
                 .size(24.dp)
-                .align(Alignment.CenterVertically),
+                .align(Alignment.CenterVertically)
+                .semantics {
+                    drawableId = R.drawable.baseline_call_24
+                },
             tint = Green500
         )
     }
@@ -124,25 +129,33 @@ private fun CallTypeIcon(type: Type) {
             painter = painterResource(id = R.drawable.baseline_call_received_24),
             contentDescription = stringResource(id = R.string.cd_call_incoming),
             tint = Green500,
-            modifier = modifier
+            modifier = modifier.semantics {
+                drawableId = R.drawable.baseline_call_received_24
+            }
         )
         OUTGOING -> Icon(
             painter = painterResource(id = R.drawable.baseline_call_made_24),
             contentDescription = stringResource(id = R.string.cd_call_outgoing),
             tint = Green500,
-            modifier = modifier
+            modifier = modifier.semantics {
+                drawableId = R.drawable.baseline_call_made_24
+            }
         )
         INCOMING_MISSED -> Icon(
             painter = painterResource(id = R.drawable.baseline_call_missed_24),
             contentDescription = stringResource(id = R.string.cd_call_incoming_missed),
             tint = Red500,
-            modifier = modifier
+            modifier = modifier.semantics {
+                drawableId = R.drawable.baseline_call_missed_24
+            }
         )
         OUTGOING_MISSED -> Icon(
             painter = painterResource(id = R.drawable.baseline_call_missed_outgoing_24),
             contentDescription = stringResource(id = R.string.cd_call_outgoing_missed),
             tint = Red500,
-            modifier = modifier
+            modifier = modifier.semantics {
+                drawableId = R.drawable.baseline_call_missed_outgoing_24
+            }
         )
     }
 }
