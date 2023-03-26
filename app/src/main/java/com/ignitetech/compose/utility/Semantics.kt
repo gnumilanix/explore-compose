@@ -17,9 +17,9 @@ val DrawableUrl = SemanticsPropertyKey<List<String>>(
     mergePolicy = mergeSemantics()
 )
 
-var SemanticsPropertyReceiver.drawableUrl: String
+var SemanticsPropertyReceiver.drawableUrl: String?
     get() = throwSemanticsGetNotSupported()
-    set(value) = set(DrawableUrl, listOf(value))
+    set(value) = set(DrawableUrl, listOf(value ?: ""))
 
 private fun <T> mergeSemantics(): (List<T>?, List<T>) -> List<T> {
     return { parentValue, childValue ->

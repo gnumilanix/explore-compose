@@ -50,7 +50,7 @@ fun UserAvatar(avatar: String?) {
                 .size(48.dp)
                 .clip(CircleShape)
                 .border(1.5.dp, Color(0xff76d275), CircleShape)
-                .semantics { drawableUrl = avatar ?: "" }
+                .semantics { drawableUrl = avatar }
         )
     }
 }

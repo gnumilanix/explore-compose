@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +31,7 @@ import com.ignitetech.compose.data.group.Group
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.ui.theme.Grey200
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
+import com.ignitetech.compose.utility.drawableUrl
 
 @Composable
 fun GroupScreen(viewModel: GroupsViewModel) {
@@ -106,6 +108,7 @@ fun User(user: User) {
             .aspectRatio(1.0f)
             .clip(CircleShape)
             .border(1.dp, Color(0xff76d275), CircleShape)
+            .semantics { drawableUrl = user.avatar }
     )
 }
 

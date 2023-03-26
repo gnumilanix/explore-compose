@@ -1,17 +1,14 @@
 package com.ignitetech.compose.ui.call
 
-import android.content.Context
 import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ignitetech.compose.R
-import com.ignitetech.compose.data.call.CallRepository
 import com.ignitetech.compose.data.call.Type
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.domain.CallDetail
@@ -19,19 +16,15 @@ import com.ignitetech.compose.domain.CallsByDate
 import com.ignitetech.compose.ui.compose.ComposeActivity
 import com.ignitetech.compose.utility.TestContainer
 import com.ignitetech.compose.utility.matchers.hasDrawable
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import javax.inject.Inject
 
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
-@OptIn(ExperimentalAnimationApi::class)
-class CallScreenKtTest {
+class CallScreenTest {
     @get:Rule(order = 1)
     var hiltTestRule = HiltAndroidRule(this)
 
@@ -40,18 +33,6 @@ class CallScreenKtTest {
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
-
-    @Inject
-    @ApplicationContext
-    lateinit var context: Context
-
-    @Inject
-    lateinit var callRepository: CallRepository
-
-    @Before
-    fun setUp() {
-        hiltTestRule.inject()
-    }
 
     @Test
     fun noElementsDisplayedWhenEmpty() {
