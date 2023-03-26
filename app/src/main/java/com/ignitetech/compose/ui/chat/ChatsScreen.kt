@@ -17,6 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.ignitetech.compose.data.chat.Direction
 import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.domain.ChatDetail
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.composable.UserAvatar
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
@@ -31,7 +32,7 @@ fun ChatsScreen(
 }
 
 @Composable
-fun ChatsScreen(navController: NavController, chats: List<ChatsUiState.ChatDetail>) {
+fun ChatsScreen(navController: NavController, chats: List<ChatDetail>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -44,7 +45,7 @@ fun ChatsScreen(navController: NavController, chats: List<ChatsUiState.ChatDetai
 }
 
 @Composable
-private fun Chat(navController: NavController, chat: ChatsUiState.ChatDetail) {
+private fun Chat(navController: NavController, chat: ChatDetail) {
     Row(
         modifier = Modifier
             .clickable { navController.navigate(Screens.Chats.route(chat.sender!!.id)) }
@@ -88,7 +89,7 @@ fun ChatsScreenPreview() {
     ChatsScreen(
         rememberNavController(),
         listOf(
-            ChatsUiState.ChatDetail(
+            ChatDetail(
                 1,
                 1,
                 "Hello Jack! How are you today? Can you me those presentations",
@@ -96,7 +97,7 @@ fun ChatsScreenPreview() {
                 "10:00",
                 User(1, "John", "https://placekitten.com/200/300")
             ),
-            ChatsUiState.ChatDetail(
+            ChatDetail(
                 2,
                 2,
                 "Hello Jack! How are you today? Can you me those presentations",

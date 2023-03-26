@@ -23,6 +23,8 @@ import com.ignitetech.compose.R
 import com.ignitetech.compose.data.call.Type
 import com.ignitetech.compose.data.call.Type.*
 import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.domain.CallDetail
+import com.ignitetech.compose.domain.CallsByDate
 import com.ignitetech.compose.ui.composable.UserAvatar
 import com.ignitetech.compose.ui.theme.Green500
 import com.ignitetech.compose.ui.theme.Red500
@@ -35,7 +37,7 @@ fun CallScreen(viewModel: CallViewModel) {
 }
 
 @Composable
-fun CallScreen(calls: Map<String, List<CallUiState.CallDetail>>) {
+fun CallScreen(calls: List<CallsByDate>) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         calls.forEach { (time, calls) ->
             item {
@@ -75,7 +77,7 @@ private fun CallTime(time: String) {
 }
 
 @Composable
-private fun Call(call: CallUiState.CallDetail) {
+private fun Call(call: CallDetail) {
     Row(
         modifier = Modifier
             .clickable { }
@@ -150,37 +152,31 @@ private fun CallTypeIcon(type: Type) {
 @ExcludeFromGeneratedCoverageReport
 fun CallScreenPreview() {
     CallScreen(
-        mapOf(
-            "Today" to listOf(
-                CallUiState.CallDetail(
-                    0,
-                    1000,
-                    INCOMING,
-                    "February 19, 10:00",
-                    User(1, "John", "https://placekitten.com/200/300")
-                )
-            ),
-            "Yesterday" to listOf(
-                CallUiState.CallDetail(
-                    0,
-                    60000,
-                    OUTGOING,
-                    "February 19, 10:00",
-                    User(2, "Jane", "https://placekitten.com/200/100")
-                ),
-                CallUiState.CallDetail(
-                    0,
-                    0,
-                    INCOMING_MISSED,
-                    "February 19, 10:00",
-                    User(1, "John", "https://placekitten.com/200/300")
-                ),
-                CallUiState.CallDetail(
-                    0,
-                    0,
-                    OUTGOING_MISSED,
-                    "February 19, 10:00",
-                    User(2, "Jane", "https://placekitten.com/200/100")
+        listOf(
+            CallsByDate(
+                "Today",
+                listOf(
+                    CallDetail(
+                        0,
+                        60000,
+                        OUTGOING,
+                        "February 19, 10:00",
+                        User(2, "Jane", "https://placekitten.com/200/100")
+                    ),
+                    CallDetail(
+                        0,
+                        0,
+                        INCOMING_MISSED,
+                        "February 19, 10:00",
+                        User(1, "John", "https://placekitten.com/200/300")
+                    ),
+                    CallDetail(
+                        0,
+                        0,
+                        OUTGOING_MISSED,
+                        "February 19, 10:00",
+                        User(2, "Jane", "https://placekitten.com/200/100")
+                    )
                 )
             )
         )

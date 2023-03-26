@@ -3,10 +3,9 @@ package com.ignitetech.compose.ui.chat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ignitetech.compose.data.chat.ChatRepository
-import com.ignitetech.compose.data.chat.ChatWithSender
-import com.ignitetech.compose.data.chat.Direction
-import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.domain.ChatDetail
 import com.ignitetech.compose.domain.FormatInstantUseCase
+import com.ignitetech.compose.domain.asDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -33,26 +32,7 @@ class ChatsViewModel @Inject constructor(
     )
 }
 
-fun ChatWithSender.asDetail(
-    formatInstantUseCase: FormatInstantUseCase
-) = ChatsUiState.ChatDetail(
-    chat.id,
-    chat.userId,
-    chat.message,
-    chat.direction,
-    formatInstantUseCase("MM/dd", chat.date),
-    sender
-)
-
 data class ChatsUiState(
     val chats: List<ChatDetail> = listOf()
 ) {
-    data class ChatDetail(
-        val id: Int,
-        val userId: Int,
-        val message: String,
-        val direction: Direction,
-        val date: String,
-        val sender: User? = null
-    )
 }

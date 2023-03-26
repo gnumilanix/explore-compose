@@ -4,11 +4,9 @@ import app.cash.turbine.test
 import com.ignitetech.compose.data.group.Group
 import com.ignitetech.compose.data.group.GroupRepository
 import com.ignitetech.compose.rules.TestDispatcherRule
-import io.mockk.coEvery
-import io.mockk.coVerify
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
-import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
@@ -34,19 +32,19 @@ class GroupsViewModelTest {
 
     @Test
     fun `state returns default GroupsUiState initially`() = runTest {
-        coEvery { groupsRepository.getGroups() } returns flowOf()
+        every { groupsRepository.getGroups() } returns flowOf()
         viewModel = GroupsViewModel(groupsRepository)
 
         val state = viewModel.state.value
 
         assertEquals(GroupsUiState(), state)
-        coVerify { groupsRepository.getGroups() }
+        verify { groupsRepository.getGroups() }
     }
 
     @Test
     fun `state returns updated GroupsUiState when groups updates`() = runTest {
         val groups = listOf<Group>(mockk(), mockk())
-        coEvery { groupsRepository.getGroups() } returns flow {
+        every { groupsRepository.getGroups() } returns flow {
             delay(100)
             emit(groups)
         }

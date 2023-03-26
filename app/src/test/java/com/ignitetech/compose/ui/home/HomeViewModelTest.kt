@@ -6,8 +6,10 @@ import com.ignitetech.compose.rules.TestDispatcherRule
 import com.ignitetech.compose.ui.Screens
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
@@ -40,7 +42,7 @@ class HomeViewModelTest {
 
     @Test
     fun `onboardComplete sets preferenceRepository_onboardComplete true`() = runTest {
-        coEvery { preferenceRepository.onboardCompleteFlow } returns flowOf()
+        every { preferenceRepository.onboardCompleteFlow } returns flowOf()
         coEvery { preferenceRepository.userId(any()) } returns Unit
         coEvery { preferenceRepository.onboardComplete(any()) } returns Unit
         viewModel = HomeViewModel(preferenceRepository)
@@ -55,19 +57,19 @@ class HomeViewModelTest {
 
     @Test
     fun `state returns default HomeUiState initially`() = runTest {
-        coEvery { preferenceRepository.onboardCompleteFlow } returns flowOf()
+        every { preferenceRepository.onboardCompleteFlow } returns flowOf()
         viewModel = HomeViewModel(preferenceRepository)
 
         val state = viewModel.state.value
 
         assertNull(state.onboardComplete)
         assertEquals(defaultTabs, state.tabs)
-        coVerify { preferenceRepository.onboardCompleteFlow }
+        verify { preferenceRepository.onboardCompleteFlow }
     }
 
     @Test
     fun `state returns updated HomeUiState when onboardCompleteFlow updates`() = runTest {
-        coEvery { preferenceRepository.onboardCompleteFlow } returns flow {
+        every { preferenceRepository.onboardCompleteFlow } returns flow {
             delay(100)
             emit(true)
         }

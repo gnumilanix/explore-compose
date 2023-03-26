@@ -50,6 +50,8 @@ import com.ignitetech.compose.R
 import com.ignitetech.compose.data.chat.Direction.RECEIVED
 import com.ignitetech.compose.data.chat.Direction.SENT
 import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.domain.ChatDetail
+import com.ignitetech.compose.domain.ChatsByDate
 import com.ignitetech.compose.ui.composable.AppBarBackButton
 import com.ignitetech.compose.ui.composable.AppBarTitle
 import com.ignitetech.compose.ui.composable.UserAvatar
@@ -533,7 +535,7 @@ private fun ConversationTime(time: String) {
 fun Conversation(
     me: User?,
     recipient: User?,
-    chat: ChatsUiState.ChatDetail,
+    chat: ChatDetail,
     contextualModeState: ContextualModeState,
     chatSelected: (Int, Boolean) -> Unit
 ) {
@@ -572,7 +574,7 @@ fun Conversation(
 private fun ConversationReceived(
     modifier: Modifier,
     user: User?,
-    chat: ChatsUiState.ChatDetail
+    chat: ChatDetail
 ) {
     Row(
         modifier = modifier
@@ -591,7 +593,7 @@ private fun ConversationReceived(
 private fun ConversationSent(
     modifier: Modifier,
     user: User?,
-    chat: ChatsUiState.ChatDetail
+    chat: ChatDetail
 ) {
     Row(
         modifier = modifier
@@ -607,7 +609,7 @@ private fun ConversationSent(
 }
 
 @Composable
-private fun ConversationMessage(user: User?, chat: ChatsUiState.ChatDetail, textAlign: TextAlign) {
+private fun ConversationMessage(user: User?, chat: ChatDetail, textAlign: TextAlign) {
     Text(
         text = user?.name ?: "",
         color = Color(0xff43a047),
@@ -673,7 +675,7 @@ fun ConversationSentPreview() {
     Conversation(
         User(1, "Jack", "https://placekitten.com/200/300"),
         User(1, "Jack", "https://placekitten.com/200/300"),
-        ChatsUiState.ChatDetail(
+        ChatDetail(
             1,
             1,
             "Hello Jack! How are you today? Can you me those presentations",
@@ -692,7 +694,7 @@ fun ConversationReceivedPreview() {
     Conversation(
         User(1, "Jack", "https://placekitten.com/200/300"),
         User(1, "Jack", "https://placekitten.com/200/300"),
-        ChatsUiState.ChatDetail(
+        ChatDetail(
             1,
             1,
             "Hello Jack! How are you today? Can you me those presentations",
@@ -719,23 +721,26 @@ fun ConversationsScreenPreview() {
             ChatUiState(
                 User(1, "Jack", "https://placekitten.com/200/300"),
                 User(1, "John", "https://placekitten.com/200/300"),
-                mapOf(
-                    "yesterday" to listOf(
-                        ChatsUiState.ChatDetail(
-                            1,
-                            1,
-                            "Hello Jack! How are you today? Can you me those presentations",
-                            SENT,
-                            "22/02",
-                            User(1, "John", "https://placekitten.com/200/300")
-                        ),
-                        ChatsUiState.ChatDetail(
-                            2,
-                            2,
-                            "Hello John! I am good. How about you?",
-                            RECEIVED,
-                            "22/02",
-                            User(2, "Jane", "https://placekitten.com/200/100")
+                listOf(
+                    ChatsByDate(
+                        "yesterday",
+                        listOf(
+                            ChatDetail(
+                                1,
+                                1,
+                                "Hello Jack! How are you today? Can you me those presentations",
+                                SENT,
+                                "22/02",
+                                User(1, "John", "https://placekitten.com/200/300")
+                            ),
+                            ChatDetail(
+                                2,
+                                2,
+                                "Hello John! I am good. How about you?",
+                                RECEIVED,
+                                "22/02",
+                                User(2, "Jane", "https://placekitten.com/200/100")
+                            )
                         )
                     )
                 )
@@ -769,7 +774,7 @@ fun ChatScreenEmojiSelectorPreview() {
             ChatUiState(
                 User(1, "Jack", "https://placekitten.com/200/300"),
                 User(1, "John", "https://placekitten.com/200/300"),
-                mapOf()
+                listOf()
             ),
             EditorState.Emoji
         )
@@ -787,7 +792,7 @@ fun ChatScreenAttachmentSelectorPreview() {
             ChatUiState(
                 User(1, "Jack", "https://placekitten.com/200/300"),
                 User(1, "John", "https://placekitten.com/200/300"),
-                mapOf()
+                listOf()
             ),
             EditorState.Attachment
         )

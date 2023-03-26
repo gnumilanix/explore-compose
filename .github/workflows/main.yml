@@ -94,20 +94,20 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: report
-          path: app/build/reports/coverage/androidTest/debug
+          path: app/build/reports/jacoco/jacocoTestReport
 
       - name: Download test reports
         if: steps.test-with-jacoco.outcome == 'success' && steps.test-with-jacoco.conclusion == 'success'
         uses: actions/download-artifact@v2
         with:
           name: report
-          path: app/build/reports/coverage/androidTest/debug
+          path: app/build/reports/jacoco/jacocoTestReport
 
       - name: Export test report
         if: steps.test-with-jacoco.outcome == 'success' && steps.test-with-jacoco.conclusion == 'success'
         uses: codecov/codecov-action@v3
         with:
-          files: app/build/reports/coverage/androidTest/debug/connected/report.xml
+          files: app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
 
       - name: Build debug
         run: ./gradlew assembleDebug

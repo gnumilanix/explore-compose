@@ -7,10 +7,10 @@ import com.ignitetech.compose.R
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.data.user.UserRepository
 import com.ignitetech.compose.rules.TestDispatcherRule
-import io.mockk.coEvery
-import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
@@ -39,20 +39,20 @@ class SettingsViewModelTest {
 
     @Test
     fun `state returns default SettingsUiState initially`() = runTest {
-        coEvery { userRepository.getMe() } returns flowOf()
+        every { userRepository.getMe() } returns flowOf()
         viewModel = SettingsViewModel(userRepository)
 
         val state = viewModel.state.value
 
         assertEquals(SettingsUiState(null, R.string.lorem_ipsum), state)
-        coVerify { userRepository.getMe() }
+        verify { userRepository.getMe() }
     }
 
     @Test
     fun `state returns updated SettingsUiState when user updates`() = runTest {
         val user = User(1, "John", "http://www.example.com/1.jpg")
 
-        coEvery { userRepository.getMe() } returns flow {
+        every { userRepository.getMe() } returns flow {
             delay(100)
             emit(user)
         }
@@ -70,7 +70,7 @@ class SettingsViewModelTest {
     fun `state returns updated SettingsUiState when selectedAvatar updates`() = runTest {
         val user = User(1, "John", "http://www.example.com/1.jpg")
 
-        coEvery { userRepository.getMe() } returns flowOf(user)
+        every { userRepository.getMe() } returns flowOf(user)
 
         viewModel = SettingsViewModel(userRepository)
 

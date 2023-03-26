@@ -6,14 +6,12 @@ import com.ignitetech.compose.data.chat.ChatRepository
 import com.ignitetech.compose.data.chat.ChatWithSender
 import com.ignitetech.compose.data.chat.Direction
 import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.domain.ChatDetail
 import com.ignitetech.compose.domain.FormatInstantUseCase
 import com.ignitetech.compose.rules.TestDispatcherRule
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.every
+import io.mockk.*
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit4.MockKRule
-import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
@@ -42,25 +40,25 @@ class ChatsViewModelTest {
     lateinit var viewModel: ChatsViewModel
 
     @Test
-    fun `state returns default ChatDetail initially`() = runTest {
-        coEvery { chatRepository.getLatestChats() } returns flowOf()
+    fun `state returns default ChatsUiState initially`() = runTest {
+        every { chatRepository.getLatestChats() } returns flowOf()
         viewModel = ChatsViewModel(chatRepository, formatInstantUseCase)
 
         val state = viewModel.state.value
 
         assertEquals(ChatsUiState(), state)
-        coVerify { chatRepository.getLatestChats() }
+        verify { chatRepository.getLatestChats() }
     }
 
     @Test
-    fun `state returns updated ChatDetail when chats updates`() = runTest {
+    fun `state returns updated ChatsUiState when chats updates`() = runTest {
         val dateString1 = "01/01"
         val date1 = mockk<Instant>()
         val chat1 = Chat(1, 1, "Hello", Direction.SENT, date1)
         val sender1 = User(1, "John", "http://www.example.com/1.jpg")
         val chatWithSender1 = ChatWithSender(chat1, sender1)
 
-        val dateString2 = "01/01"
+        val dateString2 = "01/02"
         val date2 = mockk<Instant>()
         val chat2 = Chat(2, 2, "Hi", Direction.RECEIVED, date2)
         val sender2 = User(2, "Jack", "http://www.example.com/2.jpg")
@@ -70,7 +68,7 @@ class ChatsViewModelTest {
 
         val expectedState = ChatsUiState(
             listOf(
-                ChatsUiState.ChatDetail(
+                ChatDetail(
                     chat1.id,
                     chat1.userId,
                     chat1.message,
@@ -78,7 +76,7 @@ class ChatsViewModelTest {
                     dateString1,
                     chatWithSender1.sender
                 ),
-                ChatsUiState.ChatDetail(
+                ChatDetail(
                     chat2.id,
                     chat2.userId,
                     chat2.message,
@@ -91,7 +89,7 @@ class ChatsViewModelTest {
 
         every { formatInstantUseCase("MM/dd", date1) } returns dateString1
         every { formatInstantUseCase("MM/dd", date2) } returns dateString2
-        coEvery { chatRepository.getLatestChats() } returns flow {
+        every { chatRepository.getLatestChats() } returns flow {
             delay(100)
             emit(chats)
         }
