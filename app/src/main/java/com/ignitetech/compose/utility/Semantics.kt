@@ -1,5 +1,6 @@
 package com.ignitetech.compose.utility
 
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 
@@ -20,6 +21,15 @@ val DrawableUrl = SemanticsPropertyKey<List<String>>(
 var SemanticsPropertyReceiver.drawableUrl: String?
     get() = throwSemanticsGetNotSupported()
     set(value) = set(DrawableUrl, listOf(value ?: ""))
+
+val DrawableVector = SemanticsPropertyKey<List<ImageVector>>(
+    name = "DrawableVector",
+    mergePolicy = mergeSemantics()
+)
+
+var SemanticsPropertyReceiver.drawableVector: ImageVector
+    get() = throwSemanticsGetNotSupported()
+    set(value) = set(DrawableVector, listOf(value))
 
 private fun <T> mergeSemantics(): (List<T>?, List<T>) -> List<T> {
     return { parentValue, childValue ->

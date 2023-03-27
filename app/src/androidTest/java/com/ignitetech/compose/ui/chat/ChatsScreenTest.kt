@@ -94,9 +94,9 @@ class ChatsScreenTest {
             .onChildAt(childIndex)
             .assert(
                 hasDrawable(sender.avatar) and
-                        hasText(sender.name) and
-                        hasText(chatDetail.message) and
-                        hasText(chatDetail.date)
+                    hasText(sender.name) and
+                    hasText(chatDetail.message) and
+                    hasText(chatDetail.date)
             )
             .assertIsDisplayed()
     }

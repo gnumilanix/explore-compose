@@ -8,4 +8,3 @@ val TestNavHostController.destinationRoute: String?
 
 val TestNavHostController.destinationArguments: Map<String, NavArgument>?
     get() = currentBackStackEntry?.destination?.arguments
-

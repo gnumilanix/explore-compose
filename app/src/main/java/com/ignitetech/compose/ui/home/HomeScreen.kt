@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -24,6 +25,8 @@ import com.ignitetech.compose.ui.call.CallScreen
 import com.ignitetech.compose.ui.chat.ChatsScreen
 import com.ignitetech.compose.ui.groups.GroupScreen
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
+import com.ignitetech.compose.utility.drawableId
+import com.ignitetech.compose.utility.drawableVector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -76,19 +79,26 @@ private fun AppBar(navController: NavController) {
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_search_24),
-                    contentDescription = stringResource(id = R.string.cd_search_conversation)
+                    contentDescription = stringResource(id = R.string.cd_search_conversation),
+                    modifier = Modifier.semantics { drawableId = R.drawable.baseline_search_24 }
                 )
             }
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_archive_24),
-                    contentDescription = stringResource(id = R.string.cd_archive_chat)
+                    contentDescription = stringResource(id = R.string.cd_archive_chat),
+                    modifier = Modifier.semantics { drawableId = R.drawable.baseline_archive_24 }
+
                 )
             }
             Box {
                 val dismissDropDown = { showDropDown = false }
                 IconButton(onClick = { showDropDown = !showDropDown }) {
-                    Icon(Icons.Default.MoreVert, stringResource(id = R.string.cd_more_items))
+                    Icon(
+                        Icons.Default.MoreVert,
+                        stringResource(id = R.string.cd_more_items),
+                        modifier = Modifier.semantics { drawableVector = Icons.Default.MoreVert }
+                    )
                 }
                 DropdownMenu(
                     expanded = showDropDown,
@@ -123,7 +133,9 @@ fun FloatingButton(scaffoldState: ScaffoldState, scope: CoroutineScope) {
         Icon(
             painter = painterResource(id = R.drawable.baseline_chat_24),
             contentDescription = stringResource(id = R.string.cd_new_chat),
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier
+                .padding(8.dp)
+                .semantics { drawableId = R.drawable.baseline_chat_24 },
             tint = Color.White
         )
     }
