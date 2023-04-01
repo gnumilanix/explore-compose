@@ -36,6 +36,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,12 +53,14 @@ import com.ignitetech.compose.data.chat.Direction.SENT
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.domain.ChatDetail
 import com.ignitetech.compose.domain.ChatsByDate
+import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.composable.AppBarBackButton
 import com.ignitetech.compose.ui.composable.AppBarTitle
 import com.ignitetech.compose.ui.composable.UserAvatar
 import com.ignitetech.compose.ui.theme.*
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 import com.ignitetech.compose.utility.isActive
+import com.ignitetech.compose.utility.screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -133,7 +136,8 @@ fun ChatScreen(
                 contextualModeState,
                 state.recipient
             )
-        }
+        },
+        modifier = Modifier.semantics { screen = Screens.HomeScreens.Chats }
     ) { padding ->
         var showSelector by remember {
             mutableStateOf(editorState)

@@ -18,6 +18,8 @@
     <string name="document">Document</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
+    <string name="photo">Photo</string>
+    <string name="video">Video</string>
 
     <string name="camera_permission_title">Allow camera access</string>
     <string name="camera_permission_message">Compose needs camera permission to take photos for this feature</string>
@@ -25,6 +27,7 @@
 
     <!-- Place holders -->
     <string name="ph_message">Message</string>
+    <string name="ph_search">Search..</string>
 
     <!-- Content descriptions -->
     <string name="cd_back">Back</string>

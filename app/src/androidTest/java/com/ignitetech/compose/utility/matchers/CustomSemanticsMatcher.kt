@@ -7,9 +7,11 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
+import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.utility.DrawableId
 import com.ignitetech.compose.utility.DrawableUrl
 import com.ignitetech.compose.utility.DrawableVector
+import com.ignitetech.compose.utility.Screen
 
 fun hasDrawable(@DrawableRes id: Int) = matcher(DrawableId, id)
 
@@ -35,6 +37,8 @@ private fun <T> allMatcher(
         actualValues.containsAll(expectedValues) && expectedValues.containsAll(actualValues)
     }
 }
+
+fun hasScreen(screen: Screens) = matcher(Screen, screen)
 
 fun withRole(role: Role) = SemanticsMatcher("${SemanticsProperties.Role.name} contains '$role'") {
     val roleProperty = it.config.getOrNull(SemanticsProperties.Role) ?: false

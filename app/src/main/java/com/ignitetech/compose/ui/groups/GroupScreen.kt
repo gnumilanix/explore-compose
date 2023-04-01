@@ -29,9 +29,11 @@ import coil.compose.AsyncImage
 import com.ignitetech.compose.R
 import com.ignitetech.compose.data.group.Group
 import com.ignitetech.compose.data.user.User
+import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.theme.Grey200
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 import com.ignitetech.compose.utility.drawableUrl
+import com.ignitetech.compose.utility.screen
 
 @Composable
 fun GroupScreen(viewModel: GroupsViewModel) {
@@ -48,6 +50,7 @@ fun GroupScreen(groups: List<Group>) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
+            .semantics { screen = Screens.HomeScreens.Groups }
     ) {
         items(groups) {
             Group(it)

@@ -1,13 +1,26 @@
 package com.ignitetech.compose.ui.home
 
+import androidx.activity.compose.BackHandler
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.animation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -24,11 +37,12 @@ import com.ignitetech.compose.ui.Screens.HomeScreens
 import com.ignitetech.compose.ui.call.CallScreen
 import com.ignitetech.compose.ui.chat.ChatsScreen
 import com.ignitetech.compose.ui.groups.GroupScreen
-import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
-import com.ignitetech.compose.utility.drawableId
-import com.ignitetech.compose.utility.drawableVector
+import com.ignitetech.compose.ui.theme.ComposeTheme
+import com.ignitetech.compose.utility.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+
+const val FAB_TOAST_MESSAGE = "Launch new chat"
 
 @Composable
 fun HomeScreen(
@@ -44,31 +58,89 @@ fun HomeScreen(
 @Composable
 fun HomeScreen(
     navController: NavController,
-    tabs: List<HomeScreens>
+    tabs: List<HomeScreens>,
+    isSearchActive: Boolean = false
 ) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+    var onSearchMode by remember {
+        mutableStateOf(isSearchActive)
+    }
 
-    Scaffold(
-        scaffoldState = scaffoldState,
-        topBar = { AppBar(navController) },
-        floatingActionButton = { FloatingButton(scaffoldState, scope) }
-    ) { padding ->
-        val pagerState = rememberPagerState(0)
+    BackHandler(onSearchMode) {
+        onSearchMode = false
+    }
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .semantics { screen = Screens.Home }) {
+        Scaffold(
+            scaffoldState = scaffoldState,
+            topBar = { AppBar(navController, onSearch = { onSearchMode = it }) },
+            floatingActionButton = {
+                if (!onSearchMode) {
+                    FloatingButton(scaffoldState, scope)
+                }
+            },
+            modifier = Modifier.semantics { screen = Screens.Home }
+        ) { padding ->
+            val pagerState = rememberPagerState(0)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                Tabs(scope, pagerState, tabs)
+                TabContents(navController, pagerState, tabs)
+            }
+        }
+        AnimatedVisibility(
+            visible = onSearchMode,
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
-            Tabs(scope, pagerState, tabs)
-            TabContents(navController, pagerState, tabs)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                SearchAppBar(onSearch = { onSearchMode = it })
+                SearchResults()
+            }
         }
     }
 }
 
 @Composable
-private fun AppBar(navController: NavController) {
+private fun SearchResults() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ComposeTheme.colors.materialColors.background)
+            .clickable {}
+    ) {
+
+    }
+}
+
+@Composable
+private fun AppBar(
+    navController: NavController,
+    onSearch: (Boolean) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .statusBarsPadding()
+            .fillMaxWidth()
+    ) {
+        DefaultAppBar(navController, onSearch)
+    }
+}
+
+@Composable
+private fun DefaultAppBar(
+    navController: NavController,
+    onSearch: (Boolean) -> Unit
+) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
         actions = {
@@ -76,7 +148,7 @@ private fun AppBar(navController: NavController) {
                 mutableStateOf(false)
             }
 
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { onSearch(true) }) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_search_24),
                     contentDescription = stringResource(id = R.string.cd_search_conversation),
@@ -87,8 +159,9 @@ private fun AppBar(navController: NavController) {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_archive_24),
                     contentDescription = stringResource(id = R.string.cd_archive_chat),
-                    modifier = Modifier.semantics { drawableId = R.drawable.baseline_archive_24 }
-
+                    modifier = Modifier.semantics {
+                        drawableId = R.drawable.baseline_archive_24
+                    }
                 )
             }
             Box {
@@ -97,7 +170,9 @@ private fun AppBar(navController: NavController) {
                     Icon(
                         Icons.Default.MoreVert,
                         stringResource(id = R.string.cd_more_items),
-                        modifier = Modifier.semantics { drawableVector = Icons.Default.MoreVert }
+                        modifier = Modifier.semantics {
+                            drawableVector = Icons.Default.MoreVert
+                        }
                     )
                 }
                 DropdownMenu(
@@ -124,10 +199,111 @@ private fun AppBar(navController: NavController) {
 }
 
 @Composable
+@OptIn(ExperimentalComposeUiApi::class)
+private fun SearchAppBar(onSearch: (Boolean) -> Unit) {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.high) {
+        Surface(
+            color = ComposeTheme.colors.appBar,
+            contentColor = ComposeTheme.colors.appBarContent
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                ) {
+                    IconButton(onClick = { onSearch(false) }) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            stringResource(id = R.string.cd_back),
+                            modifier = Modifier.semantics {
+                                drawableVector = Icons.Default.MoreVert
+                            }
+                        )
+                    }
+
+                    var query by remember {
+                        mutableStateOf("")
+                    }
+
+                    TextField(
+                        value = query,
+                        onValueChange = { query = it },
+                        placeholder = {
+                            Text(
+                                stringResource(R.string.ph_search),
+                                style = MaterialTheme.typography.body1,
+                                color = ComposeTheme.colors.contextualAppBarContent,
+                                maxLines = 1,
+                                modifier = Modifier
+                                    .background(Color.Transparent)
+                                    .fillMaxSize()
+                            )
+                        },
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .weight(1.0f)
+                            .focusRequester(focusRequester)
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    keyboardController?.show()
+                                }
+                            }
+                    )
+
+                    LaunchedEffect(Unit) {
+                        focusRequester.requestFocus()
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp, 0.dp, 16.dp, 8.dp)
+                ) {
+                    FilterChip(R.string.photo, R.drawable.baseline_image_24)
+                    Spacer(modifier = Modifier.size(8.dp))
+                    FilterChip(R.string.video, R.drawable.baseline_video_file_24)
+                    Spacer(modifier = Modifier.size(8.dp))
+                    FilterChip(R.string.document, R.drawable.baseline_file_24)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterialApi::class)
+private fun FilterChip(@StringRes title: Int, @DrawableRes icon: Int) {
+    Chip(onClick = {/*TODO*/ }) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = icon),
+                contentDescription = stringResource(id = title),
+                modifier = Modifier.size(20.dp)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = stringResource(id = title),
+            )
+        }
+    }
+}
+
+@Composable
 fun FloatingButton(scaffoldState: ScaffoldState, scope: CoroutineScope) {
     FloatingActionButton(onClick = {
         scope.launch {
-            scaffoldState.snackbarHostState.showSnackbar("Launch attach")
+            scaffoldState.snackbarHostState.showSnackbar(FAB_TOAST_MESSAGE)
         }
     }, backgroundColor = MaterialTheme.colors.secondary) {
         Icon(
@@ -171,13 +347,13 @@ private fun Tabs(
                     pagerState.animateScrollToPage(index)
                 }
             }, icon = {
-                    Icon(
-                        painter = painterResource(id = tab.icon),
-                        contentDescription = stringResource(id = tab.name)
-                    )
-                }, text = {
-                    Text(text = stringResource(id = tab.name))
-                })
+                Icon(
+                    painter = painterResource(id = tab.icon),
+                    contentDescription = stringResource(id = tab.name)
+                )
+            }, text = {
+                Text(text = stringResource(id = tab.name))
+            })
         }
     }
 }
@@ -208,8 +384,32 @@ private fun TabContents(
 @Composable
 @ExcludeFromGeneratedCoverageReport
 fun HomeScreenPreview() {
-    HomeScreen(
-        rememberNavController(),
-        listOf(HomeScreens.Chats, HomeScreens.Groups, HomeScreens.Calls)
-    )
+    ComposeTheme {
+        HomeScreen(
+            rememberNavController(),
+            listOf(HomeScreens.Chats, HomeScreens.Groups, HomeScreens.Calls)
+        )
+    }
+}
+
+@Preview
+@Composable
+@ExcludeFromGeneratedCoverageReport
+fun HomeScreenSearchPreview() {
+    ComposeTheme {
+        HomeScreen(
+            rememberNavController(),
+            listOf(HomeScreens.Chats, HomeScreens.Groups, HomeScreens.Calls),
+            true
+        )
+    }
+}
+
+@Preview
+@Composable
+@ExcludeFromGeneratedCoverageReport
+fun HomeScreenSearchBarPreview() {
+    ComposeTheme {
+        SearchAppBar {}
+    }
 }

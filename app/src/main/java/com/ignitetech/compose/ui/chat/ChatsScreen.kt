@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,6 +22,7 @@ import com.ignitetech.compose.domain.ChatDetail
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.composable.UserAvatar
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
+import com.ignitetech.compose.utility.screen
 
 @Composable
 fun ChatsScreen(
@@ -37,6 +39,7 @@ fun ChatsScreen(navController: NavController, chats: List<ChatDetail>) {
         modifier = Modifier
             .fillMaxSize()
             .padding(0.dp, 8.dp, 0.dp, 8.dp)
+            .semantics { screen = Screens.HomeScreens.Chats }
     ) {
         items(chats) { chat ->
             Chat(navController, chat)

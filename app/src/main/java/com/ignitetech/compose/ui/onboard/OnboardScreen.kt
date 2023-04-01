@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -18,6 +19,7 @@ import com.ignitetech.compose.R
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.home.HomeViewModel
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
+import com.ignitetech.compose.utility.screen
 
 @Composable
 fun OnboardScreen(
@@ -36,7 +38,10 @@ fun OnboardScreen(
 
 @Composable
 fun OnboardScreen(onBoardComplete: () -> Unit = {}) {
-    Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+    Box(
+        modifier = Modifier
+            .background(MaterialTheme.colors.background)
+            .semantics { screen = Screens.Onboard }) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

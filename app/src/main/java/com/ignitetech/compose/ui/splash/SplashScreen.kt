@@ -28,6 +28,7 @@ import com.ignitetech.compose.ui.home.HomeUiState
 import com.ignitetech.compose.ui.home.HomeViewModel
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 import com.ignitetech.compose.utility.drawableId
+import com.ignitetech.compose.utility.screen
 import kotlinx.coroutines.delay
 
 @Composable
@@ -71,6 +72,7 @@ fun SplashScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)
+            .semantics { screen = Screens.Splash }
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),

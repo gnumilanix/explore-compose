@@ -26,11 +26,13 @@ import com.ignitetech.compose.data.call.Type.*
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.domain.CallDetail
 import com.ignitetech.compose.domain.CallsByDate
+import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.composable.UserAvatar
 import com.ignitetech.compose.ui.theme.Green500
 import com.ignitetech.compose.ui.theme.Red500
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 import com.ignitetech.compose.utility.drawableId
+import com.ignitetech.compose.utility.screen
 
 @Composable
 fun CallScreen(viewModel: CallViewModel) {
@@ -40,7 +42,10 @@ fun CallScreen(viewModel: CallViewModel) {
 
 @Composable
 fun CallScreen(calls: List<CallsByDate>) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(modifier = Modifier
+        .fillMaxSize()
+        .semantics { screen = Screens.HomeScreens.Calls }
+    ) {
         calls.forEach { (time, calls) ->
             item {
                 Spacer(modifier = Modifier.height(8.dp))

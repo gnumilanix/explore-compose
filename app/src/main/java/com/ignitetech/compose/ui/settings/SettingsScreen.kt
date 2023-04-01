@@ -18,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,10 +30,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.ignitetech.compose.R
+import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.composable.AppBarBackButtonIcon
 import com.ignitetech.compose.ui.permissions.PermissionHandling
 import com.ignitetech.compose.ui.permissions.PreviewPermissionState
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
+import com.ignitetech.compose.utility.screen
 
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
@@ -73,7 +76,8 @@ fun SettingsScreen(
                 navigationIcon = { AppBarBackButtonIcon(navController = navController) },
                 modifier = Modifier.statusBarsPadding()
             )
-        }
+        },
+        modifier = Modifier.semantics { screen = Screens.Settings }
     ) { padding ->
         Column(
             modifier = Modifier
