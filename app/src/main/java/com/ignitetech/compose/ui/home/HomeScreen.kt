@@ -71,9 +71,11 @@ fun HomeScreen(
         onSearchMode = false
     }
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .semantics { screen = Screens.Home }) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .semantics { screen = Screens.Home }
+    ) {
         Scaffold(
             scaffoldState = scaffoldState,
             topBar = { AppBar(navController, onSearch = { onSearchMode = it }) },
@@ -118,7 +120,6 @@ private fun SearchResults() {
             .background(ComposeTheme.colors.materialColors.background)
             .clickable {}
     ) {
-
     }
 }
 
@@ -284,7 +285,7 @@ private fun SearchAppBar(onSearch: (Boolean) -> Unit) {
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
 private fun FilterChip(@StringRes title: Int, @DrawableRes icon: Int) {
-    Chip(onClick = {/*TODO*/ }) {
+    Chip(onClick = { /*TODO*/ }) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 painter = painterResource(id = icon),
@@ -293,7 +294,7 @@ private fun FilterChip(@StringRes title: Int, @DrawableRes icon: Int) {
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = stringResource(id = title),
+                text = stringResource(id = title)
             )
         }
     }
@@ -347,13 +348,13 @@ private fun Tabs(
                     pagerState.animateScrollToPage(index)
                 }
             }, icon = {
-                Icon(
-                    painter = painterResource(id = tab.icon),
-                    contentDescription = stringResource(id = tab.name)
-                )
-            }, text = {
-                Text(text = stringResource(id = tab.name))
-            })
+                    Icon(
+                        painter = painterResource(id = tab.icon),
+                        contentDescription = stringResource(id = tab.name)
+                    )
+                }, text = {
+                    Text(text = stringResource(id = tab.name))
+                })
         }
     }
 }

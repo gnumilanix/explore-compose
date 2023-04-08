@@ -42,9 +42,10 @@ fun CallScreen(viewModel: CallViewModel) {
 
 @Composable
 fun CallScreen(calls: List<CallsByDate>) {
-    LazyColumn(modifier = Modifier
-        .fillMaxSize()
-        .semantics { screen = Screens.HomeScreens.Calls }
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .semantics { screen = Screens.HomeScreens.Calls }
     ) {
         calls.forEach { (time, calls) ->
             item {

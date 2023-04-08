@@ -41,7 +41,8 @@ fun OnboardScreen(onBoardComplete: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .background(MaterialTheme.colors.background)
-            .semantics { screen = Screens.Onboard }) {
+            .semantics { screen = Screens.Onboard }
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()

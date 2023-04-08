@@ -50,6 +50,6 @@ private fun <T> mergeSemantics(): (List<T>?, List<T>) -> List<T> {
 private fun <T> throwSemanticsGetNotSupported(): T {
     throw UnsupportedOperationException(
         "You cannot retrieve a semantics property directly - " +
-                "use one of the SemanticsConfiguration.getOr* methods instead"
+            "use one of the SemanticsConfiguration.getOr* methods instead"
     )
 }

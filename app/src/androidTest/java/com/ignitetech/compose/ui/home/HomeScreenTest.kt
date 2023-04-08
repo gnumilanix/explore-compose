@@ -58,8 +58,8 @@ class HomeScreenTest {
         composeTestRule
             .onNode(
                 withRole(Role.Button) and
-                        hasDrawable(Icons.Default.MoreVert) and
-                        hasContentDescription(composeTestRule.getString(R.string.cd_more_items))
+                    hasDrawable(Icons.Default.MoreVert) and
+                    hasContentDescription(composeTestRule.getString(R.string.cd_more_items))
             )
             .assertIsDisplayed()
 
@@ -72,7 +72,6 @@ class HomeScreenTest {
         assertTabDisplayed(2, R.string.calls)
     }
 
-
     private fun assertIconButtonDisplayed(
         @DrawableRes icon: Int,
         @StringRes contentDescription: Int
@@ -80,8 +79,8 @@ class HomeScreenTest {
         composeTestRule
             .onNode(
                 withRole(Role.Button) and
-                        hasDrawable(icon) and
-                        hasContentDescription(composeTestRule.getString(contentDescription))
+                    hasDrawable(icon) and
+                    hasContentDescription(composeTestRule.getString(contentDescription))
             )
             .assertIsDisplayed()
     }
@@ -92,7 +91,7 @@ class HomeScreenTest {
             .onChildAt(childIndex)
             .assert(
                 withRole(Role.Tab) and
-                        hasText(composeTestRule.getString(title))
+                    hasText(composeTestRule.getString(title))
             )
             .assertIsDisplayed()
     }
@@ -104,8 +103,8 @@ class HomeScreenTest {
         composeTestRule
             .onNode(
                 withRole(Role.Button) and
-                        hasDrawable(R.drawable.baseline_chat_24) and
-                        hasContentDescription(composeTestRule.getString(R.string.cd_new_chat))
+                    hasDrawable(R.drawable.baseline_chat_24) and
+                    hasContentDescription(composeTestRule.getString(R.string.cd_new_chat))
             )
             .performClick()
 
@@ -118,16 +117,16 @@ class HomeScreenTest {
     fun onSwitchTabSwitchesTab() {
         setScreen()
 
-        //Chats screen
+        // Chats screen
         composeTestRule
             .onNode(hasScreen(Screens.HomeScreens.Chats))
             .assertIsDisplayed()
 
-        //Groups screen
+        // Groups screen
         composeTestRule
             .onNode(
                 withRole(Role.Tab) and
-                        hasContentDescription(composeTestRule.getString(R.string.groups))
+                    hasContentDescription(composeTestRule.getString(R.string.groups))
             )
             .performClick()
 
@@ -135,11 +134,11 @@ class HomeScreenTest {
             .onNode(hasScreen(Screens.HomeScreens.Groups))
             .assertIsDisplayed()
 
-        //Calls screen
+        // Calls screen
         composeTestRule
             .onNode(
                 withRole(Role.Tab) and
-                        hasContentDescription(composeTestRule.getString(R.string.calls))
+                    hasContentDescription(composeTestRule.getString(R.string.calls))
             )
             .performClick()
 
@@ -152,7 +151,7 @@ class HomeScreenTest {
     fun onClickSettingsOpensSettings() {
         setScreen()
 
-        //Chats screen
+        // Chats screen
         composeTestRule
             .onNode(hasScreen(Screens.HomeScreens.Chats))
             .assertIsDisplayed()
