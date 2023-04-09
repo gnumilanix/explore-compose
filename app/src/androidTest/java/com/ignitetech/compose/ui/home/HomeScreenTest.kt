@@ -4,7 +4,9 @@ import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
@@ -12,21 +14,27 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.createGraph
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.google.accompanist.navigation.animation.AnimatedComposeNavigator
+import com.google.accompanist.navigation.animation.composable
 import com.ignitetech.compose.R
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.compose.ComposeActivity
 import com.ignitetech.compose.utility.TestContainer
+import com.ignitetech.compose.utility.extensions.destinationRoute
 import com.ignitetech.compose.utility.extensions.getString
 import com.ignitetech.compose.utility.matchers.hasDrawable
 import com.ignitetech.compose.utility.matchers.hasScreen
 import com.ignitetech.compose.utility.matchers.withRole
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.properties.Delegates
 
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
@@ -149,21 +157,128 @@ class HomeScreenTest {
 
     @Test
     fun onClickSettingsOpensSettings() {
-        setScreen()
+        var navController by Delegates.notNull<TestNavHostController>()
 
-        // Chats screen
-        composeTestRule
-            .onNode(hasScreen(Screens.HomeScreens.Chats))
-            .assertIsDisplayed()
+        setScreen { navController = it }
+
+        assertMenuItemDisplayedAndClickDismissesPopUp(R.string.settings)
+
+        // Settings screen
+        assertEquals(Screens.Settings.route, navController.destinationRoute)
     }
 
-    private fun setScreen() {
+    @Test
+    fun onClickNewGroupOpenNewGroup() {
+        var navController by Delegates.notNull<TestNavHostController>()
+
+        setScreen { navController = it }
+
+        assertMenuItemDisplayedAndClickDismissesPopUp(R.string.new_group)
+
+        // Home screen
+        assertEquals(Screens.Home.route, navController.destinationRoute)
+    }
+
+    private fun assertMenuItemDisplayedAndClickDismissesPopUp(string: Int) {
+        composeTestRule
+            .onNode(
+                withRole(Role.Button) and
+                    hasDrawable(Icons.Default.MoreVert) and
+                    hasContentDescription(composeTestRule.getString(R.string.cd_more_items))
+            )
+            .performClick()
+
+        composeTestRule
+            .onNode(hasText(composeTestRule.getString(string)))
+            .assert(hasAnyAncestor(isPopup()))
+            .performClick()
+
+        composeTestRule
+            .onNode(isPopup())
+            .assertDoesNotExist()
+    }
+
+    @Test
+    fun onClickSearchOpensSearch() {
+        setScreen()
+
+        // Default state
+        assertNoSearchState()
+
+        // Search state
+        composeTestRule
+            .onNode(
+                withRole(Role.Button) and
+                    hasDrawable(R.drawable.baseline_search_24) and
+                    hasContentDescription(composeTestRule.getString(R.string.cd_search_conversation))
+            )
+            .performClick()
+
+        composeTestRule
+            .onNode(hasText(composeTestRule.getString(R.string.ph_search)))
+            .assertIsDisplayed()
+
+        assertChipDisplayed(R.drawable.baseline_image_24, R.string.photo)
+        assertChipDisplayed(R.drawable.baseline_video_file_24, R.string.video)
+        assertChipDisplayed(R.drawable.baseline_file_24, R.string.document)
+
+        composeTestRule
+            .onNode(
+                withRole(Role.Button) and
+                    hasDrawable(Icons.Default.ArrowBack) and
+                    hasContentDescription(composeTestRule.getString(R.string.cd_back))
+            ).performClick()
+
+        // Default state
+        assertNoSearchState()
+    }
+
+    private fun assertNoSearchState() {
+        composeTestRule
+            .onNode(hasText(composeTestRule.getString(R.string.ph_search)))
+            .assertDoesNotExist()
+
+        assertChipNotDisplayed(R.drawable.baseline_image_24, R.string.photo)
+        assertChipNotDisplayed(R.drawable.baseline_video_file_24, R.string.video)
+        assertChipNotDisplayed(R.drawable.baseline_file_24, R.string.document)
+    }
+
+    private fun assertChipNotDisplayed(@DrawableRes drawable: Int, @StringRes string: Int) {
+        composeTestRule
+            .onNode(
+                withRole(Role.Button) and
+                    hasDrawable(drawable) and
+                    hasContentDescription(composeTestRule.getString(string))
+            ).assertDoesNotExist()
+    }
+
+    private fun assertChipDisplayed(@DrawableRes drawable: Int, @StringRes string: Int) {
+        composeTestRule
+            .onNode(
+                withRole(Role.Button) and
+                    hasDrawable(drawable) and
+                    hasContentDescription(composeTestRule.getString(string))
+            ).assertIsDisplayed()
+    }
+
+    @OptIn(ExperimentalAnimationApi::class)
+    private fun setScreen(navHostAvailable: (TestNavHostController) -> Unit = {}) {
         composeTestRule.activity.setContent {
-            TestContainer {
-                HomeScreen(
-                    TestNavHostController(LocalContext.current),
-                    viewModel = hiltViewModel()
+            val navHostController = TestNavHostController(LocalContext.current).apply {
+                navigatorProvider.addNavigator(AnimatedComposeNavigator())
+                setGraph(
+                    createGraph(Screens.Home.route, null) {
+                        composable(route = Screens.Home.route) {
+                        }
+                        composable(route = Screens.Settings.route) {
+                        }
+                    },
+                    null
                 )
+                navHostAvailable(this)
+            }
+            TestContainer {
+                HomeScreen(navHostController, viewModel = hiltViewModel())
             }
         }
     }

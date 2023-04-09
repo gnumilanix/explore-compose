@@ -222,7 +222,7 @@ private fun SearchAppBar(onSearch: (Boolean) -> Unit) {
                             Icons.Default.ArrowBack,
                             stringResource(id = R.string.cd_back),
                             modifier = Modifier.semantics {
-                                drawableVector = Icons.Default.MoreVert
+                                drawableVector = Icons.Default.ArrowBack
                             }
                         )
                     }
@@ -290,7 +290,9 @@ private fun FilterChip(@StringRes title: Int, @DrawableRes icon: Int) {
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = stringResource(id = title),
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier
+                    .size(20.dp)
+                    .semantics { drawableId = icon }
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(

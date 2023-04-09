@@ -4,7 +4,7 @@ import androidx.navigation.NavArgument
 import androidx.navigation.testing.TestNavHostController
 
 val TestNavHostController.destinationRoute: String?
-    get() = currentBackStackEntry?.destination?.route
+    get() = currentDestination?.route
 
 val TestNavHostController.destinationArguments: Map<String, NavArgument>?
-    get() = currentBackStackEntry?.destination?.arguments
+    get() = currentDestination?.arguments
