@@ -1,19 +1,32 @@
 buildscript {
     ext {
+        ktx_version = '1.10.0'
         compose_ui_version = '1.4.1'
         compose_lifecycle_version = '2.6.1'
+        compose_activity_version = '1.7.0'
         navigation_version = '2.5.3'
         accompanist_version = '0.29.1-alpha'
         room_version = '2.5.1'
         hilt_version = '2.44'
         hilt_android_version = '1.0.0'
+        hilt_compose_version = '1.0.0'
         datastore_version = '1.0.0'
         work_version = '2.8.1'
+        coil_version = '2.2.2'
+        ktx_serialization_version = '1.4.1'
+        ktx_datetime_version = '0.4.0'
+
+        junit_version = '4.13.2'
         mockito_version = '5.1.1'
         mockito_kotlin_version = '4.1.0'
         mock_version = '1.13.4'
-        android_runner_version = '1.5.2'
         turbine_version = '0.12.1'
+        coroutine_test_version = '1.1.5'
+        android_junit_ext_version = '1.1.5'
+        android_runner_version = '1.5.2'
+        android_rules_version = '1.5.0'
+        android_espresso_version = '3.5.1'
+        android_testing_version = '2.2.0'
     }
 }
 
