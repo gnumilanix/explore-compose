@@ -109,5 +109,11 @@ jobs:
         with:
           files: app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
 
+      - name: Export offline test report
+        if: steps.test-with-jacoco.outcome == 'failure'
+        uses: codecov/codecov-action@v3
+        with:
+          files: offline-coverage/jacocoTestReport.xml
+
       - name: Build debug
         run: ./gradlew assembleDebug
