@@ -34,6 +34,9 @@ import org.junit.runner.RunWith
 @HiltAndroidTest
 class PermissionsDialogTest {
 
+//    @get:Rule(order = 0)
+//    val resetPermissionRule = ShellCommandRule(ResetPermissions())
+
     @get:Rule(order = 1)
     var hiltTestRule = HiltAndroidRule(this)
 

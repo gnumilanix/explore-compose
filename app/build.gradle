@@ -29,8 +29,6 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "com.ignitetech.compose.utility.ComposeTestRunner"
-        testInstrumentationRunnerArguments clearPackageData: 'true'
-        testInstrumentationRunnerArguments useTestStorageService: 'true'
 
         vectorDrawables {
             useSupportLibrary true
@@ -60,8 +58,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     testOptions {
-        execution 'ANDROIDX_TEST_ORCHESTRATOR'
-
         unitTests.all {
             jacoco {
                 includeNoLocationClasses = true
@@ -147,7 +143,12 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
 
     sourceDirectories.from = files(coverageSourceDirs)
     classDirectories.from = files([javaClasses, kotlinClasses])
-    executionData.from = unitTestCoverageData.files + instrumentationTestCoverageData.files
+//    executionData.from = unitTestCoverageData.files + instrumentationTestCoverageData.files
+    executionData.from = fileTree(dir: buildDir, includes: [
+            'outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec',
+            'outputs/code_coverage/debugAndroidTest/connected/Pixel_3a_API_32_arm64-v8a(AVD) - 12/coverage.ec'
+
+    ])
 }
 
 dependencies {
@@ -195,8 +196,6 @@ dependencies {
     testImplementation "io.mockk:mockk:$mock_version"
     testImplementation "app.cash.turbine:turbine:$turbine_version"
 
-    androidTestUtil "androidx.test:orchestrator:$android_orchestrator_version"
-    androidTestUtil "androidx.test.services:test-services:$android_test_services_version"
     androidTestImplementation "androidx.test:runner:$android_runner_version"
     androidTestImplementation "androidx.test:rules:$android_rules_version"
     androidTestImplementation "androidx.test.ext:junit:$android_junit_ext_version"
@@ -210,9 +209,6 @@ dependencies {
     androidTestImplementation "app.cash.turbine:turbine:$turbine_version"
     androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
     kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
-
-    debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
-    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 }
 
 kapt {
