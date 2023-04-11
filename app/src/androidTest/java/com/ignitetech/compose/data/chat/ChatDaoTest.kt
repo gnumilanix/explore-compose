@@ -9,10 +9,10 @@ import app.cash.turbine.test
 import com.ignitetech.compose.data.AppDatabase
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.data.user.UserDao
+import com.ignitetech.compose.utility.extensions.currentTimeInstant
 import com.ignitetech.compose.utility.rules.TestDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -43,7 +43,7 @@ class ChatDaoTest {
     @Test
     @Throws(IOException::class)
     fun getAllReturnsAll() = runTest {
-        val now = Clock.System.now()
+        val now = currentTimeInstant()
         val chat1 = Chat(1, 1, "Hello", Direction.RECEIVED, now)
         val chat2 = Chat(2, 1, "Hi", Direction.SENT, now)
 
@@ -61,7 +61,7 @@ class ChatDaoTest {
     @Test
     @Throws(Exception::class)
     fun getChatsWithSenderGetsChatsWithUser() = runTest {
-        val now = Clock.System.now()
+        val now = currentTimeInstant()
         val chat1 = Chat(1, 1, "Hello", Direction.RECEIVED, now)
         val chat2 = Chat(2, 1, "Hi", Direction.SENT, now)
         val user1 = User(1, "John", "http://www.example.com/image1.jpeg")
@@ -81,8 +81,8 @@ class ChatDaoTest {
     @Test
     @Throws(Exception::class)
     fun getLatestChatsWithSenderGetsLatestChatsWithUser() = runTest {
-        val now = Clock.System.now()
-        val past = Clock.System.now().minus(2.0.minutes)
+        val now = currentTimeInstant()
+        val past = currentTimeInstant().minus(2.0.minutes)
         val user1Chat1 = Chat(1, 1, "Hello", Direction.RECEIVED, past)
         val user1Chat2 = Chat(2, 1, "Hi", Direction.SENT, now)
         val user2Chat1 = Chat(3, 2, "How are you?", Direction.RECEIVED, past)
@@ -105,7 +105,7 @@ class ChatDaoTest {
     @Test
     @Throws(IOException::class)
     fun deleteChatsDeletesGivenChats() = runTest {
-        val now = Clock.System.now()
+        val now = currentTimeInstant()
         val chat1 = Chat(1, 1, "Hello", Direction.RECEIVED, now)
         val chat2 = Chat(2, 1, "Hi", Direction.SENT, now)
 

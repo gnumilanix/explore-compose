@@ -227,6 +227,7 @@ fun PermissionDeniedDialogPreview() {
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
+@ExcludeFromGeneratedCoverageReport
 class PreviewPermissionState(
     private val _permission: String = Manifest.permission.CAMERA,
     private val _status: PermissionStatus = PermissionStatus.Granted

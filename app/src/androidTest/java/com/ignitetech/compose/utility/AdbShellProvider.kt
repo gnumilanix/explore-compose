@@ -23,6 +23,8 @@ class AdbShellProvider(
             )
         } catch (e: TimeoutException) {
             Log.e(TAG, "Timeout while executing cmd: $cmd")
+        } catch (e: Exception) {
+            Log.e(TAG, "Unknown exception while executing cmd: $cmd")
         }
     }
 

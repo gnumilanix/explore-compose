@@ -2,44 +2,38 @@ package com.ignitetech.compose.ui.permissions
 
 import android.Manifest
 import android.app.Instrumentation
-import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
 import com.ignitetech.compose.R
 import com.ignitetech.compose.ui.compose.ComposeActivity
 import com.ignitetech.compose.utility.AdbShellProvider
 import com.ignitetech.compose.utility.TestContainer
 import com.ignitetech.compose.utility.extensions.getString
 import com.ignitetech.compose.utility.matchers.withRole
-import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
-import org.junit.Assert.assertEquals
+import org.junit.AfterClass
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
 
 @OptIn(ExperimentalPermissionsApi::class)
-@RunWith(AndroidJUnit4::class)
-@HiltAndroidTest
-class PermissionsDialogTest {
-    @get:Rule(order = 1)
-    var hiltTestRule = HiltAndroidRule(this)
-
-    @get:Rule(order = 2)
+abstract class PermissionsDialogTest {
+    @get:Rule(order = Int.MAX_VALUE)
     val composeTestRule = createAndroidComposeRule<ComposeActivity>()
 
     lateinit var instrumentation: Instrumentation
@@ -51,155 +45,23 @@ class PermissionsDialogTest {
         uiDevice = UiDevice.getInstance(instrumentation)
     }
 
-    @Test
-    fun showsRationaleWhenPermissionNotGranted() {
-        setScreen(
-            PreviewPermissionState(
-                Manifest.permission.CAMERA,
-                PermissionStatus.Denied(true)
-            )
-        )
-
-        // Show rationale
-        composeTestRule.onNode(
-            isDialog() and
-
-                hasAnyDescendant(
-                    hasText(composeTestRule.getString(R.string.camera_permission_title))
-                ) and
-                hasAnyDescendant(
-                    hasText(composeTestRule.getString(R.string.camera_permission_message))
-                ) and
-                hasAnyDescendant(
-                    withRole(Role.Button) and
-                        hasText(composeTestRule.getString(R.string.allow))
-                ) and
-                hasAnyDescendant(
-                    withRole(Role.Button) and
-                        hasText(composeTestRule.getString(R.string.deny))
-                )
-        ).assertIsDisplayed()
-    }
-
-    @Test
-    fun denyOnRationaleDismissesDialog() {
-        setScreen(
-            PreviewPermissionState(
-                Manifest.permission.CAMERA,
-                PermissionStatus.Denied(true)
-            )
-        )
-
-        // Show rationale
-        composeTestRule.onNode(
-            hasAnyAncestor(isDialog()) and
-
-                withRole(Role.Button) and
-                hasText(composeTestRule.getString(R.string.deny))
-        ).performClick()
-
-        // Dismiss rationale
-        composeTestRule.onNode(isDialog()).assertDoesNotExist()
-    }
-
-    @Test
-    fun allowOnRationaleShowsSystemPermissionsDialog() {
-        setScreen(
-            PreviewPermissionState(
-                Manifest.permission.CAMERA,
-                PermissionStatus.Denied(true)
-            )
-        )
-
-        composeTestRule.onNode(
-            hasAnyAncestor(isDialog()) and
-
-                withRole(Role.Button) and
-                hasText(composeTestRule.getString(R.string.allow))
-        ).performClick()
-
-        // System dialog
-        uiDevice.hasText("Allow Compose to take pictures and record video?")
-        uiDevice.hasText(systemAllowText())
-        uiDevice.hasText(systemDenyText())
-    }
-
-    @Test
-    fun denyOnRationaleSystemPermissionsDialogDeniesPermission() {
-        setScreen(
-            PreviewPermissionState(
-                Manifest.permission.CAMERA,
-                PermissionStatus.Denied(true)
-            )
-        )
-
-        // Show rationale
-        composeTestRule.onNode(
-            hasAnyAncestor(isDialog()) and
-
-                withRole(Role.Button) and
-                hasText(composeTestRule.getString(R.string.allow))
-        ).performClick()
-
-        // System dialog
-        uiDevice.findObject(UiSelector().text(systemDenyText())).click()
-
-        // Dismiss system dialog
-        uiDevice.hasObject(By.text(systemDenyText()))
-
-        // Dismiss rationale
-        composeTestRule.onNode(isDialog()).assertDoesNotExist()
-    }
-
-    @Test
-    fun allowOnRationaleSystemPermissionsDialogGrantsPermission() {
-        setScreen(
-            PreviewPermissionState(
-                Manifest.permission.CAMERA,
-                PermissionStatus.Denied(true)
-            ),
-            ActivityResultContracts.RequestPermission()
-        )
-
-        // Show rationale
-        composeTestRule.onNode(
-            hasAnyAncestor(isDialog()) and
-
-                withRole(Role.Button) and
-                hasText(composeTestRule.getString(R.string.allow))
-        ).performClick()
-
-        // System dialog
-        uiDevice.findObject(UiSelector().text(systemAllowText())).click()
-
-        // Dismiss system dialog
-        uiDevice.hasObject(By.text(systemAllowText()))
-
-        // Dismiss rationale
-        composeTestRule.onNode(isDialog()).assertDoesNotExist()
-
-        // Verify permission
-        assertEquals(
-            PackageManager.PERMISSION_GRANTED,
-            composeTestRule.activity.checkSelfPermission(Manifest.permission.CAMERA)
-        )
-    }
-
-    private fun systemAllowText() = when {
+    protected fun systemAllowText() = when {
         Build.VERSION.SDK_INT == 23 -> "Allow"
         Build.VERSION.SDK_INT <= 28 -> "ALLOW"
         Build.VERSION.SDK_INT == 29 -> "Allow only while using the app"
         else -> "While using the app"
     }
 
-    private fun systemDenyText() = when (Build.VERSION.SDK_INT) {
-        in 24..28 -> "DENY"
+    protected fun systemDenyText() = when {
+        Build.VERSION.SDK_INT in 24..28 -> "DENY"
+        Build.VERSION.SDK_INT > 31 -> "Don’t Allow"
         else -> "Deny"
     }
 
-    private fun setScreen(
+    protected fun setScreen(
         permissionState: PreviewPermissionState,
-        requestPermission: ActivityResultContracts.RequestPermission? = null
+        requestPermission: ActivityResultContracts.RequestPermission? = null,
+        onActivityResult: ((Bitmap?) -> Unit)? = null
     ) {
         composeTestRule.activity.setContent {
             TestContainer {
@@ -214,23 +76,116 @@ class PermissionsDialogTest {
                     },
                     activityResultLauncher = rememberLauncherForActivityResult(
                         contract = ActivityResultContracts.TakePicturePreview()
-                    ) { },
+                    ) { onActivityResult?.invoke(it) },
                     rationaleTitle = R.string.camera_permission_title,
                     rationaleMessage = R.string.camera_permission_message,
                     denialTitle = R.string.camera_permission_title,
-                    denialMessage = R.string.camera_permission_message_detail,
-                    content = { it() }
-                )
+                    denialMessage = R.string.camera_permission_message_detail
+                ) {
+                    Button(onClick = { it() }) {
+                        Text(text = BUTTON_TEXT)
+                    }
+
+                    when (onActivityResult) {
+                        null -> it()
+                        else -> SideEffect { it() }
+                    }
+                }
             }
         }
     }
 
-    private fun UiDevice.hasText(string: String) {
+    protected fun setScreen2(
+        onActivityResult: ((Bitmap?) -> Unit)? = null
+    ) {
+        composeTestRule.activity.setContent {
+            TestContainer {
+                PermissionHandling(
+                    permissionStateProvider = { onPermissionResult ->
+                        rememberPermissionState(Manifest.permission.CAMERA) {
+                            onPermissionResult(
+                                it
+                            )
+                        }
+                    },
+                    activityResultLauncher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.TakePicturePreview()
+                    ) { onActivityResult?.invoke(it) },
+                    rationaleTitle = R.string.camera_permission_title,
+                    rationaleMessage = R.string.camera_permission_message,
+                    denialTitle = R.string.camera_permission_title,
+                    denialMessage = R.string.camera_permission_message_detail
+                ) {
+                    Button(onClick = { it() }) {
+                        Text(text = BUTTON_TEXT)
+                    }
+                }
+            }
+        }
+    }
+
+    protected fun clickOnPermissionRequest() {
+        composeTestRule.onNode(withRole(Role.Button) and hasText(BUTTON_TEXT))
+            .performClick()
+    }
+
+    protected fun clickOnSystemDenyButton() {
+        uiDevice.wait(Until.findObject(By.textContains(systemDenyText())), 1000)
+        uiDevice.findObject(UiSelector().textContains(systemDenyText())).click()
+    }
+
+    protected fun clickOnSystemAllowButton() {
+        uiDevice.wait(Until.findObject(By.textContains(systemAllowText())), 1000)
+        uiDevice.findObject(UiSelector().textContains(systemAllowText())).click()
+    }
+
+    protected fun verifyDialogDismissed() {
+        composeTestRule.onNode(isDialog()).assertDoesNotExist()
+    }
+
+    protected fun clickOnDialogButtonWithText(@StringRes text: Int) {
+        composeTestRule.onNode(
+            hasAnyAncestor(isDialog()) and
+
+                withRole(Role.Button) and
+                hasText(composeTestRule.getString(text))
+        ).performClick()
+    }
+
+    protected fun verifyDialogDisplayed(
+        @StringRes title: Int,
+        @StringRes message: Int,
+        @StringRes button1: Int,
+        @StringRes button2: Int
+    ) {
+        composeTestRule.onNode(
+            isDialog() and
+
+                hasAnyDescendant(
+                    hasText(composeTestRule.getString(title))
+                ) and
+                hasAnyDescendant(
+                    hasText(composeTestRule.getString(message))
+                ) and
+                hasAnyDescendant(
+                    withRole(Role.Button) and
+                        hasText(composeTestRule.getString(button1))
+                ) and
+                hasAnyDescendant(
+                    withRole(Role.Button) and
+                        hasText(composeTestRule.getString(button2))
+                )
+        ).assertIsDisplayed()
+    }
+
+    protected fun UiDevice.hasText(string: String) {
         findObject(UiSelector().text(string))
     }
 
     companion object {
-        @BeforeClass
+        const val BUTTON_TEXT = "Button to test with"
+
+        @AfterClass
         @JvmStatic
         fun tearDown() {
             InstrumentationRegistry.getInstrumentation().apply {

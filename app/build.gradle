@@ -199,10 +199,13 @@ dependencies {
     testImplementation "io.mockk:mockk:$mock_version"
     testImplementation "app.cash.turbine:turbine:$turbine_version"
 
+    androidTestUtil "androidx.test:orchestrator:$android_orchestrator_version"
+    androidTestUtil "androidx.test.services:test-services:$android_test_services_version"
     androidTestImplementation "androidx.test:runner:$android_runner_version"
     androidTestImplementation "androidx.test:rules:$android_rules_version"
     androidTestImplementation "androidx.test.ext:junit:$android_junit_ext_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$android_espresso_version"
+    androidTestImplementation "androidx.test.espresso:espresso-intents:$android_espresso_version"
     androidTestImplementation "androidx.arch.core:core-testing:$android_testing_version"
     androidTestImplementation "androidx.work:work-testing:$work_version"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"

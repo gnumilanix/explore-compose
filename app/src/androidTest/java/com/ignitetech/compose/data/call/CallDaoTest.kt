@@ -9,10 +9,10 @@ import app.cash.turbine.test
 import com.ignitetech.compose.data.AppDatabase
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.data.user.UserDao
+import com.ignitetech.compose.utility.extensions.currentTimeInstant
 import com.ignitetech.compose.utility.rules.TestDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -43,7 +43,7 @@ class CallDaoTest {
     @Test
     @Throws(IOException::class)
     fun getAllReturnsAll() = runTest {
-        val now = Clock.System.now()
+        val now = currentTimeInstant()
         val call1 = Call(1, 1, 100, Type.OUTGOING_MISSED, now)
         val call2 = Call(2, 2, 200, Type.INCOMING, now)
 
@@ -61,7 +61,7 @@ class CallDaoTest {
     @Test
     @Throws(Exception::class)
     fun deleteCallsDeletesGivenCalls() = runTest {
-        val now = Clock.System.now()
+        val now = currentTimeInstant()
         val call1 = Call(1, 1, 100, Type.OUTGOING_MISSED, now)
         val call2 = Call(2, 2, 200, Type.INCOMING, now)
 
@@ -79,7 +79,7 @@ class CallDaoTest {
     @Test
     @Throws(Exception::class)
     fun getCallsWithTargetGetsCallsWithUser() = runTest {
-        val now = Clock.System.now()
+        val now = currentTimeInstant()
         val call1 = Call(1, 1, 100, Type.OUTGOING_MISSED, now)
         val call2 = Call(2, 2, 200, Type.INCOMING, now)
         val user1 = User(1, "John", "http://www.example.com/image1.jpeg")

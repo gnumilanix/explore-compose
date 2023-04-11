@@ -8,9 +8,12 @@ import org.junit.Test
 class ConvertersTest {
     @Test
     fun `instantToTimestamp returns toEpochMilliseconds`() {
-        val now = Clock.System.now()
+        val now: Instant = Clock.System.now()
 
-        assertEquals(now.toEpochMilliseconds(), Converters().instantToTimestamp(now))
+        assertEquals(
+            (now.toEpochMilliseconds() / 1000) * 1000,
+            Converters().instantToTimestamp(now)
+        )
     }
 
     @Test
