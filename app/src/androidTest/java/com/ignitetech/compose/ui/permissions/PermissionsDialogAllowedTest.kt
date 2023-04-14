@@ -48,7 +48,7 @@ class PermissionsDialogAllowedTest : PermissionsDialogTest() {
         intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
             .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, resultData))
 
-        setScreen2 { resultBitmap = it }
+        setScreen { resultBitmap = it }
 
         // Does not show any dialog
         clickOnPermissionRequest()

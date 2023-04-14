@@ -1,5 +1,6 @@
 package com.ignitetech.compose.ui.home
 
+import android.content.Context
 import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -24,16 +25,18 @@ import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.compose.ComposeActivity
 import com.ignitetech.compose.utility.TestContainer
 import com.ignitetech.compose.utility.extensions.destinationRoute
-import com.ignitetech.compose.utility.extensions.getString
 import com.ignitetech.compose.utility.matchers.hasDrawable
 import com.ignitetech.compose.utility.matchers.hasScreen
 import com.ignitetech.compose.utility.matchers.withRole
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
 @RunWith(AndroidJUnit4::class)
@@ -48,6 +51,15 @@ class HomeScreenTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
+    @Inject
+    @ApplicationContext
+    lateinit var context: Context
+
+    @Before
+    fun setUp() {
+        hiltTestRule.inject()
+    }
+
     @Test
     fun displaysAllElements() {
         setScreen()
@@ -55,7 +67,7 @@ class HomeScreenTest {
         // Title
         composeTestRule
             .onNode(
-                hasText(composeTestRule.getString(R.string.app_name))
+                hasText(context.getString(R.string.app_name))
             )
             .assertIsDisplayed()
 
@@ -67,7 +79,7 @@ class HomeScreenTest {
             .onNode(
                 withRole(Role.Button) and
                     hasDrawable(Icons.Default.MoreVert) and
-                    hasContentDescription(composeTestRule.getString(R.string.cd_more_items))
+                    hasContentDescription(context.getString(R.string.cd_more_items))
             )
             .assertIsDisplayed()
 
@@ -88,7 +100,7 @@ class HomeScreenTest {
             .onNode(
                 withRole(Role.Button) and
                     hasDrawable(icon) and
-                    hasContentDescription(composeTestRule.getString(contentDescription))
+                    hasContentDescription(context.getString(contentDescription))
             )
             .assertIsDisplayed()
     }
@@ -99,7 +111,7 @@ class HomeScreenTest {
             .onChildAt(childIndex)
             .assert(
                 withRole(Role.Tab) and
-                    hasText(composeTestRule.getString(title))
+                    hasText(context.getString(title))
             )
             .assertIsDisplayed()
     }
@@ -112,7 +124,7 @@ class HomeScreenTest {
             .onNode(
                 withRole(Role.Button) and
                     hasDrawable(R.drawable.baseline_chat_24) and
-                    hasContentDescription(composeTestRule.getString(R.string.cd_new_chat))
+                    hasContentDescription(context.getString(R.string.cd_new_chat))
             )
             .performClick()
 
@@ -134,7 +146,7 @@ class HomeScreenTest {
         composeTestRule
             .onNode(
                 withRole(Role.Tab) and
-                    hasContentDescription(composeTestRule.getString(R.string.groups))
+                    hasContentDescription(context.getString(R.string.groups))
             )
             .performClick()
 
@@ -146,7 +158,7 @@ class HomeScreenTest {
         composeTestRule
             .onNode(
                 withRole(Role.Tab) and
-                    hasContentDescription(composeTestRule.getString(R.string.calls))
+                    hasContentDescription(context.getString(R.string.calls))
             )
             .performClick()
 
@@ -184,12 +196,12 @@ class HomeScreenTest {
             .onNode(
                 withRole(Role.Button) and
                     hasDrawable(Icons.Default.MoreVert) and
-                    hasContentDescription(composeTestRule.getString(R.string.cd_more_items))
+                    hasContentDescription(context.getString(R.string.cd_more_items))
             )
             .performClick()
 
         composeTestRule
-            .onNode(hasText(composeTestRule.getString(string)))
+            .onNode(hasText(context.getString(string)))
             .assert(hasAnyAncestor(isPopup()))
             .performClick()
 
@@ -210,12 +222,12 @@ class HomeScreenTest {
             .onNode(
                 withRole(Role.Button) and
                     hasDrawable(R.drawable.baseline_search_24) and
-                    hasContentDescription(composeTestRule.getString(R.string.cd_search_conversation))
+                    hasContentDescription(context.getString(R.string.cd_search_conversation))
             )
             .performClick()
 
         composeTestRule
-            .onNode(hasText(composeTestRule.getString(R.string.ph_search)))
+            .onNode(hasText(context.getString(R.string.ph_search)))
             .assertIsDisplayed()
 
         assertChipDisplayed(R.drawable.baseline_image_24, R.string.photo)
@@ -226,7 +238,7 @@ class HomeScreenTest {
             .onNode(
                 withRole(Role.Button) and
                     hasDrawable(Icons.Default.ArrowBack) and
-                    hasContentDescription(composeTestRule.getString(R.string.cd_back))
+                    hasContentDescription(context.getString(R.string.cd_back))
             ).performClick()
 
         // Default state
@@ -235,7 +247,7 @@ class HomeScreenTest {
 
     private fun assertNoSearchState() {
         composeTestRule
-            .onNode(hasText(composeTestRule.getString(R.string.ph_search)))
+            .onNode(hasText(context.getString(R.string.ph_search)))
             .assertDoesNotExist()
 
         assertChipNotDisplayed(R.drawable.baseline_image_24, R.string.photo)
@@ -248,7 +260,7 @@ class HomeScreenTest {
             .onNode(
                 withRole(Role.Button) and
                     hasDrawable(drawable) and
-                    hasContentDescription(composeTestRule.getString(string))
+                    hasContentDescription(context.getString(string))
             ).assertDoesNotExist()
     }
 
@@ -257,7 +269,7 @@ class HomeScreenTest {
             .onNode(
                 withRole(Role.Button) and
                     hasDrawable(drawable) and
-                    hasContentDescription(composeTestRule.getString(string))
+                    hasContentDescription(context.getString(string))
             ).assertIsDisplayed()
     }
 

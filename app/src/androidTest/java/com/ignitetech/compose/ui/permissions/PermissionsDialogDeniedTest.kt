@@ -1,6 +1,5 @@
 package com.ignitetech.compose.ui.permissions
 
-import android.Manifest
 import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
@@ -8,7 +7,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.Settings
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.test.*
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.Intents.intending
@@ -17,7 +15,6 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasData
 import androidx.test.espresso.intent.rule.IntentsRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionStatus
 import com.ignitetech.compose.R
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -43,7 +40,7 @@ class PermissionsDialogDeniedTest1 : PermissionsDialogTest() {
      */
     @Test
     fun showsDeniedMessageWhenPermissionDenied() {
-        setScreen2()
+        setScreen()
 
         clickOnPermissionRequest()
 
@@ -53,13 +50,7 @@ class PermissionsDialogDeniedTest1 : PermissionsDialogTest() {
         // Show rationale
         clickOnPermissionRequest()
 
-        verifyDialogDisplayed(
-            R.string.camera_permission_title,
-            R.string.camera_permission_message,
-            R.string.allow,
-            R.string.deny
-        )
-
+        verifiedRationaleDialogDisplayed()
         clickOnDialogButtonWithText(R.string.allow)
 
         // Show system permissions and don't allow
@@ -68,13 +59,7 @@ class PermissionsDialogDeniedTest1 : PermissionsDialogTest() {
         // Show denied
         clickOnPermissionRequest()
 
-        verifyDialogDisplayed(
-            R.string.camera_permission_title,
-            R.string.camera_permission_message_detail,
-            R.string.settings,
-            R.string.not_now
-        )
-
+        verifiedDeniedDialogDisplayed()
         clickOnDialogButtonWithText(R.string.not_now)
 
         // Dismiss rationale
@@ -104,7 +89,7 @@ class PermissionsDialogDeniedTest2 : PermissionsDialogTest() {
             )
         )
 
-        setScreen2()
+        setScreen()
 
         clickOnPermissionRequest()
 
@@ -114,13 +99,7 @@ class PermissionsDialogDeniedTest2 : PermissionsDialogTest() {
         // Show rationale
         clickOnPermissionRequest()
 
-        verifyDialogDisplayed(
-            R.string.camera_permission_title,
-            R.string.camera_permission_message,
-            R.string.allow,
-            R.string.deny
-        )
-
+        verifiedRationaleDialogDisplayed()
         clickOnDialogButtonWithText(R.string.allow)
 
         // Show system permissions and don't allow
@@ -129,13 +108,7 @@ class PermissionsDialogDeniedTest2 : PermissionsDialogTest() {
         // Show denied
         clickOnPermissionRequest()
 
-        verifyDialogDisplayed(
-            R.string.camera_permission_title,
-            R.string.camera_permission_message_detail,
-            R.string.settings,
-            R.string.not_now
-        )
-
+        verifiedDeniedDialogDisplayed()
         clickOnDialogButtonWithText(R.string.settings)
 
         // Dismiss rationale
@@ -169,13 +142,7 @@ class PermissionsDialogDeniedTest3 : PermissionsDialogTest() {
         intending(hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
             .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, resultData))
 
-        setScreen(
-            PreviewPermissionState(
-                Manifest.permission.CAMERA,
-                PermissionStatus.Granted
-            ),
-            ActivityResultContracts.RequestPermission()
-        ) {
+        setScreen {
             resultBitmap = it
         }
 

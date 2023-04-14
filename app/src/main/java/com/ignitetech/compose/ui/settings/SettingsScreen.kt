@@ -35,6 +35,8 @@ import com.ignitetech.compose.ui.composable.AppBarBackButtonIcon
 import com.ignitetech.compose.ui.permissions.PermissionHandling
 import com.ignitetech.compose.ui.permissions.PreviewPermissionState
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
+import com.ignitetech.compose.utility.drawableId
+import com.ignitetech.compose.utility.drawableUrl
 import com.ignitetech.compose.utility.screen
 
 @Composable
@@ -129,6 +131,11 @@ private fun ProfileImage(
                         .clip(CircleShape)
                         .border(1.dp, MaterialTheme.colors.secondary, CircleShape)
                         .fillMaxSize()
+                        .semantics {
+                            if (avatar is String) {
+                                drawableUrl = avatar
+                            }
+                        }
                         .clickable { permissionHandle() }
                 )
                 Icon(
@@ -139,6 +146,7 @@ private fun ProfileImage(
                         .size(40.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colors.secondary)
+                        .semantics { drawableId = R.drawable.baseline_photo_camera_24 }
                         .clickable { permissionHandle() }
                         .padding(8.dp)
                 )

@@ -8,11 +8,12 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.provider.MediaStore
 import androidx.compose.ui.test.*
-import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intending
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.intent.rule.IntentsRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ignitetech.compose.R
+import com.ignitetech.compose.utility.verifySystemPermissionsDialogDisplayed
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.impl.annotations.MockK
@@ -30,7 +31,7 @@ class PermissionsDialogRationaleTest1 : PermissionsDialogTest() {
 
     @Test
     fun showsRationaleWhenPermissionNotGranted() {
-        setScreen2()
+        setScreen()
 
         // Don't allow system permission
         clickOnPermissionRequest()
@@ -38,12 +39,7 @@ class PermissionsDialogRationaleTest1 : PermissionsDialogTest() {
 
         // Show rationale
         clickOnPermissionRequest()
-        verifyDialogDisplayed(
-            R.string.camera_permission_title,
-            R.string.camera_permission_message,
-            R.string.allow,
-            R.string.deny
-        )
+        verifiedRationaleDialogDisplayed()
     }
 }
 
@@ -55,7 +51,7 @@ class PermissionsDialogRationaleTest2 : PermissionsDialogTest() {
 
     @Test
     fun denyOnRationaleDismissesDialog() {
-        setScreen2()
+        setScreen()
 
         // Don't allow system permission
         clickOnPermissionRequest()
@@ -78,7 +74,7 @@ class PermissionsDialogRationaleTest3 : PermissionsDialogTest() {
 
     @Test
     fun allowOnRationaleShowsSystemPermissionsDialog() {
-        setScreen2()
+        setScreen()
 
         // Don't allow system permission
         clickOnPermissionRequest()
@@ -89,9 +85,7 @@ class PermissionsDialogRationaleTest3 : PermissionsDialogTest() {
         clickOnDialogButtonWithText(R.string.allow)
 
         // System dialog
-        uiDevice.hasText("Allow Compose to take pictures and record video?")
-        uiDevice.hasText(systemAllowText())
-        uiDevice.hasText(systemDenyText())
+        uiDevice.verifySystemPermissionsDialogDisplayed()
     }
 }
 
@@ -103,7 +97,7 @@ class PermissionsDialogRationaleTest4 : PermissionsDialogTest() {
 
     @Test
     fun denyOnRationaleSystemPermissionsDialogDeniesPermission() {
-        setScreen2()
+        setScreen()
 
         // Don't allow system permission
         clickOnPermissionRequest()
@@ -145,10 +139,10 @@ class PermissionsDialogRationaleTest5 : PermissionsDialogTest() {
     @Test
     fun allowOnRationaleSystemPermissionsDialogGrantsPermission() {
         val resultData = Intent().putExtra("data", bitmap)
-        Intents.intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
+        intending(IntentMatchers.hasAction(MediaStore.ACTION_IMAGE_CAPTURE))
             .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, resultData))
 
-        setScreen2()
+        setScreen()
 
         // Don't allow system permission
         clickOnPermissionRequest()
