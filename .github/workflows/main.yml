@@ -1,7 +1,7 @@
 name: Android Build Action
 on:
   push:
-    branches: [ '**' ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -32,24 +32,11 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
 
-      - name: Configure gradle cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
       - name: Lint check
         run: ./gradlew ktlintCheck
-
-      - name: Unit tests
-        run: ./gradlew testDebugUnitTest
 
       - name: Unit and UI tests with Jacoco
         run: ./gradlew jacocoTestReport
