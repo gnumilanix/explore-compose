@@ -1,0 +1,6 @@
+task installGitHook(type: Copy) {
+    from new File(rootProject.rootDir, 'scripts/pre-commit.sh')
+    into { new File(rootProject.rootDir, '.git/hooks') }
+    fileMode 0777
+}
+tasks.getByPath(':app:preBuild').dependsOn installGitHook
