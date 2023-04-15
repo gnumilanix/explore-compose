@@ -51,11 +51,12 @@ android {
 
     sourceSets {
         debug.java.srcDirs = ['debug/java']
+        release.java.srcDirs = ['release/java']
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     testOptions {
         unitTests.all {
@@ -71,7 +72,7 @@ android {
         }
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     buildFeatures {
         compose true
@@ -169,8 +170,6 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:$datastore_version"
     implementation "androidx.work:work-runtime-ktx:$work_version"
 
-    implementation "com.google.accompanist:accompanist-pager:$accompanist_version"
-    implementation "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
     implementation "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
     implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanist_version"
     implementation "com.google.accompanist:accompanist-permissions:$accompanist_version"

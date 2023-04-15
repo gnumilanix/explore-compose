@@ -1,7 +1,6 @@
 package com.ignitetech.compose
 
 import android.app.Application
-import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import dagger.hilt.android.HiltAndroidApp
@@ -14,7 +13,7 @@ class ComposeApplication : Application(), Configuration.Provider {
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder()
-            .setMinimumLoggingLevel(if (BuildConfig.DEBUG) Log.DEBUG else Log.ERROR)
+            .setMinimumLoggingLevel(ComposeConfiguration.logLevel)
             .setWorkerFactory(workerFactory)
             .build()
     }

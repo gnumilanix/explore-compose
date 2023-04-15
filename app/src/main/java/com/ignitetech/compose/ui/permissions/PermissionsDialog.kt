@@ -232,7 +232,7 @@ class PreviewPermissionState(
     private val _permission: String = Manifest.permission.CAMERA,
     private val _status: PermissionStatus = PermissionStatus.Granted
 ) : PermissionState {
-    var launcher: ManagedActivityResultLauncher<String, Boolean>? = null
+    private var launcher: ManagedActivityResultLauncher<String, Boolean>? = null
 
     override val permission: String
         get() = _permission

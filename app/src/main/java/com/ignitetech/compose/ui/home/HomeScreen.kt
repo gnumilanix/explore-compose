@@ -4,10 +4,15 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.*
+import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -30,7 +35,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.pager.*
 import com.ignitetech.compose.R
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.Screens.HomeScreens
@@ -54,7 +58,7 @@ fun HomeScreen(
     HomeScreen(navController, state.tabs)
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
@@ -321,7 +325,7 @@ fun FloatingButton(scaffoldState: ScaffoldState, scope: CoroutineScope) {
 }
 
 @Composable
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 private fun Tabs(
     scope: CoroutineScope,
     pagerState: PagerState,
@@ -332,9 +336,8 @@ private fun Tabs(
         divider = { Spacer(modifier = Modifier.height(4.dp)) },
         indicator = {
             TabRowDefaults.Indicator(
-                modifier = Modifier.pagerTabIndicatorOffset(
-                    pagerState,
-                    it
+                modifier = Modifier.tabIndicatorOffset(
+                    it[pagerState.currentPage]
                 ),
                 height = 4.dp,
                 color = Color.White
@@ -362,14 +365,14 @@ private fun Tabs(
 }
 
 @Composable
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 private fun TabContents(
     navController: NavController,
     pagerState: PagerState,
     tabs: List<HomeScreens>
 ) {
     HorizontalPager(
-        count = tabs.size,
+        pageCount = tabs.size,
         state = pagerState,
         modifier = Modifier.fillMaxSize()
     ) {
