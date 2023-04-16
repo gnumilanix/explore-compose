@@ -2,13 +2,13 @@ package com.ignitetech.compose.ui.splash
 
 import android.content.Context
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.accompanist.navigation.animation.AnimatedComposeNavigator
@@ -17,7 +17,6 @@ import com.ignitetech.compose.data.preference.PreferenceRepository
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.compose.ComposeActivity
 import com.ignitetech.compose.ui.compose.SetUpNavGraph
-import com.ignitetech.compose.ui.home.HomeViewModel
 import com.ignitetech.compose.utility.extensions.deleteDatastore
 import com.ignitetech.compose.utility.extensions.destinationRoute
 import com.ignitetech.compose.utility.matchers.hasDrawable
@@ -67,7 +66,7 @@ class SplashScreenTest {
             navController = TestNavHostController(LocalContext.current).apply {
                 navigatorProvider.addNavigator(AnimatedComposeNavigator())
             }
-            SetUpNavGraph(navController, composeTestRule.activity.viewModels<HomeViewModel>().value)
+            SetUpNavGraph(navController, hiltViewModel())
         }
     }
 

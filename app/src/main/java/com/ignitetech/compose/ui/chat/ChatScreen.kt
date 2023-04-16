@@ -1,6 +1,5 @@
 package com.ignitetech.compose.ui.chat
 
-import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
@@ -11,10 +10,30 @@ import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,27 +53,13 @@ import coil.compose.AsyncImage
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ignitetech.compose.R
-import com.ignitetech.compose.data.chat.Direction.RECEIVED
-import com.ignitetech.compose.data.chat.Direction.SENT
 import com.ignitetech.compose.data.user.User
-import com.ignitetech.compose.domain.ChatDetail
-import com.ignitetech.compose.domain.ChatsByDate
 import com.ignitetech.compose.ui.Screens
 import com.ignitetech.compose.ui.composable.AppBarBackButton
 import com.ignitetech.compose.ui.composable.AppBarTitle
 import com.ignitetech.compose.ui.theme.ComposeTheme
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 import com.ignitetech.compose.utility.screen
-
-private interface Selector
-
-sealed class EditorState {
-
-    object None : EditorState()
-    object Typing : EditorState()
-    object Emoji : EditorState(), Selector
-    object Attachment : EditorState(), Selector
-}
 
 @Stable
 class ContextualModeState(
@@ -119,7 +124,7 @@ fun ChatScreen(
                 state.recipient
             )
         },
-        modifier = Modifier.semantics { screen = Screens.HomeScreens.Chats }
+        modifier = Modifier.semantics { screen = Screens.Chats }
     ) { padding ->
         var showSelector by remember {
             mutableStateOf(editorState)
@@ -291,85 +296,6 @@ fun AppBarSelectionModePreview() {
             navController = rememberNavController(),
             contextualModeState = ContextualModeState(),
             user = User(1, "Jack", "https://placekitten.com/200/300")
-        )
-    }
-}
-
-@Preview(
-    name = "Light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true
-)
-@Composable
-@ExcludeFromGeneratedCoverageReport
-fun ConversationsScreenPreview() {
-    ComposeTheme {
-        ChatScreen(
-            rememberSystemUiController(),
-            rememberNavController(),
-            ChatUiState(
-                User(1, "Jack", "https://placekitten.com/200/300"),
-                User(1, "John", "https://placekitten.com/200/300"),
-                listOf(
-                    ChatsByDate(
-                        "yesterday",
-                        listOf(
-                            ChatDetail(
-                                1,
-                                1,
-                                "Hello Jack! How are you today? Can you me those presentations",
-                                SENT,
-                                "22/02",
-                                User(1, "John", "https://placekitten.com/200/300")
-                            ),
-                            ChatDetail(
-                                2,
-                                2,
-                                "Hello John! I am good. How about you?",
-                                RECEIVED,
-                                "22/02",
-                                User(2, "Jane", "https://placekitten.com/200/100")
-                            )
-                        )
-                    )
-                )
-            )
-        )
-    }
-}
-
-@Composable
-@Preview(name = "Light mode")
-@ExcludeFromGeneratedCoverageReport
-fun ChatScreenEmojiSelectorPreview() {
-    ComposeTheme {
-        ChatScreen(
-            rememberSystemUiController(),
-            rememberNavController(),
-            ChatUiState(
-                User(1, "Jack", "https://placekitten.com/200/300"),
-                User(1, "John", "https://placekitten.com/200/300"),
-                listOf()
-            ),
-            EditorState.Emoji
-        )
-    }
-}
-
-@Composable
-@Preview(name = "Light mode")
-@ExcludeFromGeneratedCoverageReport
-fun ChatScreenAttachmentSelectorPreview() {
-    ComposeTheme {
-        ChatScreen(
-            rememberSystemUiController(),
-            rememberNavController(),
-            ChatUiState(
-                User(1, "Jack", "https://placekitten.com/200/300"),
-                User(1, "John", "https://placekitten.com/200/300"),
-                listOf()
-            ),
-            EditorState.Attachment
         )
     }
 }

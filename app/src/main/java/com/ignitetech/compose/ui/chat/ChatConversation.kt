@@ -23,9 +23,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ignitetech.compose.data.chat.Direction
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.domain.ChatDetail
+import com.ignitetech.compose.domain.ChatsByDate
 import com.ignitetech.compose.ui.composable.UserAvatar
 import com.ignitetech.compose.ui.theme.ComposeTheme
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
@@ -227,4 +230,47 @@ fun ConversationReceivedPreview() {
         ),
         ContextualModeState()
     ) { _, _ -> }
+}
+
+@Preview(
+    name = "Light mode",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    showBackground = true
+)
+@Composable
+@ExcludeFromGeneratedCoverageReport
+fun ConversationsScreenPreview() {
+    ComposeTheme {
+        ChatScreen(
+            rememberSystemUiController(),
+            rememberNavController(),
+            ChatUiState(
+                User(1, "Jack", "https://placekitten.com/200/300"),
+                User(1, "John", "https://placekitten.com/200/300"),
+                listOf(
+                    ChatsByDate(
+                        "yesterday",
+                        listOf(
+                            ChatDetail(
+                                1,
+                                1,
+                                "Hello Jack! How are you today? Can you me those presentations",
+                                Direction.SENT,
+                                "22/02",
+                                User(1, "John", "https://placekitten.com/200/300")
+                            ),
+                            ChatDetail(
+                                2,
+                                2,
+                                "Hello John! I am good. How about you?",
+                                Direction.RECEIVED,
+                                "22/02",
+                                User(2, "Jane", "https://placekitten.com/200/100")
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    }
 }
