@@ -19,6 +19,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,7 +39,7 @@ import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
 @Composable
 fun ConversationsByTime(
     state: ChatUiState,
-    contextualModeState: ContextualModeState,
+    contextualState: ChatContextualState,
     chatSelected: (Int, Boolean) -> Unit
 ) {
     LazyColumn(Modifier.fillMaxSize()) {
@@ -52,7 +55,7 @@ fun ConversationsByTime(
                         state.me,
                         state.recipient,
                         conversation,
-                        contextualModeState,
+                        contextualState,
                         chatSelected = chatSelected
                     )
                 }
@@ -90,12 +93,13 @@ fun Conversation(
     me: User?,
     recipient: User?,
     chat: ChatDetail,
-    contextualModeState: ContextualModeState,
+    contextualState: ChatContextualState,
     chatSelected: (Int, Boolean) -> Unit
 ) {
     val id = chat.id
+    val currentSelectionState = contextualState.isSelected(id)
     val surfaceColor by animateColorAsState(
-        if (contextualModeState.isSelected(id)) ComposeTheme.colors.secondaryBackgroundColor else Color.Transparent,
+        if (currentSelectionState) ComposeTheme.colors.secondaryBackgroundColor else Color.Transparent,
         tween(durationMillis = 500, delayMillis = 40, easing = LinearOutSlowInEasing)
     )
 
@@ -103,21 +107,22 @@ fun Conversation(
         .fillMaxWidth()
         .combinedClickable(
             onClick = {
-                if (contextualModeState.inSelectionMode) {
-                    val selected = !contextualModeState.isSelected(id)
-                    contextualModeState.selected(id, selected)
-                    chatSelected(id, selected)
+                if (contextualState.inSelectionMode) {
+                    val newSelectionState = !currentSelectionState
+                    contextualState.selected(id, newSelectionState)
+                    chatSelected(id, newSelectionState)
                 }
             },
             onLongClick = {
-                if (!contextualModeState.inSelectionMode) {
-                    contextualModeState.selected(id, true)
+                if (!contextualState.inSelectionMode) {
+                    contextualState.selected(id, true)
                     chatSelected(id, true)
                 }
             }
         )
         .background(color = surfaceColor, shape = RoundedCornerShape(4.dp))
         .padding(16.dp, 0.dp, 16.dp, 0.dp)
+        .semantics { selected = currentSelectionState }
     when (chat.direction) {
         Direction.SENT -> ConversationSent(background, me, chat)
         Direction.RECEIVED -> ConversationReceived(background, recipient, chat)
@@ -132,7 +137,8 @@ private fun ConversationReceived(
 ) {
     Row(
         modifier = modifier
-            .padding(0.dp, 4.dp, 60.dp, 4.dp),
+            .padding(0.dp, 4.dp, 60.dp, 4.dp)
+            .testTag(Direction.RECEIVED.name),
         horizontalArrangement = Arrangement.Start
     ) {
         UserAvatar(user?.avatar)
@@ -151,7 +157,8 @@ private fun ConversationSent(
 ) {
     Row(
         modifier = modifier
-            .padding(60.dp, 4.dp, 0.dp, 4.dp),
+            .padding(60.dp, 4.dp, 0.dp, 4.dp)
+            .testTag(Direction.SENT.name),
         horizontalArrangement = Arrangement.End
     ) {
         Column(modifier = Modifier.weight(1.0f), horizontalAlignment = Alignment.End) {
@@ -209,7 +216,7 @@ fun ConversationSentPreview() {
             "22/02",
             User(1, "John", "https://placekitten.com/200/300")
         ),
-        ContextualModeState()
+        ChatContextualState()
     ) { _, _ -> }
 }
 
@@ -228,7 +235,7 @@ fun ConversationReceivedPreview() {
             "22/02",
             User(1, "John", "https://placekitten.com/200/300")
         ),
-        ContextualModeState()
+        ChatContextualState()
     ) { _, _ -> }
 }
 

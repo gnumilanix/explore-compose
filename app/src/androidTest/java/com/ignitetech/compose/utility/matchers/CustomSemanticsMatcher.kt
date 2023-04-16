@@ -17,7 +17,7 @@ fun hasDrawable(@DrawableRes id: Int) = matcher(DrawableId, id)
 
 fun hasDrawable(url: String?) = matcher(DrawableUrl, url)
 
-fun hasDrawable(vector: ImageVector) = matcher(DrawableVector, vector)
+fun hasDrawable(vector: ImageVector) = matcher(DrawableVector, vector.name)
 
 fun hasDrawables(vararg urls: String) = allMatcher(DrawableUrl, *urls)
 
@@ -39,6 +39,8 @@ private fun <T> allMatcher(
 }
 
 fun hasScreen(screen: Screens) = matcher(Screen, screen)
+
+fun hasKey(key: SemanticsPropertyKey<*>): SemanticsMatcher = SemanticsMatcher.keyIsDefined(key)
 
 fun withRole(role: Role) = SemanticsMatcher("${SemanticsProperties.Role.name} contains '$role'") {
     val roleProperty = it.config.getOrNull(SemanticsProperties.Role) ?: false

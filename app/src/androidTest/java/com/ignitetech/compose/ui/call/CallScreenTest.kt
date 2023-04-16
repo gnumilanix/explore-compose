@@ -61,12 +61,12 @@ class CallScreenTest {
             .assertCountEquals(6)
 
         assertDateHeader(0, calls[0].date)
-        assertChat(1, calls[0].calls[0], R.drawable.baseline_call_made_24)
-        assertChat(2, calls[0].calls[1], R.drawable.baseline_call_missed_24)
-        assertChat(3, calls[0].calls[2], R.drawable.baseline_call_missed_outgoing_24)
+        assertCall(1, calls[0].calls[0], R.drawable.baseline_call_made_24)
+        assertCall(2, calls[0].calls[1], R.drawable.baseline_call_missed_24)
+        assertCall(3, calls[0].calls[2], R.drawable.baseline_call_missed_outgoing_24)
 
         assertDateHeader(4, calls[1].date)
-        assertChat(5, calls[1].calls[0], R.drawable.baseline_call_received_24)
+        assertCall(5, calls[1].calls[0], R.drawable.baseline_call_received_24)
     }
 
     private fun assertDateHeader(childIndex: Int, date: String) {
@@ -77,7 +77,7 @@ class CallScreenTest {
             .assertIsDisplayed()
     }
 
-    private fun assertChat(childIndex: Int, calls: CallDetail, @DrawableRes typeDrawable: Int) {
+    private fun assertCall(childIndex: Int, calls: CallDetail, @DrawableRes typeDrawable: Int) {
         val call = calls
         val target = call.target
 

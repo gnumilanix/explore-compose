@@ -23,14 +23,14 @@ var SemanticsPropertyReceiver.drawableUrl: String?
     get() = throwSemanticsGetNotSupported()
     set(value) = set(DrawableUrl, listOf(value ?: ""))
 
-val DrawableVector = SemanticsPropertyKey<List<ImageVector>>(
+val DrawableVector = SemanticsPropertyKey<List<String>>(
     name = "DrawableVector",
     mergePolicy = mergeSemantics()
 )
 
 var SemanticsPropertyReceiver.drawableVector: ImageVector
     get() = throwSemanticsGetNotSupported()
-    set(value) = set(DrawableVector, listOf(value))
+    set(value) = set(DrawableVector, listOf(value.name))
 
 val Screen = SemanticsPropertyKey<List<Screens>>(
     name = "Screen",

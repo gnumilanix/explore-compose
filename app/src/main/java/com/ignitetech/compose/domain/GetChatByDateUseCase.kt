@@ -51,5 +51,5 @@ data class ChatDetail(
 
 data class ChatsByDate(
     val date: String,
-    val calls: List<ChatDetail>
+    val chats: List<ChatDetail>
 )

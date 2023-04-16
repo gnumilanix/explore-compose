@@ -41,12 +41,14 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ignitetech.compose.R
 import com.ignitetech.compose.ui.theme.ComposeTheme
 import com.ignitetech.compose.ui.theme.Purple500
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
+import com.ignitetech.compose.utility.drawableVector
 import com.ignitetech.compose.utility.isActive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -158,7 +160,8 @@ private fun EditorIconButton(
         onClick = onClick,
         shape = CircleShape,
         modifier = Modifier
-            .size(40.dp),
+            .size(40.dp)
+            .semantics { drawableVector = icon },
         contentPadding = contentPadding,
         colors = ButtonDefaults.buttonColors(Purple500)
     ) {

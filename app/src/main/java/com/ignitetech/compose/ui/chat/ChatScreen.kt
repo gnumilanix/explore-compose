@@ -1,5 +1,6 @@
 package com.ignitetech.compose.ui.chat
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColor
@@ -27,13 +28,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -59,36 +58,9 @@ import com.ignitetech.compose.ui.composable.AppBarBackButton
 import com.ignitetech.compose.ui.composable.AppBarTitle
 import com.ignitetech.compose.ui.theme.ComposeTheme
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
+import com.ignitetech.compose.utility.drawableId
+import com.ignitetech.compose.utility.drawableUrl
 import com.ignitetech.compose.utility.screen
-
-@Stable
-class ContextualModeState(
-    initialSelectedItems: Map<Int, Boolean> = mapOf()
-) {
-    private var _selectedItems = initialSelectedItems.entries
-        .map { it.key to it.value }
-        .toMutableStateMap()
-
-    var selectedItems: Map<Int, Boolean> = mapOf()
-        get() = _selectedItems
-        private set
-
-    var inSelectionMode: Boolean = false
-        get() = selectedItems.containsValue(true)
-        private set
-
-    fun clearSelection() {
-        _selectedItems.clear()
-    }
-
-    fun selected(id: Int, selected: Boolean) {
-        _selectedItems[id] = selected
-    }
-
-    fun isSelected(id: Int): Boolean {
-        return _selectedItems.getOrElse(id) { false }
-    }
-}
 
 @Composable
 fun ChatScreen(
@@ -110,8 +82,8 @@ fun ChatScreen(
 ) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-    val contextualModeState = remember {
-        ContextualModeState()
+    val contextualState = remember {
+        ChatContextualState()
     }
 
     Scaffold(
@@ -120,7 +92,7 @@ fun ChatScreen(
             AppBar(
                 systemUiController,
                 navController,
-                contextualModeState,
+                contextualState,
                 state.recipient
             )
         },
@@ -134,8 +106,8 @@ fun ChatScreen(
             showSelector = EditorState.None
         }
 
-        BackHandler(contextualModeState.inSelectionMode) {
-            contextualModeState.clearSelection()
+        BackHandler(contextualState.inSelectionMode) {
+            contextualState.clearSelection()
         }
 
         if (showSelector != EditorState.Typing) {
@@ -143,10 +115,10 @@ fun ChatScreen(
         }
 
         if (showSelector != EditorState.None) {
-            contextualModeState.clearSelection()
+            contextualState.clearSelection()
         }
 
-        if (contextualModeState.inSelectionMode) {
+        if (contextualState.inSelectionMode) {
             showSelector = EditorState.None
         }
 
@@ -155,7 +127,7 @@ fun ChatScreen(
                 Box(modifier = Modifier.weight(1.0f)) {
                     ConversationsByTime(
                         state = state,
-                        contextualModeState = contextualModeState,
+                        contextualState = contextualState,
                         chatSelected = { _, _ -> showSelector = EditorState.None }
                     )
 
@@ -176,7 +148,7 @@ fun ChatScreen(
                     showSelector = it
 
                     if (it != EditorState.None) {
-                        contextualModeState.clearSelection()
+                        contextualState.clearSelection()
                     }
                 }
             }
@@ -195,11 +167,11 @@ fun ChatScreen(
 private fun AppBar(
     systemUiController: SystemUiController,
     navController: NavController,
-    contextualModeState: ContextualModeState,
+    contextualState: ChatContextualState,
     user: User?
 ) {
     val transition =
-        updateTransition(contextualModeState.inSelectionMode, label = "inSelectionMode")
+        updateTransition(contextualState.inSelectionMode, label = "inSelectionMode")
     val transitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Color> =
         { tween(500) }
     val statusBarColor by transition.animateColor(
@@ -232,22 +204,30 @@ private fun AppBar(
             modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (contextualModeState.inSelectionMode) {
+            if (contextualState.inSelectionMode) {
                 AppBarBackButton(navController, ContentAlpha.medium)
                 Text(
-                    text = "${contextualModeState.selectedItems.filterValues { it }.size}",
+                    text = "${contextualState.selectedItems.filterValues { it }.size}",
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier
                         .padding(8.dp, 0.dp, 8.dp, 0.dp)
                         .weight(1.0f)
                 )
-                IconButton(onClick = { contextualModeState.clearSelection() }) {
+                IconButton(
+                    onClick = { contextualState.clearSelection() },
+                    modifier = Modifier.semantics { drawableId = R.drawable.baseline_delete_24 }
+                ) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_delete_24),
                         contentDescription = stringResource(id = R.string.cd_delete_chat)
                     )
                 }
-                IconButton(onClick = { contextualModeState.clearSelection() }) {
+                IconButton(
+                    onClick = { contextualState.clearSelection() },
+                    modifier = Modifier.semantics {
+                        drawableId = R.drawable.baseline_content_copy_24
+                    }
+                ) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_content_copy_24),
                         contentDescription = stringResource(id = R.string.cd_copy_chat)
@@ -265,6 +245,7 @@ private fun AppBar(
                         .size(40.dp)
                         .clip(CircleShape)
                         .border(1.5.dp, Color(0xff76d275), CircleShape)
+                        .semantics { drawableUrl = user?.avatar }
                 )
                 AppBarTitle(title = user?.name ?: "", modifier = Modifier.weight(1.0f))
             }
@@ -280,7 +261,7 @@ fun AppBarPreview() {
         AppBar(
             systemUiController = rememberSystemUiController(),
             navController = rememberNavController(),
-            contextualModeState = ContextualModeState(),
+            contextualState = ChatContextualState(),
             user = User(1, "Jack", "https://placekitten.com/200/300")
         )
     }
@@ -294,8 +275,29 @@ fun AppBarSelectionModePreview() {
         AppBar(
             systemUiController = rememberSystemUiController(),
             navController = rememberNavController(),
-            contextualModeState = ContextualModeState(),
+            contextualState = ChatContextualState(mapOf(1 to true)),
             user = User(1, "Jack", "https://placekitten.com/200/300")
+        )
+    }
+}
+
+@Preview(
+    name = "Light mode",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    showBackground = true
+)
+@Composable
+@ExcludeFromGeneratedCoverageReport
+fun ConversationsEmptyScreenPreview() {
+    ComposeTheme {
+        ChatScreen(
+            rememberSystemUiController(),
+            rememberNavController(),
+            ChatUiState(
+                User(1, "Jack", "https://placekitten.com/200/300"),
+                User(1, "John", "https://placekitten.com/200/300"),
+                listOf()
+            )
         )
     }
 }
