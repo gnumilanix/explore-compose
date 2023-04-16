@@ -1,7 +1,12 @@
 # Explore Jetpack compose
+
 <p>
+  <a href="https://github.com/gnumilanix/explore-compose/actions" alt="Build status">
    <img src="https://img.shields.io/github/actions/workflow/status/gnumilanix/explore-compose/main.yml?style=flat-square" />
-   <img src="https://img.shields.io/codecov/c/github/gnumilanix/explore-compose?style=flat-square&token=Q5ZYJAWCA9" />
+  </a>
+  <a href="https://app.codecov.io/github/gnumilanix/explore-compose" alt="Coverage">   
+    <img src="https://img.shields.io/codecov/c/github/gnumilanix/explore-compose?style=flat-square&token=Q5ZYJAWCA9" />
+  </a>
 </p>
 
 Repo to track personal journey about exploring and learning Jetpack Compose (A declarative way to

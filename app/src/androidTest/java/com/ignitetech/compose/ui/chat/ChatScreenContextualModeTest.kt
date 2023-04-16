@@ -20,17 +20,17 @@ class ChatScreenContextualModeTest : ChatScreenTest() {
     @get:Rule(order = 1)
     var hiltTestRule = HiltAndroidRule(this)
 
+    private val state = ChatUiState(currentUser, recipient, chats)
+
     @Before
     override fun setUp() = runTest {
         hiltTestRule.inject()
         super.setUp()
+        setScreen(state)
     }
 
     @Test
     fun toggleConversationSelectionUpdatesContextualState() = runTest {
-        val state = ChatUiState(currentUser, recipient, chats)
-        setScreen(state)
-
         // No selection allowed on date headers
         longClickOnConversation(0)
         assertNoContextualMode()
@@ -55,9 +55,7 @@ class ChatScreenContextualModeTest : ChatScreenTest() {
 
     @Test
     fun systemBackPressOnContextualStateRevertsContextualMode() = runTest {
-        val state = ChatUiState(currentUser, recipient, chats)
         val chat = state.chats[0].chats[0]
-        setScreen(state)
 
         // Switch to contextual mode
         longClickOnConversation(1)
@@ -72,9 +70,7 @@ class ChatScreenContextualModeTest : ChatScreenTest() {
 
     @Test
     fun switchEditorStateOnContextualStateRevertsContextualMode() = runTest {
-        val state = ChatUiState(currentUser, recipient, chats)
         val chat = state.chats[0].chats[0]
-        setScreen(state)
 
         // Switch to contextual mode
         longClickOnConversation(1)
@@ -89,9 +85,7 @@ class ChatScreenContextualModeTest : ChatScreenTest() {
 
     @Test
     fun deleteOnContextualStateRevertsContextualMode() = runTest {
-        val state = ChatUiState(currentUser, recipient, chats)
         val chat = state.chats[0].chats[0]
-        setScreen(state)
 
         // Switch to contextual mode
         longClickOnConversation(1)
@@ -106,9 +100,7 @@ class ChatScreenContextualModeTest : ChatScreenTest() {
 
     @Test
     fun copyOnContextualStateRevertsContextualMode() = runTest {
-        val state = ChatUiState(currentUser, recipient, chats)
         val chat = state.chats[0].chats[0]
-        setScreen(state)
 
         // Switch to contextual mode
         longClickOnConversation(1)

@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +41,11 @@ import com.ignitetech.compose.ui.theme.Pink300
 import com.ignitetech.compose.ui.theme.Purple300
 import com.ignitetech.compose.ui.theme.Red300
 import com.ignitetech.compose.utility.ExcludeFromGeneratedCoverageReport
+import com.ignitetech.compose.utility.drawableId
+
+enum class Attachment {
+    Document, Camera, Image
+}
 
 @Composable
 internal fun EmojiSelector() {
@@ -50,12 +56,14 @@ internal fun EmojiSelector() {
             .fillMaxWidth()
             .height(250.dp)
     ) {
-        Text(text = "Emoji", modifier = Modifier.align(Alignment.Center))
+        Text(text = stringResource(R.string.cd_emoji), modifier = Modifier.align(Alignment.Center))
     }
 }
 
 @Composable
-internal fun AttachmentSelector() {
+internal fun AttachmentSelector(
+    attachmentSelected: (Attachment) -> Unit
+) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(70.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -72,7 +80,7 @@ internal fun AttachmentSelector() {
                 R.string.cd_document,
                 R.string.document,
                 Purple300
-            )
+            ) { attachmentSelected(Attachment.Document) }
         }
         item {
             AttachmentButton(
@@ -80,7 +88,7 @@ internal fun AttachmentSelector() {
                 R.string.cd_camera,
                 R.string.camera,
                 Red300
-            )
+            ) { attachmentSelected(Attachment.Camera) }
         }
         item {
             AttachmentButton(
@@ -88,7 +96,7 @@ internal fun AttachmentSelector() {
                 R.string.cd_gallery,
                 R.string.gallery,
                 Pink300
-            )
+            ) { attachmentSelected(Attachment.Image) }
         }
     }
 }
@@ -98,11 +106,12 @@ private fun AttachmentButton(
     @DrawableRes icon: Int,
     @StringRes contentDescription: Int,
     @StringRes text: Int,
-    buttonColor: Color
+    buttonColor: Color,
+    onClick: () -> Unit
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Button(
-            onClick = {},
+            onClick = onClick,
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(buttonColor),
             modifier = Modifier
@@ -113,7 +122,9 @@ private fun AttachmentButton(
             Icon(
                 painterResource(icon),
                 stringResource(id = contentDescription),
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .semantics { drawableId = icon },
                 tint = Color.White
             )
         }

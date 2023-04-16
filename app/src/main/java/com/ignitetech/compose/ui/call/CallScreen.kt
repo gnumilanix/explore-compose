@@ -1,7 +1,16 @@
 package com.ignitetech.compose.ui.call
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
@@ -22,7 +31,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ignitetech.compose.R
 import com.ignitetech.compose.data.call.Type
-import com.ignitetech.compose.data.call.Type.*
+import com.ignitetech.compose.data.call.Type.INCOMING
+import com.ignitetech.compose.data.call.Type.INCOMING_MISSED
+import com.ignitetech.compose.data.call.Type.OUTGOING
+import com.ignitetech.compose.data.call.Type.OUTGOING_MISSED
 import com.ignitetech.compose.data.user.User
 import com.ignitetech.compose.domain.CallDetail
 import com.ignitetech.compose.domain.CallsByDate
@@ -139,6 +151,7 @@ private fun CallTypeIcon(type: Type) {
                 drawableId = R.drawable.baseline_call_received_24
             }
         )
+
         OUTGOING -> Icon(
             painter = painterResource(id = R.drawable.baseline_call_made_24),
             contentDescription = stringResource(id = R.string.cd_call_outgoing),
@@ -147,6 +160,7 @@ private fun CallTypeIcon(type: Type) {
                 drawableId = R.drawable.baseline_call_made_24
             }
         )
+
         INCOMING_MISSED -> Icon(
             painter = painterResource(id = R.drawable.baseline_call_missed_24),
             contentDescription = stringResource(id = R.string.cd_call_incoming_missed),
@@ -155,6 +169,7 @@ private fun CallTypeIcon(type: Type) {
                 drawableId = R.drawable.baseline_call_missed_24
             }
         )
+
         OUTGOING_MISSED -> Icon(
             painter = painterResource(id = R.drawable.baseline_call_missed_outgoing_24),
             contentDescription = stringResource(id = R.string.cd_call_outgoing_missed),

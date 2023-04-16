@@ -157,7 +157,9 @@ fun ChatScreen(
                 EmojiSelector()
             }
             AnimatedVisibility(visible = showSelector == EditorState.Attachment) {
-                AttachmentSelector()
+                AttachmentSelector {
+                    showSelector = EditorState.None
+                }
             }
         }
     }
